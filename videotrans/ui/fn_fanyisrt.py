@@ -5,6 +5,7 @@ from PySide6.QtCore import (QMetaObject, Qt, QEvent)
 from PySide6.QtGui import QIcon
 
 from videotrans.configure.config import tr, settings, ROOT_DIR
+from videotrans.ui.responsive_layout import WrappingRowLayout
 
 
 class Ui_fn_fanyisrt(QtWidgets.QWidget):
@@ -25,10 +26,10 @@ class Ui_fn_fanyisrt(QtWidgets.QWidget):
         self.error_msg = ""
         if not fanyisrt.objectName():
             fanyisrt.setObjectName(u"fanyisrt")
-        fanyisrt.setMinimumSize(1150, 535)
+        fanyisrt.setMinimumSize(0, 420)
 
 
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(fanyisrt.sizePolicy().hasHeightForWidth())
@@ -41,7 +42,7 @@ class Ui_fn_fanyisrt(QtWidgets.QWidget):
         self.verticalLayout_13 = QtWidgets.QVBoxLayout()
         self.verticalLayout_13.setObjectName("verticalLayout_13")
 
-        self.horizontalLayout_18 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_18 = WrappingRowLayout(spacing=8)
         self.horizontalLayout_18.setObjectName("horizontalLayout_18")
 
         self.label_13 = QtWidgets.QLabel()
@@ -134,7 +135,7 @@ class Ui_fn_fanyisrt(QtWidgets.QWidget):
         self.label_614.setMinimumSize(QtCore.QSize(0, 30))
         self.label_614.setObjectName("label_614")
 
-        self.horizontalLayout_new = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_new = WrappingRowLayout(spacing=8)
         self.horizontalLayout_new.addWidget(self.aisendsrt)
         self.horizontalLayout_new.addWidget(self.is_cuda)
 
@@ -146,7 +147,7 @@ class Ui_fn_fanyisrt(QtWidgets.QWidget):
         self.loglabel.setStyleSheet('''color:#148cd2;background-color:transparent''')
         self.verticalLayout_13.addWidget(self.loglabel)
 
-        self.horizontalLayout_19 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_19 = WrappingRowLayout(spacing=8)
         self.horizontalLayout_19.setContentsMargins(-1, 20, -1, -1)
         self.horizontalLayout_19.setObjectName("horizontalLayout_19")
         self.fanyi_import = QtWidgets.QPushButton()

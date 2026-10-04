@@ -13,7 +13,8 @@ def run_check():
     os.environ['QT_QPA_PLATFORM'] = 'offscreen'
     os.environ['PYVIDEOTRANS_LANG'] = 'vi'
 
-    from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
+    from PySide6.QtCore import QPoint
+    from PySide6.QtWidgets import QApplication, QFrame, QMainWindow, QPushButton
     from videotrans.configure.config import defaulelang, tr
     from videotrans.configure._paths import resource_path
     from videotrans.ui.home import HomePage
@@ -28,7 +29,13 @@ def run_check():
         raise AssertionError('Vietnamese catalog missing from package')
 
     page = HomePage(defaulelang)
-    page.show()
+    for width in (480, 720, 900, 1280):
+        page.resize(width, 720)
+        page.show()
+        app.processEvents()
+        cards = page.findChildren(QFrame, 'toolCard')
+        if len(cards) != 4 or any(card.mapTo(page, QPoint()).x() + card.width() > page.width() for card in cards):
+            raise AssertionError(f'home cards exceed the {width}px canvas')
     app.processEvents()
     routes = []
     workspaces = []
@@ -44,6 +51,30 @@ def run_check():
         raise AssertionError('legacy website appears in About title')
     about.close()
     page.close()
+
+    from videotrans.ui.fn_fanyisrt import Ui_fn_fanyisrt
+    from videotrans.ui.fn_peiyinrole import Ui_fn_peiyinrole
+    from videotrans.ui.fn_recogn import Ui_fn_recogn
+    from videotrans.ui.fn_vas import Ui_fn_vas
+    quick_tools = (
+        (Ui_fn_fanyisrt(), ('fanyi_import', 'fanyi_start')),
+        (Ui_fn_peiyinrole(), ('hecheng_importbtn', 'hecheng_startbtn')),
+        (Ui_fn_vas(), ('ysphb_selectvideo', 'ysphb_startbtn')),
+        (Ui_fn_recogn(), ('shibie_startbtn', 'shibie_opendir')),
+    )
+    for tool, controls in quick_tools:
+        tool.resize(480, 720)
+        tool.show()
+        app.processEvents()
+        if tool.width() != 480:
+            raise AssertionError(f'{type(tool).__name__} did not fit 480px')
+        for name in controls:
+            control = getattr(tool, name)
+            if control.mapTo(tool, QPoint()).x() + control.width() > tool.width():
+                raise AssertionError(f'{type(tool).__name__}.{name} exceeds its window')
+        tool.close()
+    if tr('Menu') != 'Danh mục':
+        raise AssertionError('Vietnamese compact-menu label is missing')
 
     class GeneratedWindow(QMainWindow, Ui_MainWindow):
         def show_home(self):
@@ -101,6 +132,7 @@ def run_check():
         'workflow_state': 'running',
         'workflow_hierarchy': True,
         'responsive_layout': True,
+        'responsive_quick_tools': True,
     }
 
 

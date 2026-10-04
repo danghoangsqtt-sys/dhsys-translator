@@ -36,6 +36,10 @@ QLineEdit, QPlainTextEdit, QTextEdit, QComboBox, QSpinBox {
     min-height: 28px; padding: 3px 8px; selection-background-color: #BBD7C5;
 }
 QPlainTextEdit#subtitle_area { border-color: #AEBFB4; padding: 10px; }
+QTableWidget { background: #FFFFFF; color: #17211C; border: 1px solid #DDE4DF; gridline-color: #E7ECE9; }
+QTableWidget::item { padding: 5px; border-bottom: 1px solid #E7ECE9; }
+QTableWidget::item:selected { background: #E7F0EA; color: #14452F; }
+QHeaderView::section { background: #F1F5F2; color: #244032; padding: 5px; border: 0; border-bottom: 1px solid #DDE4DF; font-weight: 700; }
 QLineEdit:focus, QPlainTextEdit:focus, QTextEdit:focus, QComboBox:focus, QSpinBox:focus,
 QPushButton:focus, QToolButton:focus { border: 2px solid #14452F; }
 QComboBox::drop-down { border: 0; width: 23px; }

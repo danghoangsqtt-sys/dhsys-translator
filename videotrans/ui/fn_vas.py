@@ -8,6 +8,7 @@ from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QHBoxLayout
 
 from videotrans.configure.config import tr, ROOT_DIR
+from videotrans.ui.responsive_layout import WrappingRowLayout
 
 
 class Ui_fn_vas(QtWidgets.QWidget):
@@ -19,10 +20,10 @@ class Ui_fn_vas(QtWidgets.QWidget):
         self.has_done = False
         if not vasrt.objectName():
             vasrt.setObjectName(u"vasrt")
-        vasrt.setMinimumSize(1000, 500)
+        vasrt.setMinimumSize(0, 420)
 
 
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(vasrt.sizePolicy().hasHeightForWidth())
@@ -36,7 +37,7 @@ class Ui_fn_vas(QtWidgets.QWidget):
         self.v3.setObjectName("v3")
 
         # h3
-        self.h3 = QtWidgets.QHBoxLayout()
+        self.h3 = WrappingRowLayout(spacing=8)
         self.h3.setObjectName("horizontalLayout_3")
         self.label_4 = QtWidgets.QLabel()
         self.label_4.setSizePolicy(sizePolicy)
@@ -61,7 +62,7 @@ class Ui_fn_vas(QtWidgets.QWidget):
         self.v3.addLayout(self.h3)
 
         # h5
-        self.h5 = QtWidgets.QHBoxLayout()
+        self.h5 = WrappingRowLayout(spacing=8)
         self.h5.setObjectName("horizontalLayout_5")
         self.label_5 = QtWidgets.QLabel()
         self.label_5.setMinimumSize(QtCore.QSize(100, 40))
@@ -82,7 +83,7 @@ class Ui_fn_vas(QtWidgets.QWidget):
         self.v3.addLayout(self.h5)
 
         # h6
-        self.h6 = QtWidgets.QHBoxLayout()
+        self.h6 = WrappingRowLayout(spacing=8)
         self.h6.setObjectName("h6")
 
         self.label_6 = QtWidgets.QLabel()
@@ -102,7 +103,7 @@ class Ui_fn_vas(QtWidgets.QWidget):
 
 
 
-        self.h7 = QtWidgets.QHBoxLayout()
+        self.h7 = WrappingRowLayout(spacing=8)
         self.h7.setObjectName("h7")
         self.ysphb_replace = QtWidgets.QCheckBox()
         self.ysphb_replace.setObjectName("ysphb_replace")
@@ -168,7 +169,7 @@ class Ui_fn_vas(QtWidgets.QWidget):
         self.h7.addWidget(self.audio_process)
         self.h7.addStretch()
         
-        hsub=QtWidgets.QHBoxLayout()
+        hsub=QtWidgets.QVBoxLayout()
         hsub.addWidget(self.set_ass)
         hsub.addLayout(self.layout_form0)
         hsub.addWidget(self.remain_hr)
@@ -199,7 +200,7 @@ class Ui_fn_vas(QtWidgets.QWidget):
         self.ysphb_stopbtn.setCursor(Qt.PointingHandCursor)
         self.ysphb_startbtn.setCursor(Qt.PointingHandCursor)
 
-        h_btn=QHBoxLayout()
+        h_btn=WrappingRowLayout(spacing=8)
         h_btn.addStretch()
         h_btn.addWidget(self.ysphb_startbtn)
         h_btn.addWidget(self.ysphb_stopbtn)
@@ -209,7 +210,7 @@ class Ui_fn_vas(QtWidgets.QWidget):
         self.v3.addLayout(h_btn)
         self.v3.addStretch()
 
-        self.h8 = QtWidgets.QHBoxLayout()
+        self.h8 = WrappingRowLayout(spacing=8)
         self.h8.setObjectName("horizontalLayout_20")
         self.ysphb_out = QtWidgets.QLineEdit()
         self.ysphb_out.setMinimumSize(QtCore.QSize(0, 30))
@@ -224,6 +225,8 @@ class Ui_fn_vas(QtWidgets.QWidget):
 
         # end
         self.horizontalLayout_3.addLayout(self.v3)
+        self.horizontalLayout_3.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetNoConstraint)
+        vasrt.setMinimumSize(0, 420)
         vasrt.setWindowTitle(tr("hebing-windows-title"))
         self.retranslateUi()
 

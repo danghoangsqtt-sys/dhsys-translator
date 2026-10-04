@@ -21,7 +21,8 @@ class WrappingRowLayout(QLayout):
     def addItem(self, item):
         self._items.append(item)
 
-    def addWidget(self, widget):
+    def addWidget(self, widget, *args):
+        """Accept QBoxLayout-style stretch/alignment arguments for legacy rows."""
         self.addChildWidget(widget)
         self.addItem(QWidgetItem(widget))
 

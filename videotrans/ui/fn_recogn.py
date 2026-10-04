@@ -5,6 +5,7 @@ from PySide6 import QtCore, QtWidgets
 from PySide6.QtGui import Qt, QIcon
 
 from videotrans.configure.config import tr, ROOT_DIR
+from videotrans.ui.responsive_layout import WrappingRowLayout
 
 
 class Ui_fn_recogn(QtWidgets.QWidget):
@@ -17,7 +18,7 @@ class Ui_fn_recogn(QtWidgets.QWidget):
         self.error_msg = ""
         self.shibie_out_path = None
         recogn.setObjectName("recogn")
-        recogn.setMinimumSize(1200, 500)
+        recogn.setMinimumSize(0, 420)
 
 
         # 语音识别
@@ -31,7 +32,7 @@ class Ui_fn_recogn(QtWidgets.QWidget):
         self.shibie_widget.setObjectName("shibie_widget")
         self.verticalLayout_3.addLayout(self.shibie_widget)
 
-        self.horizontalLayout = QtWidgets.QHBoxLayout()
+        self.horizontalLayout = WrappingRowLayout(spacing=8)
         self.horizontalLayout.setObjectName("horizontalLayout")
 
         self.label_3 = QtWidgets.QLabel()
@@ -120,7 +121,7 @@ class Ui_fn_recogn(QtWidgets.QWidget):
         self.copysrt_rawvideo.setMinimumSize(QtCore.QSize(0, 30))
         self.copysrt_rawvideo.setObjectName("copysrt_rawvideo")
 
-        self.h4 = QtWidgets.QHBoxLayout()
+        self.h4 = WrappingRowLayout(spacing=8)
         self.h4.addStretch()
         self.h4.addWidget(self.shibie_startbtn)
         self.h4.addWidget(self.shibie_stop)

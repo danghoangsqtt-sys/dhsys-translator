@@ -11,6 +11,7 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
 
 from videotrans import tts
 from videotrans.configure.config import tr, app_cfg, ROOT_DIR
+from videotrans.ui.responsive_layout import WrappingRowLayout
 from videotrans.util._srt_parse import get_subtitle_from_srt
 from videotrans.util.help_misc import show_error
 
@@ -219,13 +220,13 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
         self.error_msg = ""
         if not peiyinrole.objectName():
             peiyinrole.setObjectName(u"peiyinrole")
-        peiyinrole.setMinimumSize(1200, 750)
+        peiyinrole.setMinimumSize(0, 520)
 
         self.main_layout = QtWidgets.QVBoxLayout(peiyinrole)
         self.main_layout.setObjectName("main_layout")
 
         # 1. 顶部文件导入区域
-        self.import_layout = QtWidgets.QHBoxLayout()
+        self.import_layout = WrappingRowLayout(spacing=8)
         self.hecheng_importbtn = QPushButton(tr("Import SRT file..."))
         self.hecheng_importbtn.setMinimumHeight(40)
         self.hecheng_importbtn.setCursor(Qt.PointingHandCursor)
@@ -268,7 +269,7 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
         self.assign_role_button2.setVisible(False)
         self.assign_role_button2.setCursor(Qt.PointingHandCursor)
 
-        self.assign_role_layout2 = QHBoxLayout()
+        self.assign_role_layout2 = WrappingRowLayout(spacing=8)
         self.assign_role_layout2.addWidget(self.assign_role_label2)
         self.assign_role_layout2.addWidget(self.tmp_rolelist2)
         self.assign_role_layout2.addWidget(self.assign_role_button2)
@@ -309,36 +310,10 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
         header.setSectionResizeMode(5, QHeaderView.Stretch)
 
 
-        self.subtitle_table.setStyleSheet("""
-           QTableWidget {
-                color: #e0e0e0;  
-                border: none;
-                gridline-color: #3a3a3a;
-            }
-            QTableWidget::item {
-                padding: 5px;
-                border-bottom: 1px solid #3a3a3a;
-                color: #e0e0e0;   
-            }
-            QTableWidget::item:selected {
-                background-color: #455364;  
-                color: white;  
-            }
-            QHeaderView::section {
-                background-color: #2b2b2b; 
-                color: #e0e0e0;  
-                padding: 4px;
-                border: 1px solid #3a3a3a;
-            }
-            QCheckBox {
-                color: #e0e0e0; 
-            }
-        """)
-
         container_layout_subs.addWidget(self.subtitle_table)
 
         # 2.2 角色分配工具栏
-        self.assign_role_layout = QHBoxLayout()
+        self.assign_role_layout = WrappingRowLayout(spacing=8)
         self.assign_role_label = QLabel(tr("Assign role to selected:"))
         self.tmp_rolelist = QComboBox() 
         self.tmp_rolelist.setMinimumWidth(200)
@@ -350,7 +325,7 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
         self.assign_role_layout.addStretch()
         container_layout_subs.addLayout(self.assign_role_layout)
         
-        self.container_frame_subs.setStyleSheet("""#container_frame_subs{border: 1px solid #54687a}""")
+        self.container_frame_subs.setStyleSheet("""#container_frame_subs{border: 1px solid #DDE4DF;}""")
         self.splitter.addWidget(self.container_frame_subs)
         
         self.splitter.setStretchFactor(0, 0)
@@ -360,13 +335,13 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
 
 
         spk_label=QLabel(tr('will be automatically identified as the speaker'))
-        spk_label.setStyleSheet("""color:#999""")
+        spk_label.setStyleSheet("""color:#65736B""")
         spk_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.main_layout.addWidget(spk_label)
 
 
         # 3. TTS 设置区域
-        self.horizontalLayout_10 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_10 = QtWidgets.QVBoxLayout()
         self.horizontalLayout_10.setObjectName("horizontalLayout_10")
         
         
@@ -419,7 +394,7 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
         self.main_layout.addLayout(self.horizontalLayout_10)
 
         # 4. 速率、音量等设置
-        self.horizontalLayout_10_1 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_10_1 = QtWidgets.QVBoxLayout()
         self.formLayout_5 = QtWidgets.QFormLayout()
         self.label_12 = QtWidgets.QLabel()
         self.formLayout_5.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label_12)
@@ -435,7 +410,7 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
         self.horizontalLayout_10_1.addWidget(self.voice_autorate)
         self.horizontalLayout_10_1.addWidget(self.remove_silent_mid)
 
-        self.edge_volume_layout = QtWidgets.QHBoxLayout()
+        self.edge_volume_layout = WrappingRowLayout(spacing=8)
         self.volume_label = QtWidgets.QLabel(tr("Volume+"))
         self.volume_rate = QtWidgets.QSpinBox()
         self.volume_rate.setMinimum(-95)
@@ -462,7 +437,7 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
 
         # 5. 底部按钮
         self.bottom_layout = QtWidgets.QVBoxLayout()
-        h1 = QtWidgets.QHBoxLayout()
+        h1 = WrappingRowLayout(spacing=8)
         self.hecheng_startbtn = QtWidgets.QPushButton()
         self.hecheng_startbtn.setMinimumSize(QtCore.QSize(200, 40))
         self.hecheng_startbtn.setCursor(Qt.PointingHandCursor)
@@ -484,6 +459,8 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
         self.hecheng_opendir.setCursor(Qt.PointingHandCursor)
         self.bottom_layout.addWidget(self.hecheng_opendir)
         self.main_layout.addLayout(self.bottom_layout)
+        self.main_layout.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetNoConstraint)
+        peiyinrole.setMinimumSize(0, 520)
 
         self.retranslateUi(peiyinrole)
         QtCore.QMetaObject.connectSlotsByName(peiyinrole)
@@ -493,7 +470,6 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
             tr("multi-windows-title"))
         self.label_10.setText(tr("Subtitle lang"))
         self.label_8.setText(tr("TTS"))
-        self.label_11.setStyleSheet("""color:#ffff00""")
         self.label_11.setText(tr("Default Role"))
         self.label_12.setText(tr("Speed change"))
         self.hecheng_rate.setToolTip(tr("Negative deceleration, positive acceleration"))

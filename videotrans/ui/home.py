@@ -2,11 +2,12 @@
 
 from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import (
-    QComboBox, QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton,
-    QScrollArea, QVBoxLayout, QWidget,
+    QBoxLayout, QComboBox, QFrame, QGridLayout, QHBoxLayout, QLabel, QPushButton,
+    QScrollArea, QSizePolicy, QVBoxLayout, QWidget,
 )
 
 from videotrans.configure.config import tr
+from videotrans.ui.responsive_layout import WrappingRowLayout
 
 
 class HomePage(QWidget):
@@ -60,7 +61,7 @@ class HomePage(QWidget):
         canvas_layout.setContentsMargins(34, 30, 34, 32)
         canvas_layout.setSpacing(24)
 
-        header = QHBoxLayout()
+        self.header = QBoxLayout(QBoxLayout.Direction.LeftToRight)
         heading = QVBoxLayout()
         eyebrow = QLabel(tr("VIDEO WORKSPACE"))
         eyebrow.setObjectName("eyebrow")
@@ -71,8 +72,8 @@ class HomePage(QWidget):
         credit = QLabel("DHSYSTEM.SYS")
         credit.setObjectName("eyebrow")
         heading.addWidget(credit)
-        header.addLayout(heading)
-        header.addStretch()
+        self.header.addLayout(heading)
+        self.header.addStretch()
         language_area = QVBoxLayout()
         language_label = QLabel(tr("Interface language"))
         language_label.setObjectName("muted")
@@ -83,8 +84,8 @@ class HomePage(QWidget):
         self.reset_locale(locale)
         self.language.currentIndexChanged.connect(self._request_locale)
         language_area.addWidget(self.language)
-        header.addLayout(language_area)
-        canvas_layout.addLayout(header)
+        self.header.addLayout(language_area)
+        canvas_layout.addLayout(self.header)
 
         hero = QFrame()
         hero.setObjectName("hero")
@@ -102,7 +103,7 @@ class HomePage(QWidget):
         intro.setObjectName("muted")
         intro.setWordWrap(True)
         hero_layout.addWidget(intro)
-        actions = QHBoxLayout()
+        actions = WrappingRowLayout(spacing=10)
         open_workspace = QPushButton(tr("Open video workspace"))
         open_workspace.setObjectName('openWorkspace')
         open_workspace.setAccessibleName(tr("Open video workspace"))
@@ -113,16 +114,16 @@ class HomePage(QWidget):
         translate_srt.setProperty('variant', 'secondary')
         translate_srt.clicked.connect(lambda: self.tool_requested.emit("fn_fanyisrt"))
         actions.addWidget(translate_srt)
-        actions.addStretch()
         hero_layout.addLayout(actions)
         canvas_layout.addWidget(hero)
 
         tools_header = QLabel(tr("Quick tools"))
         tools_header.setObjectName("sectionTitle")
         canvas_layout.addWidget(tools_header)
-        grid = QGridLayout()
-        grid.setHorizontalSpacing(14)
-        grid.setVerticalSpacing(14)
+        self.tool_grid = QGridLayout()
+        self.tool_grid.setHorizontalSpacing(14)
+        self.tool_grid.setVerticalSpacing(14)
+        self.tool_cards = []
         cards = (
             ("fn_recogn", "01", "Transcribe speech", "Create SRT subtitles from video or audio."),
             ("fn_fanyisrt", "02", "Translate SRT", "Translate text and subtitle files."),
@@ -132,6 +133,8 @@ class HomePage(QWidget):
         for position, (name, number, title_text, description) in enumerate(cards):
             card = QFrame()
             card.setObjectName("toolCard")
+            card.setMinimumWidth(0)
+            card.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
             card_layout = QVBoxLayout(card)
             card_layout.setContentsMargins(20, 16, 20, 17)
             card_layout.setSpacing(8)
@@ -152,9 +155,27 @@ class HomePage(QWidget):
             button.setAccessibleName(f"{tr('Open tool')}: {tr(title_text)}")
             button.clicked.connect(lambda checked=False, tool=name: self.tool_requested.emit(tool))
             card_layout.addWidget(button, alignment=Qt.AlignmentFlag.AlignLeft)
-            grid.addWidget(card, position // 2, position % 2)
-        canvas_layout.addLayout(grid)
+            self.tool_cards.append(card)
+        self._apply_responsive_layout()
+        canvas_layout.addLayout(self.tool_grid)
         canvas_layout.addStretch()
+
+    def resizeEvent(self, event):
+        self._apply_responsive_layout()
+        super().resizeEvent(event)
+
+    def _apply_responsive_layout(self):
+        compact = self.width() < 760
+        self.header.setDirection(
+            QBoxLayout.Direction.TopToBottom if compact else QBoxLayout.Direction.LeftToRight
+        )
+        while self.tool_grid.count():
+            self.tool_grid.takeAt(0)
+        for index, card in enumerate(self.tool_cards):
+            card.setMaximumWidth(max(1, self.width() - 100) if compact else 16_777_215)
+            self.tool_grid.addWidget(card, index if compact else index // 2, 0 if compact else index % 2)
+        self.tool_grid.setColumnStretch(0, 1)
+        self.tool_grid.setColumnStretch(1, 0 if compact else 1)
 
     def reset_locale(self, locale):
         index = self.language.findData(locale)
