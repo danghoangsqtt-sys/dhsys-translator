@@ -65,7 +65,7 @@ Nguồn phạm vi: [brainstorm 2026-10-03](brainstorm/session-2026-10-03.md) và
 
 ### Phase 3 — Runtime và bản đóng gói
 
-**Hàng đợi sửa lỗi audit trước phát hành 4.14.1:** thực hiện 3.4 → 3.5 → 3.6 → 3.7 → 3.8 → 3.9, sau đó hoàn tất 3.1 → 3.2 → 3.3. Giữ số task 3.1–3.3 vì đã có công việc và bằng chứng cục bộ; số mới không biểu thị thứ tự thi công. [Kế hoạch sửa lỗi chi tiết](BUGFIX-PLAN.md) ánh xạ đủ 16 phiếu audit, điều kiện nghiệm thu và cổng G3a–G3c. 3.4–3.6 là chặn P0; không đóng gói/phát hành khi chúng chưa qua hồi quy. 3.7–3.9 và các việc P1 trong 3.1/3.2 phải hoàn tất trước cổng phát hành.
+**Hàng đợi sửa lỗi audit trước phát hành 4.14.1:** thực hiện 3.4 → 3.5 → 3.6 → 3.7 → 3.8 → 3.9, sau đó hoàn tất 3.1 → 3.2 → 3.3. Giữ số task 3.1–3.3 vì đã có công việc và bằng chứng cục bộ; số mới không biểu thị thứ tự thi công. [Kế hoạch sửa lỗi chi tiết](BUGFIX-PLAN.md) ánh xạ 17 phiếu audit hiện tại, điều kiện nghiệm thu và cổng G3a–G3c. 3.4–3.6 là chặn P0; không đóng gói/phát hành khi chúng chưa qua hồi quy. 3.7–3.9 và các việc P1 trong 3.1/3.2 phải hoàn tất trước cổng phát hành.
 
 **3.4. Cấu hình cũ và bí mật Docker — dễ, P0; BUG-012, BUG-014.** Tái hiện file cấu hình thiếu khóa, thêm giá trị mặc định/migration và test; loại bí mật người dùng khỏi build context và xác nhận image không chứa secret mẫu.
 
@@ -89,6 +89,7 @@ Nguồn phạm vi: [brainstorm 2026-10-03](brainstorm/session-2026-10-03.md) và
 
 - Thay workflow `.github/workflows/main.yml` đang tham chiếu `sp.spec` và `requirements-win-gpu.txt` không có trong repo. Tạo spec được theo dõi trong Git hoặc chuyển workflow sang lệnh PyInstaller có đủ data, binary và hidden imports.
 - CI chạy test trước build; dùng phiên bản PyInstaller thống nhất với manifest; tạo gói CPU Windows trước, gói GPU sau; ghi version và hash artifact. Kiểm tra FFmpeg, font, icon, cấu hình mặc định và đường ghi dữ liệu khi chạy từ gói.
+- Với cửa sổ nạp bằng `importlib` từ menu/sidebar, kiểm tra mọi module trong artifact và thực sự mở từng mục sidebar. BUG-016 cho thấy test chỉ tạo QAction không phát hiện đường mở cửa sổ bị thiếu.
 - **Cổng:** build trên runner sạch, mở GUI, xử lý fixture ngắn, đóng/mở lại được; artifact tải về và checksum được kiểm tra.
 
 **3.3. Cổng phát hành — khó, P0; SPEC PKG-01, DOC-01**

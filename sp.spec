@@ -2,6 +2,7 @@
 # PyInstaller spec file for pyVideoTrans
 # Windows candidate build. User models, cache, logs, and output stay outside the bundle.
 
+import ast
 import sys
 # The dynamic provider/dialog set expands PyInstaller's module graph well
 # beyond the default recursion depth on Windows.
@@ -10,6 +11,42 @@ sys.setrecursionlimit(20000)
 from pathlib import Path
 
 PROJECT_ROOT = Path.cwd()
+
+
+def menu_hidden_imports():
+    """Bundle windows reached only through menu names passed to importlib."""
+    menu_source = PROJECT_ROOT / "videotrans" / "ui" / "menu_list.py"
+    tree = ast.parse(menu_source.read_text(encoding="utf-8"), filename=str(menu_source))
+    menu_sections = {
+        "MENU_CFG_PANEL", "MENU_CFG_TRANS", "MENU_CFG_TTS",
+        "MENU_CFG_STT", "MENU_CFG_TOOLS", "MENU_CFG_HELP",
+    }
+    component_windows = {
+        "clip_video", "realtime_stt", "textmatching", "set_ass",
+        "formatsrtfiles", "xxl",
+    }
+    modules = set()
+    for statement in tree.body:
+        if not isinstance(statement, ast.Assign) or not isinstance(statement.value, ast.List):
+            continue
+        if not any(isinstance(target, ast.Name) and target.id in menu_sections
+                   for target in statement.targets):
+            continue
+        for entry in statement.value.elts:
+            if not isinstance(entry, ast.Tuple) or len(entry.elts) != 3:
+                continue
+            name, _, action = entry.elts
+            if not (isinstance(name, ast.Constant) and isinstance(name.value, str)
+                    and isinstance(action, ast.Constant) and action.value is None):
+                continue
+            if name.value in component_windows:
+                modules.add(f"videotrans.component.{name.value}")
+            else:
+                modules.add(f"videotrans.winform.{name.value}")
+                modules.add(f"videotrans.ui.{name.value}")
+    if len(modules) < 5:
+        raise RuntimeError(f"No dynamic GUI menu modules found in {menu_source}")
+    return sorted(modules)
 
 # Collect data files
 def collect_data_files():
@@ -106,8 +143,8 @@ hidden_imports = [
 ]
 
 # Providers and dialogs are resolved with importlib from runtime names.
-# Include the smoke-tested paths explicitly. Packaging every source module makes
-# PyInstaller's Windows graph recurse until the interpreter stack overflows.
+# Menu imports are derived from their declarations; collecting every source
+# module caused a Windows interpreter stack overflow in an earlier build.
 hidden_imports += [
     "videotrans.recognition._whisper",
     "videotrans.translator._google",
@@ -115,6 +152,7 @@ hidden_imports += [
     "videotrans.winform.chatgpt",
     "videotrans.ui.chatgpt",
 ]
+hidden_imports += menu_hidden_imports()
 
 # Exclude unnecessary modules to reduce size
 excludes = [

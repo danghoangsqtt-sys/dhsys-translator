@@ -164,9 +164,15 @@ jobs:
           if (-not (Test-Path $exe)) { throw 'Extracted candidate is missing sp.exe' }
 
           $smokeScript = Join-Path $env:RUNNER_TEMP 'smoke_frozen.py'
+          $sidebarScript = Join-Path $env:RUNNER_TEMP 'smoke_sidebar.py'
+          $menusScript = Join-Path $env:RUNNER_TEMP 'smoke_dynamic_menus.py'
           $cliScript = Join-Path $env:RUNNER_TEMP 'cli.py'
           $report = Join-Path $env:RUNNER_TEMP 'candidate-smoke.json'
+          $sidebarReport = Join-Path $env:RUNNER_TEMP 'candidate-sidebar.json'
+          $menusReport = Join-Path $env:RUNNER_TEMP 'candidate-menus.json'
           Copy-Item 'scripts/smoke_frozen.py' $smokeScript
+          Copy-Item 'scripts/smoke_sidebar.py' $sidebarScript
+          Copy-Item 'scripts/smoke_dynamic_menus.py' $menusScript
           Copy-Item 'cli.py' $cliScript
           $env:LOCALAPPDATA = Join-Path $env:RUNNER_TEMP 'pyvideotrans-user-data'
           $env:QT_QPA_PLATFORM = 'offscreen'
@@ -194,6 +200,32 @@ jobs:
           $result = Get-Content $report -Raw | ConvertFrom-Json
           if ($result.status -ne 'pass') { throw "Packaged smoke failed: $(Get-Content $report -Raw)" }
           if ($null -ne $smoke.ExitCode -and $smoke.ExitCode -ne 0) { throw "Packaged smoke exited with $($smoke.ExitCode)" }
+
+          $sidebarError = Join-Path $env:RUNNER_TEMP 'candidate-sidebar-stderr.txt'
+          $sidebar = Start-Process -FilePath $exe -ArgumentList @($sidebarScript, $sidebarReport) -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $sidebarError
+          if (-not $sidebar.WaitForExit(120000)) {
+            Stop-Process -Id $sidebar.Id -Force
+            throw 'Packaged sidebar smoke timed out'
+          }
+          if (-not (Test-Path $sidebarReport)) {
+            if (Test-Path $sidebarError) { Get-Content $sidebarError -Tail 40 }
+            throw 'Packaged sidebar smoke did not write a report'
+          }
+          $sidebarResult = Get-Content $sidebarReport -Raw | ConvertFrom-Json
+          if ($sidebarResult.status -ne 'pass') { throw "Packaged sidebar smoke failed: $(Get-Content $sidebarReport -Raw)" }
+
+          $menusError = Join-Path $env:RUNNER_TEMP 'candidate-menus-stderr.txt'
+          $menus = Start-Process -FilePath $exe -ArgumentList @($menusScript, $menusReport, '--open') -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $menusError
+          if (-not $menus.WaitForExit(120000)) {
+            Stop-Process -Id $menus.Id -Force
+            throw 'Packaged dynamic-menu smoke timed out'
+          }
+          if (-not (Test-Path $menusReport)) {
+            if (Test-Path $menusError) { Get-Content $menusError -Tail 40 }
+            throw 'Packaged dynamic-menu smoke did not write a report'
+          }
+          $menusResult = Get-Content $menusReport -Raw | ConvertFrom-Json
+          if ($menusResult.status -ne 'pass') { throw "Packaged dynamic-menu smoke failed: $(Get-Content $menusReport -Raw)" }
 
           for ($attempt = 1; $attempt -le 2; $attempt++) {
             $gui = Start-Process -FilePath $exe -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru

@@ -1,6 +1,6 @@
 # Kế hoạch sửa lỗi sau audit — pyVideoTrans 4.14
 
-Ngày lập: 2026-10-04. Nguồn: `.DHSYSTEM/audit-report.md` và 16 phiếu trong `.DHSYSTEM/requests/`. Đây là kế hoạch cho bản vá dự kiến **4.14.1**, chưa phải xác nhận phát hành. Nhiều sửa đổi trong hàng đợi đã được kiểm chứng cục bộ; trạng thái hiện hành nằm ở `.DHSYSTEM/TRACKER.md` và Phase 3 state.
+Ngày lập: 2026-10-04. Nguồn: `.DHSYSTEM/audit-report.md` và 17 phiếu hiện có trong `.DHSYSTEM/requests/`. Đây là kế hoạch cho bản vá dự kiến **4.14.1**, chưa phải xác nhận phát hành. Nhiều sửa đổi trong hàng đợi đã được kiểm chứng cục bộ; trạng thái hiện hành nằm ở `.DHSYSTEM/TRACKER.md` và Phase 3 state.
 
 ## Nguyên tắc và thứ tự
 
@@ -17,7 +17,7 @@ Mỗi task phải có test tái hiện lỗi trước sửa, thay đổi nhỏ t
 | 5 | 3.8 Tải mô hình tin cậy | P1 | BUG-015, BUG-013 | Tệp hỏng bị tải lại nguyên tử; tải đồng thời không sửa trạng thái toàn cục gây tranh chấp |
 | 6 | 3.9 Ngôn ngữ và test hành vi | P1/P2 | BUG-008, BUG-010, ENH-001 | Cấu hình WebUI cũ chọn đúng giá trị; `--lang` hoạt động; test gọi mã sản phẩm và phát hiện hồi quy thực |
 | 7 | 3.1 Ma trận runtime và nguồn phụ thuộc | P1 | BUG-009 | Công bố đúng giới hạn 3.10–3.12 và optional extras; nguồn phát hành bất biến hoặc có checksum; lock/install được kiểm tra |
-| 8 | 3.2 Gói Windows và provider động | P1 | BUG-007 | Artifact chứa provider/dialog được import động; gọi được ít nhất một provider và dialog từ gói |
+| 8 | 3.2 Gói Windows và cửa sổ động | P0/P1 | BUG-007, BUG-016 | Artifact gọi được provider/dialog, mở cả năm mục sidebar và import đủ 72 menu động |
 | 9 | 3.3 Cổng phát hành và đồng bộ tài liệu | P2 | BUG-011 | README, dev setup, task state, HANDOFF khớp manifest đã kiểm chứng; smoke media/gói, checksum và changelog hoàn chỉnh |
 
 ## Cổng thực thi

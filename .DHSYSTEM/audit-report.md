@@ -1,5 +1,21 @@
 # DH-AUDIT — rà soát lỗi chuyên sâu pyVideoTrans
 
+## Audit sidebar Windows — 2026-10-04
+
+### Tier 1 — trạng thái: cảnh báo
+
+Task 3.2 từng được ghi “verified locally” sau smoke một dialog `chatgpt`, nhưng người dùng tái hiện lỗi ở cả năm mục sidebar trên artifact thật. Bản build mới đã mở được 5/5 mục sidebar và 72/72 menu động; task 3.2 được xác minh cục bộ. Phase 3 và bản vá 4.14.1 vẫn chưa hoàn tất vì còn cổng runner sạch và luồng media đầy đủ.
+
+### Tier 2 — tài liệu: cảnh báo
+
+`CHANGELOG.md` từng mô tả `jaraco.text`, ZIP smoke và Docker như các cổng chưa kiểm tra, dù chúng đã qua cục bộ. Đã cập nhật phạm vi kiểm chứng và BUG-016. Phiên bản 4.14 trong README/manifest nhất quán; các TODO trong tài liệu mở rộng là ví dụ, không phải URL placeholder.
+
+### Tier 3 — PyInstaller/Qt: lỗi cao, chặn phát hành
+
+`videotrans/ui/menu_list.py` khai báo năm hành động trái `fn_recogn`, `fn_peiyin`, `fn_fanyisrt`, `fn_peiyinrole`, `fn_vas`. `_setup_menus.py` nối hành động vào `get_win(name)`, còn `winform/__init__.py` nạp module bằng `importlib`. Spec cũ chỉ khai báo động cho `chatgpt`. `scripts/smoke_sidebar.py` trên executable cũ thất bại **5/5** với `ModuleNotFoundError: videotrans.winform.fn_*`; chạy từ source đạt **5/5**. Bộ test 540 bài và smoke cũ không bấm các hành động này nên không phát hiện lỗi. Sau khi sửa năm mục trái, kiểm tra mở rộng `scripts/smoke_dynamic_menus.py` cho thấy source import **72/72** menu động, còn executable chỉ **7/72**; 65 menu cấu hình/công cụ/trợ giúp cũng thiếu module. `sp.spec` hiện suy ra 139 module cần đóng gói từ chính khai báo menu. Bản Windows 3.12 mới mở được **5/5** cửa sổ sidebar và **72/72** cửa sổ menu động từ thư mục bàn giao; GUI khởi động, provider/dialog, CLI, SRT và MP4 mẫu cũng qua smoke. Python 3.12 đạt **540/540** test. Cổng runner sạch và luồng media dùng provider thật vẫn mở.
+
+Guardrail cho `dh-auto`: mỗi hành động GUI nạp động phải có module trong artifact và một smoke gọi đúng đường `get_win` từ executable đã giải nén; test chỉ kiểm tra QAction tồn tại không đủ. Tier 4 không áp dụng vì đây là repository sản phẩm.
+
 ## Audit tiếp nối — 2026-10-04
 
 Mốc đối chiếu: `HEAD=8cf344fe` trên `main` (trùng `origin/main`); lịch sử Git gần nhất kết thúc ngày 2026-09-30. Toàn bộ tiến độ Phase 1–3 được ghi trong working tree chưa commit, không có commit/tag `dh-p*-complete` cho phần việc này. Trạng thái sản phẩm vẫn là 4.14; 4.14.1 chỉ là bản vá dự kiến.
