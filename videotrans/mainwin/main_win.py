@@ -18,6 +18,7 @@ from videotrans import VERSION
 from videotrans.util.checkgpu import AiLoaderThread
 from videotrans.ui.en import Ui_MainWindow
 from videotrans.ui.home import HomePage
+from videotrans.ui.workspace_shell import WorkspaceShell
 from videotrans.task.simple_runnable_qt import run_in_threadpool
 
 from videotrans.mainwin._bind_signals import BindSignalsMixin
@@ -65,8 +66,9 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         workspace = self.takeCentralWidget()
         self.page_stack = QStackedWidget(self)
         self.home_page = HomePage(config.defaulelang, self.page_stack)
+        self.workspace_shell = WorkspaceShell(self, workspace, self.page_stack)
         self.page_stack.addWidget(self.home_page)
-        self.page_stack.addWidget(workspace)
+        self.page_stack.addWidget(self.workspace_shell)
         self.setCentralWidget(self.page_stack)
         self.home_page.workspace_requested.connect(self.show_workspace)
         self.home_page.tool_requested.connect(self._open_home_tool)
@@ -82,7 +84,8 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
 
     def show_workspace(self):
         self.page_stack.setCurrentIndex(1)
-        self.toolBar.show()
+        # The shell exposes the same toolbar QAction instances in its tool catalog.
+        self.toolBar.hide()
 
     def _open_home_tool(self, name):
         action = getattr(self, name, None)

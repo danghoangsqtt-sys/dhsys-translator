@@ -167,10 +167,6 @@ class Ui_MainWindow(object):
         self.advcontainer = QtWidgets.QWidget()
         self.advcontainer.setLayout(self.adv_layout_outer)
         self.advcontainer.setObjectName("advContainer")
-        self.advcontainer.setStyleSheet("""#advContainer {
-        border: 1px solid #455364;
-        padding: 0; 
-    }""")
 
         self.adv_layout_outer.addLayout(self.dubb_thread_layout)
         self.adv_layout_outer.addLayout(self.bgm_layout)
@@ -181,14 +177,10 @@ class Ui_MainWindow(object):
         self.show_tips.setWordWrap(True)
         self.show_tips.setText(
             tr("Customize each configuration to batch video translation. When selecting a single video, you can pause to edit subtitles during processing."))
-        self.show_tips.setStyleSheet(
-            """background-color:transparent;border-color:transparent;color:#aaaaaa;text-align:left""")
         self.show_tips.setObjectName("show_tips")
         self.output_dir = QtWidgets.QLabel(self.layoutWidget)
         self.output_dir.setWordWrap(True)
         self.output_dir.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.output_dir.setStyleSheet(
-            """background-color:transparent;border-color:transparent;color:#929ca7;text-align:center""")
         self.output_dir.setObjectName("output_dir")
         self.verticalLayout_3.addWidget(self.show_tips)
 
@@ -218,7 +210,6 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.output_dir)
 
         self.scroll_area = QtWidgets.QScrollArea(self.layoutWidget)
-        self.scroll_area.setStyleSheet("border-color:#32414B")
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setObjectName("scroll_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()

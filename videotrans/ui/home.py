@@ -18,30 +18,30 @@ class HomePage(QWidget):
         super().__init__(parent)
         self.setObjectName("homePage")
         self.setStyleSheet("""
-            #homePage { background: #101820; }
-            #homePage QLabel { color: #f4f7f4; background: transparent; }
+            #homePage { background: #F5F7F6; }
+            #homePage QLabel { color: #17211C; background: transparent; }
             #homePage QFrame#hero, #homePage QFrame#toolCard {
-                background: #18242d; border: 1px solid #304a50; border-radius: 20px;
+                background: #FFFFFF; border: 1px solid #DDE4DF; border-radius: 16px;
             }
-            #homePage QLabel#eyebrow { color: #6fe0c4; font-size: 12px; font-weight: 700; }
+            #homePage QLabel#eyebrow { color: #14452F; font-size: 12px; font-weight: 700; }
             #homePage QLabel#title { font-size: 36px; font-weight: 700; }
             #homePage QLabel#heroTitle { font-size: 28px; font-weight: 700; }
             #homePage QLabel#sectionTitle { font-size: 19px; font-weight: 700; }
             #homePage QLabel#muted, #homePage QLabel#cardDescription {
-                color: #b7cbcb; font-size: 13px;
+                color: #65736B; font-size: 13px;
             }
             #homePage QPushButton {
-                background: #6fe0c4; color: #102028; border: 0; border-radius: 10px;
+                background: #14452F; color: #FFFFFF; border: 0; border-radius: 10px;
                 padding: 10px 16px; font-size: 13px; font-weight: 700;
             }
-            #homePage QPushButton:hover { background: #94eed6; }
-            #homePage QPushButton:focus { border: 2px solid #f8bd83; }
+            #homePage QPushButton:hover { background: #1C5B3E; }
+            #homePage QPushButton:focus { border: 2px solid #14452F; }
             #homePage QPushButton[variant="secondary"] {
-                background: #263a43; color: #f4f7f4; border: 1px solid #4b686b;
+                background: #FFFFFF; color: #244032; border: 1px solid #C9D5CE;
             }
-            #homePage QPushButton[variant="secondary"]:hover { background: #34505a; }
+            #homePage QPushButton[variant="secondary"]:hover { background: #EEF5F0; }
             #homePage QComboBox {
-                background: #263a43; color: #f4f7f4; border: 1px solid #4b686b;
+                background: #FFFFFF; color: #17211C; border: 1px solid #C9D5CE;
                 border-radius: 9px; padding: 8px 12px; min-width: 130px;
             }
         """)
@@ -68,6 +68,9 @@ class HomePage(QWidget):
         title = QLabel(tr("Video Workshop"))
         title.setObjectName("title")
         heading.addWidget(title)
+        credit = QLabel("DHSYSTEM.SYS")
+        credit.setObjectName("eyebrow")
+        heading.addWidget(credit)
         header.addLayout(heading)
         header.addStretch()
         language_area = QVBoxLayout()

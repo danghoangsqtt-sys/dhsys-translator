@@ -115,12 +115,12 @@ class SplashArtwork(QWidget):
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         painter.translate(self.width() / 2, self.height() / 2)
         painter.rotate(-10)
-        for offset, color in ((24, '#27434a'), (10, '#315b5d'), (-6, '#416e6b')):
-            painter.setPen(QPen(QColor('#669a93'), 1))
+        for offset, color in ((24, '#DDE9E1'), (10, '#C7DCCF'), (-6, '#AFCDBA')):
+            painter.setPen(QPen(QColor('#8FAF9B'), 1))
             painter.setBrush(QColor(color))
             painter.drawRoundedRect(QRectF(-66 + offset, -72, 142, 154), 18, 18)
         painter.setBrush(Qt.BrushStyle.NoBrush)
-        painter.setPen(QPen(QColor('#6fe0c4'), 9))
+        painter.setPen(QPen(QColor('#14452F'), 9))
         painter.drawEllipse(QRectF(-25, -30, 69, 69))
         painter.end()
 
@@ -132,7 +132,7 @@ class StartWindow(QWidget):
         self.LoadNotif = None
         self.start_time = time.time()
         self.loader = None
-        self.setWindowTitle('Xưởng Video')
+        self.setWindowTitle('DHSYSTEM.SYS')
         self.screen=None
 
         self.resize(560, 350)
@@ -145,14 +145,14 @@ class StartWindow(QWidget):
         panel = QFrame(self)
         panel.setObjectName('splashPanel')
         panel.setStyleSheet('''
-            #splashPanel { background: #101820; border: 1px solid #34545a; border-radius: 24px; }
-            #splashPanel QLabel { color: #f4f7f4; background: transparent; }
-            #splashPanel QLabel#splashEyebrow { color: #6fe0c4; font-size: 11px; font-weight: 700; }
+            #splashPanel { background: #FFFFFF; border: 1px solid #D5DED8; border-radius: 24px; }
+            #splashPanel QLabel { color: #17211C; background: transparent; }
+            #splashPanel QLabel#splashEyebrow { color: #14452F; font-size: 11px; font-weight: 700; }
             #splashPanel QLabel#splashBrand { font-size: 34px; font-weight: 700; }
-            #splashPanel QLabel#splashDescription { color: #b7cbcb; font-size: 13px; }
-            #splashPanel QLabel#splashStatus { color: #d6e5e1; font-size: 12px; }
-            #splashPanel QProgressBar { border: 0; border-radius: 3px; background: #314650; height: 5px; }
-            #splashPanel QProgressBar::chunk { background: #6fe0c4; border-radius: 3px; }
+            #splashPanel QLabel#splashDescription { color: #65736B; font-size: 13px; }
+            #splashPanel QLabel#splashStatus { color: #496257; font-size: 12px; }
+            #splashPanel QProgressBar { border: 0; border-radius: 3px; background: #E7ECE9; height: 5px; }
+            #splashPanel QProgressBar::chunk { background: #14452F; border-radius: 3px; }
         ''')
         root.addWidget(panel)
         layout = QVBoxLayout(panel)
@@ -233,7 +233,7 @@ def initialize_full_app(start_window, app_instance):
     start_window.update_lable('Loading resources...')
     # Import qss image resources
     import videotrans.ui.dark.darkstyle_rc
-    with open(resource_path('videotrans', 'styles', 'style.qss'), 'r', encoding='utf-8') as f:
+    with open(resource_path('videotrans', 'styles', 'light.qss'), 'r', encoding='utf-8') as f:
         app_instance.setStyleSheet(f.read())
     start_window.update_lable('Loading main window...')
 

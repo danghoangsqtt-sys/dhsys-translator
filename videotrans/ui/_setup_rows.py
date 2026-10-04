@@ -39,7 +39,6 @@ def _create_file_row(ui, parent):
 
     ui.btn_save_dir = QtWidgets.QPushButton()
     ui.btn_save_dir.setObjectName("btn_save_dir")
-    ui.btn_save_dir.setStyleSheet("""background-color:transparent;border:1px solid #455364""")
 
     ui.copysrt_rawvideo = QtWidgets.QCheckBox(parent)
     ui.copysrt_rawvideo.setMinimumSize(QtCore.QSize(0, 30))
@@ -149,7 +148,6 @@ def _create_translation_row(ui, parent):
     ui.glossary = QtWidgets.QPushButton(parent)
     ui.glossary.setObjectName("glossary")
     ui.glossary.setText(tr("glossary"))
-    ui.glossary.setStyleSheet("""background-color:transparent;border:1px solid #455364""")
     ui.glossary.setCursor(Qt.PointingHandCursor)
     ui.glossary.setToolTip(tr("Click to set up and modify the glossary"))
 

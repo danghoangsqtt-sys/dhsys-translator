@@ -15,9 +15,9 @@ class Ui_info(QDialog):
         self.setWindowTitle(tr("About"))
         self.resize(520, 300)
         self.setStyleSheet("""
-            QDialog { background: #101820; }
-            QLabel { color: #f4f7f4; }
-            QPushButton { background: #6fe0c4; color: #102028; border: 0;
+            QDialog { background: #FFFFFF; }
+            QLabel { color: #17211C; }
+            QPushButton { background: #14452F; color: #FFFFFF; border: 0;
                           border-radius: 9px; padding: 9px 20px; font-weight: 700; }
         """)
         layout = QVBoxLayout(self)
@@ -27,14 +27,14 @@ class Ui_info(QDialog):
         title.setStyleSheet("font-size: 28px; font-weight: 700;")
         layout.addWidget(title)
         version = QLabel(f"{tr('Version')} {VERSION}")
-        version.setStyleSheet("color: #6fe0c4;")
+        version.setStyleSheet("color: #14452F;")
         layout.addWidget(version)
         description = QLabel(tr("Create subtitles, translate video and add new voices in one desktop workspace."))
         description.setWordWrap(True)
         layout.addWidget(description)
         license_note = QLabel(tr("Distributed under GNU GPL v3. See the LICENSE file included with the application."))
         license_note.setWordWrap(True)
-        license_note.setStyleSheet("color: #b7cbcb;")
+        license_note.setStyleSheet("color: #65736B;")
         layout.addWidget(license_note)
         layout.addStretch()
         close = QPushButton(tr("Close"))

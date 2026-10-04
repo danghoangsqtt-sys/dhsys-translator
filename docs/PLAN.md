@@ -143,3 +143,28 @@ Nguồn phạm vi: [brainstorm 2026-10-03](brainstorm/session-2026-10-03.md) và
 - [Qt for Python: QMediaPlayer](https://doc.qt.io/qtforpython-6/PySide6/QtMultimedia/QMediaPlayer.html) — nền xem trước hiện có.
 - [Gradio: sharing and authentication](https://gradio.app/guides/sharing-your-app) — truy cập mạng và xác thực.
 - [Python 3.10 final security release](https://www.python.org/downloads/release/python-31022/) — lý do cần di chuyển runtime trước phát hành dài hạn.
+
+
+### Phase 4 ? Light workspace layout slice (approved 2026-10-04)
+
+This slice changes presentation and navigation only. It keeps every existing QAction, menu, sidebar route, dialog, shortcut, provider setting, CLI command and media-processing flow intact. The visual system uses white, neutral gray and `#14452F`; visible product credit is `DHSYSTEM.SYS`.
+
+**4.4. Light application shell and theme ? P1; SPEC UI-05, UI-07**
+
+- Replace the legacy dark application stylesheet with a PySide6 light stylesheet for windows, dialogs, inputs, menus, tables and status controls.
+- Put the existing workspace inside a clear shell with product identity, home access, workflow shortcuts and the original central workspace.
+- Rework the start page to the same light visual system without changing its routes or locale behavior.
+- **Gate:** source inspection proves the existing workspace widget and every original menu/action still exist; visual smoke at 1280?720 and 1920?1080 is readable.
+
+**4.5. Preserve navigation and clarify the workspace ? P1; SPEC UI-03, UI-06, UI-07**
+
+- Keep the menu bar as the complete tool catalog and add a sidebar menu that reuses the same QAction instances, including Translate SRT, Multiple speakers and Merge video/audio/SRT.
+- Label the main work area, retain all original controls and advanced settings, and make the start action visually distinct.
+- Do not move media, translation, TTS, recognition or configuration decisions into new UI code.
+- **Gate:** every menu action and the five known dynamic sidebar routes remains reachable through the original action object; shortcuts route to the same action.
+
+**4.6. Regression evidence and delivery handoff ? P1; SPEC UI-05, UI-06**
+
+- Add focused Qt tests for the application shell, shared actions and required style tokens; run the full source suite with the supported Python 3.12 runtime.
+- Perform an offscreen GUI smoke and record the result; leave the Phase 3 clean-runner and provider-media release gates open.
+- **Gate:** focused UI tests and the full source test suite pass; no Phase 3 release claim is made from UI-only evidence.

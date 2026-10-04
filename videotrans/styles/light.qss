@@ -1,0 +1,64 @@
+/* DHSYSTEM.SYS light desktop visual system. */
+QMainWindow, QWidget#centralwidget, QDialog {
+    background: #F5F7F6;
+    color: #17211C;
+    font-family: "Segoe UI", "Noto Sans", sans-serif;
+    font-size: 13px;
+}
+QWidget { color: #17211C; }
+QLabel { background: transparent; }
+QMenuBar, QStatusBar, QToolBar {
+    background: #FFFFFF; border: 0; border-bottom: 1px solid #DDE4DF;
+    spacing: 4px; padding: 4px 10px;
+}
+QMenuBar::item, QToolBar QToolButton {
+    background: transparent; border-radius: 7px; color: #2B3830; padding: 7px 10px;
+}
+QMenuBar::item:selected, QToolBar QToolButton:hover { background: #E7F0EA; color: #14452F; }
+QMenu { background: #FFFFFF; color: #17211C; border: 1px solid #D5DED8; border-radius: 8px; padding: 6px; }
+QMenu::item { border-radius: 6px; padding: 8px 28px 8px 12px; }
+QMenu::item:selected { background: #E7F0EA; color: #14452F; }
+QMenu::separator { height: 1px; background: #E7ECE9; margin: 5px 8px; }
+QPushButton, QToolButton {
+    background: #FFFFFF; color: #244032; border: 1px solid #C9D5CE;
+    border-radius: 8px; min-height: 30px; padding: 4px 11px;
+}
+QPushButton:hover, QToolButton:hover { background: #EEF5F0; border-color: #8FA99A; }
+QPushButton:pressed, QToolButton:pressed { background: #DCEBE1; }
+QPushButton:disabled, QToolButton:disabled { color: #8A9790; background: #EEF1EF; border-color: #E0E6E2; }
+QPushButton#startbtn, QPushButton#btn_get_video, QPushButton#openWorkspace {
+    background: #14452F; color: #FFFFFF; border: 1px solid #14452F;
+    font-weight: 700; min-height: 36px; padding: 6px 16px;
+}
+QPushButton#startbtn:hover, QPushButton#btn_get_video:hover, QPushButton#openWorkspace:hover { background: #1C5B3E; }
+QLineEdit, QPlainTextEdit, QTextEdit, QComboBox, QSpinBox {
+    background: #FFFFFF; color: #17211C; border: 1px solid #C9D5CE; border-radius: 7px;
+    min-height: 28px; padding: 3px 8px; selection-background-color: #BBD7C5;
+}
+QPlainTextEdit#subtitle_area { border-color: #AEBFB4; padding: 10px; }
+QLineEdit:focus, QPlainTextEdit:focus, QTextEdit:focus, QComboBox:focus, QSpinBox:focus,
+QPushButton:focus, QToolButton:focus { border: 2px solid #14452F; }
+QComboBox::drop-down { border: 0; width: 23px; }
+QComboBox QAbstractItemView { background: #FFFFFF; color: #17211C; selection-background-color: #E7F0EA; selection-color: #14452F; }
+QCheckBox { spacing: 7px; color: #2B3830; }
+QCheckBox::indicator { width: 16px; height: 16px; border: 1px solid #AEBFB4; border-radius: 4px; background: #FFFFFF; }
+QCheckBox::indicator:checked { background: #14452F; border-color: #14452F; }
+QScrollArea { background: #FFFFFF; border: 1px solid #DDE4DF; border-radius: 10px; }
+QScrollBar:vertical { background: transparent; width: 10px; margin: 3px; }
+QScrollBar::handle:vertical { background: #B8C8BE; border-radius: 4px; min-height: 24px; }
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical { height: 0; }
+QFrame#workspaceSidebar { background: #FFFFFF; border: 0; border-right: 1px solid #DDE4DF; }
+QLabel#workspaceBrand { color: #14452F; font-size: 17px; font-weight: 800; }
+QLabel#workspaceCredit, QLabel#workspaceEyebrow { color: #668074; font-size: 11px; font-weight: 700; }
+QLabel#workspaceTitle { color: #17211C; font-size: 23px; font-weight: 700; }
+QLabel#workspaceSubtitle { color: #65736B; font-size: 13px; }
+QLabel#workspaceGroup { color: #668074; font-size: 10px; font-weight: 700; padding-top: 12px; }
+QPushButton#workspaceHome, QToolButton#workspaceAllTools, QPushButton#workspaceQuickAction {
+    border: 0; border-radius: 7px; text-align: left; background: transparent; padding: 7px 10px;
+}
+QPushButton#workspaceHome:hover, QToolButton#workspaceAllTools:hover, QPushButton#workspaceQuickAction:hover { background: #E7F0EA; color: #14452F; }
+QFrame#workspaceContent { background: #F5F7F6; }
+QFrame#workspaceHeader { background: #FFFFFF; border: 1px solid #DDE4DF; border-radius: 12px; }
+QWidget#layoutWidget, QWidget#verticalLayoutWidget { background: #FFFFFF; border: 1px solid #DDE4DF; border-radius: 10px; }
+QWidget#advContainer { background: #F8FAF8; border: 1px solid #DDE4DF; border-radius: 8px; }
+QLabel#show_tips, QLabel#output_dir { color: #65736B; }

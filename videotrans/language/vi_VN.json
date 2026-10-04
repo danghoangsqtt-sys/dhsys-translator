@@ -1270,5 +1270,10 @@
   "The file path and file name may be too long. Please move the file to a flat and short directory and rename the file to a shorter name, ensuring that the length from the drive letter to the end of the file name does not exceed 255 characters: {},For example D:/videotrans/1.mp4 D:/videotrans/2.wav": "Đường dẫn hoặc tên tệp quá dài. Hãy chuyển tệp sang thư mục gần gốc ổ đĩa, đặt tên ngắn hơn và giữ tổng đường dẫn dưới 255 ký tự: {}. Ví dụ: D:/videotrans/1.mp4 hoặc D:/videotrans/2.wav",
   "There may be special characters in the file name or path. Please move the file to a simple directory consisting of English and numerical characters, rename the file to a simple name, and try again to avoid errors: {},For example D:/videotrans/1.mp4 D:/videotrans/2.wav": "Đường dẫn hoặc tên tệp có thể chứa ký tự đặc biệt. Hãy chuyển tệp sang thư mục có tên đơn giản bằng chữ và số, đổi tên tệp rồi thử lại: {}. Ví dụ: D:/videotrans/1.mp4 hoặc D:/videotrans/2.wav",
   "VibeVoice-ASR": "VibeVoice ASR",
-  "XiaoMi-TTS": "XiaoMi TTS"
+  "XiaoMi-TTS": "XiaoMi TTS",
+  "Video Workspace": "Kh?ng gian video",
+  "All tools": "T?t c? c?ng c?",
+  "Open tool catalog": "M? danh m?c c?ng c?",
+  "Workspace actions": "C?ng c? kh?ng gian l?m vi?c",
+  "Choose media, configure the steps, then start processing.": "Ch?n t?p media, thi?t l?p c?c b??c, r?i b?t ??u x? l?."
 }

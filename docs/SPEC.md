@@ -131,3 +131,18 @@ Chỉ chốt khi đã xác nhận thao tác cần làm trên timeline. Phiên b�
 | G5 nếu có Phase 5 | Tệp dự án lưu/mở, undo/redo, seek/preview và so khớp video xuất |
 
 Không đánh dấu cổng đạt chỉ bằng test có mock: G3–G5 cần chạy với gói và media thực.
+
+
+### UI-05 ? Light visual system
+
+The desktop application, launch screen, home page, main workspace, menus and ordinary dialogs use a light interface. White is the base surface, neutral gray separates regions, and `#14452F` is the primary action and focus color. Text and disabled states must remain legible, including on the selected menu item. The product credit `DHSYSTEM.SYS` is visible on the home page and workspace shell. This requirement changes style only; it does not change task execution, saved settings, output paths, API adapters, CLI behavior or file formats.
+
+### UI-06 ? Feature parity and routes
+
+Every pre-existing QAction remains instantiated and reachable from the menu bar. The workspace shell may expose shortcuts only by triggering those same QAction instances. Translate SRT, Multiple speakers, and Merge video/audio/SRT remain available. Dynamic provider/dialog routes and all advanced settings remain reachable. No action is duplicated with a separate business implementation.
+
+### UI-07 ? Workspace hierarchy
+
+The desktop workspace has a persistent identity/navigation area, a clear page title, a visually primary start control, and the original configuration, subtitle and queue controls. At 1280?720, users can reach the primary action and scrolling controls without hidden modal navigation. At 1920?1080, the content uses the extra space without changing widget semantics. The original top menu remains the full tool catalog.
+
+**Acceptance for the approved light-layout slice:** the light theme and shell load in the packaged source path; original actions are still used for all shortcuts; focused Qt tests plus the full Python 3.12 suite pass; visual smoke covers 1280?720 and 1920?1080. This slice does not close Phase 3 release gates.
