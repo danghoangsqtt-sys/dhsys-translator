@@ -20,3 +20,5 @@ Phase state: in_progress. The approved light-layout slice, including a rebuilt l
 
 Local checkpoint `da883c6e` preserves this verified candidate evidence.
 - Task 4.1: 11 focused UI tests and 550 full Python 3.12 tests passed. Offscreen 1280?720/1920?1080 smoke confirmed Start, subtitle and queue visibility. Rebuilt `dist/sp/sp.exe` SHA-256 `6b5d70b334489d976a5c96f54cf6d8a331cc523f9d80bd2a228d7a9faf1c816e`; frozen resource smoke and packaged UI probe passed, reporting 5 workflow sections and bundled light style.
+
+Local checkpoint `f29af7af` preserves the verified workflow-section implementation.
