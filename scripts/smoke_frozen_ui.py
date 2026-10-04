@@ -56,8 +56,23 @@ def run_check():
     catalog_actions = {
         action for section in shell._catalog_sections for action in section.actions()
     }
+    workflow_sections = (
+        window.prepareSection,
+        window.transcriptionSection,
+        window.translationSection,
+        window.voiceSection,
+        window.outputSection,
+    )
     if shell.findChild(type(workspace), 'centralwidget') is not workspace or window.fn_fanyisrt not in catalog_actions:
         raise AssertionError('packaged workspace shell did not retain original actions')
+    if any(section.property('workflowSection') is not True for section in workflow_sections):
+        raise AssertionError('packaged workspace is missing a workflow section')
+    if (window.btn_get_video.parentWidget() is not window.prepareSection
+            or window.recogn_type.parentWidget() is not window.transcriptionSection
+            or window.translate_type.parentWidget() is not window.translationSection
+            or window.tts_type.parentWidget() is not window.voiceSection
+            or window.subtitle_type.parentWidget() is not window.outputSection):
+        raise AssertionError('packaged workflow controls are not in their intended sections')
     window.close()
     return {
         'locale': defaulelang,
@@ -65,6 +80,7 @@ def run_check():
         'routes': routes,
         'workspace_shell': True,
         'light_style': resource_path('videotrans', 'styles', 'light.qss').is_file(),
+        'workflow_sections': len(workflow_sections),
     }
 
 

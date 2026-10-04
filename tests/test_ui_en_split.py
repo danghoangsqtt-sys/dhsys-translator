@@ -48,3 +48,24 @@ def test_labels_and_mode_actions_have_text():
     for action in (win.action_biaozhun, win.action_tiquzimu):
         assert action.text()
         assert action.toolTip()
+
+
+def test_existing_rows_are_grouped_into_five_workflow_sections():
+    win = _TestWindow()
+    expected = {
+        "prepareSection": "workflowPrepare",
+        "transcriptionSection": "workflowTranscription",
+        "translationSection": "workflowTranslation",
+        "voiceSection": "workflowVoice",
+        "outputSection": "workflowOutput",
+    }
+    for attribute, object_name in expected.items():
+        section = getattr(win, attribute)
+        assert section.objectName() == object_name
+        assert section.property("workflowSection") is True
+
+    assert win.btn_get_video.parentWidget() is win.prepareSection
+    assert win.recogn_type.parentWidget() is win.transcriptionSection
+    assert win.translate_type.parentWidget() is win.translationSection
+    assert win.tts_type.parentWidget() is win.voiceSection
+    assert win.subtitle_type.parentWidget() is win.outputSection

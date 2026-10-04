@@ -1023,5 +1023,10 @@
   "Open tool catalog": "Open tool catalog",
   "Workspace actions": "Workspace actions",
   "Choose media, configure the steps, then start processing.": "Choose media, configure the steps, then start processing.",
-  "VIDEO WORKSPACE": "VIDEO WORKSPACE"
+  "VIDEO WORKSPACE": "VIDEO WORKSPACE",
+  "Preparation": "Preparation",
+  "Transcription": "Transcription",
+  "Translation": "Translation",
+  "Voice & subtitles": "Voice & subtitles",
+  "Timing & output": "Timing & output"
 }

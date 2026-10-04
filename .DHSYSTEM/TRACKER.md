@@ -2,7 +2,7 @@
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
-- Parallel UI task: 4.1 ? group existing controls into five visible workflow sections (in_progress)
+- Parallel UI task: 4.1 ? five workflow sections verified locally; persistence pending
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
@@ -10,6 +10,9 @@
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 
 ## Evidence
+
+- Task 4.1 workflow cards 2026-10-04: existing preparation, transcription, translation, voice/subtitles and timing/output controls are grouped without changing their object names or handlers. Focused UI: 11 passed; full Python 3.12: 550 passed. Rebuilt candidate `dist/sp/sp.exe` SHA-256 `6b5d70b334489d976a5c96f54cf6d8a331cc523f9d80bd2a228d7a9faf1c816e` passed frozen resource and UI probes with 5 sections.
+
 
 - Phase 4 packaged light candidate 2026-10-04: Python 3.12.13 rebuild at `dist/sp/sp.exe` contains `light.qss`; SHA-256 `8c3396a06c41fee7f59effb22a03a0175e1db38be3c4345d6cd3f3a8236a7e3d`. Frozen resource/provider/dialog/CLI/SRT/MP4 smoke, frozen WorkspaceShell/UI smoke, 5 sidebar routes and 71 dynamic-menu routes pass from an isolated CWD. Clean runner, live provider-media and upstream persistence remain open.
 

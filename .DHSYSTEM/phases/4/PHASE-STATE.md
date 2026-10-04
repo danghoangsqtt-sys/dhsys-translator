@@ -2,13 +2,13 @@
 
 | Task | State | Gate |
 | --- | --- | --- |
-| 4.1 Existing workflow section cards | in_progress | Preserve all original widgets and handlers while grouping the five rows |
+| 4.1 Existing workflow section cards | verified locally; persistence pending | 5 section cards preserve original widgets; source and packaged UI probes pass |
 | 4.4 Light application shell and theme | verified locally; persistence pending | Existing workspace is reparented into shell; shared light QSS and 1280?720/1920?1080 smoke pass |
 | 4.5 Navigation parity and workspace hierarchy | verified locally; persistence pending | Sidebar shortcuts and tool catalog reuse original QAction instances; focused Qt tests pass |
 | 4.6 Regression evidence and handoff | verified locally; persistence pending | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved |
 | 4.7 Rebuild and smoke-test light Windows candidate | verified locally; persistence pending | Python 3.12 candidate has light QSS; frozen/UI/sidebar/menu smoke pass |
 
-Phase state: in_progress. The approved light-layout slice, including a rebuilt local Windows candidate, is verified locally. Task 4.1 is in progress; the remaining wider Phase 4 workflow redesign remains planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+Phase state: in_progress. The approved light-layout slice, including a rebuilt local Windows candidate, is verified locally. Task 4.1 is verified locally; the remaining wider Phase 4 workflow redesign remains planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
 
 ## Evidence ? 2026-10-04
 
@@ -19,3 +19,4 @@ Phase state: in_progress. The approved light-layout slice, including a rebuilt l
 - Rebuilt `dist/sp/sp.exe` with Python 3.12.13 and staged the normal one-directory release layout. SHA-256: `8c3396a06c41fee7f59effb22a03a0175e1db38be3c4345d6cd3f3a8236a7e3d`. From `tmp/light-package-smoke-final`, frozen resource/provider/dialog/CLI/SRT/MP4 smoke passed; frozen UI smoke confirmed `WorkspaceShell` and `light.qss`; 5 sidebar and 71 dynamic-menu routes passed.
 
 Local checkpoint `da883c6e` preserves this verified candidate evidence.
+- Task 4.1: 11 focused UI tests and 550 full Python 3.12 tests passed. Offscreen 1280?720/1920?1080 smoke confirmed Start, subtitle and queue visibility. Rebuilt `dist/sp/sp.exe` SHA-256 `6b5d70b334489d976a5c96f54cf6d8a331cc523f9d80bd2a228d7a9faf1c816e`; frozen resource smoke and packaged UI probe passed, reporting 5 workflow sections and bundled light style.

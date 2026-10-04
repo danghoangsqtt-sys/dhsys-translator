@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Light workspace now groups the original controls into five labeled workflow sections while preserving every widget/action handler. Local candidate `dist/sp/sp.exe` SHA-256 `6b5d70b334489d976a5c96f54cf6d8a331cc523f9d80bd2a228d7a9faf1c816e` passes frozen resource and UI probes with all five sections.
+
 - Local Windows light-interface candidate rebuilt from tracked `sp.spec`; `dist/sp/sp.exe` SHA-256 `8c3396a06c41fee7f59effb22a03a0175e1db38be3c4345d6cd3f3a8236a7e3d`. Frozen resource/provider/dialog/CLI/SRT/MP4 smoke, WorkspaceShell/UI smoke, 5 sidebar routes and 71 dynamic-menu routes pass. This is local verification, not release 4.14.1.
 
 - Desktop candidate ngày 2026-10-04: thêm `vi_VN` cho giao diện, bộ chọn ngôn ngữ trên trang chủ, splash Qt và trang chủ “Xưởng Video”, cùng lối tắt đến không gian làm việc và bốn công cụ. Bỏ liên kết quảng bá dự án cũ khỏi các bề mặt mở đầu và menu trợ giúp; giữ thông tin GPL trong About. Kiểm tra nguồn đạt 546 test; gói Windows mới đạt smoke giao diện, 5/5 sidebar, 71/71 menu động, CLI/SRT/media mẫu và khởi động GUI. Tên hiển thị và bản dịch dài cần người dùng rà soát; đây chưa phải phát hành 4.14.1.

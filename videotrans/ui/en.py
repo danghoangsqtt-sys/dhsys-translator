@@ -44,11 +44,30 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.verticalLayout_3.setSpacing(8)
 
-        self.verticalLayout_3.addLayout(_create_file_row(self, self.layoutWidget))
-        self.verticalLayout_3.addLayout(_create_asr_row(self, self.layoutWidget))
-        self.verticalLayout_3.addLayout(_create_translation_row(self, self.layoutWidget))
-        self.verticalLayout_3.addLayout(_create_tts_row(self, self.layoutWidget))
-        self.verticalLayout_3.addLayout(_create_alignment_row(self, self.layoutWidget))
+        self.prepareSection, prepare_layout = self._create_workflow_section(
+            "workflowPrepare", "Preparation")
+        prepare_layout.addLayout(_create_file_row(self, self.prepareSection))
+        self.verticalLayout_3.addWidget(self.prepareSection)
+
+        self.transcriptionSection, transcription_layout = self._create_workflow_section(
+            "workflowTranscription", "Transcription")
+        transcription_layout.addLayout(_create_asr_row(self, self.transcriptionSection))
+        self.verticalLayout_3.addWidget(self.transcriptionSection)
+
+        self.translationSection, translation_layout = self._create_workflow_section(
+            "workflowTranslation", "Translation")
+        translation_layout.addLayout(_create_translation_row(self, self.translationSection))
+        self.verticalLayout_3.addWidget(self.translationSection)
+
+        self.voiceSection, voice_layout = self._create_workflow_section(
+            "workflowVoice", "Voice & subtitles")
+        voice_layout.addLayout(_create_tts_row(self, self.voiceSection))
+        self.verticalLayout_3.addWidget(self.voiceSection)
+
+        self.outputSection, output_layout = self._create_workflow_section(
+            "workflowOutput", "Timing & output")
+        output_layout.addLayout(_create_alignment_row(self, self.outputSection))
+        self.verticalLayout_3.addWidget(self.outputSection)
 
         self.bgm_layout = QtWidgets.QHBoxLayout()
         self.bgm_layout.setObjectName("bgm_layout")
@@ -259,6 +278,18 @@ class Ui_MainWindow(object):
             self.enable_cuda.hide()
 
         self._set_Ui_Text()
+
+    def _create_workflow_section(self, object_name, title):
+        section = QtWidgets.QFrame(self.layoutWidget)
+        section.setObjectName(object_name)
+        section.setProperty("workflowSection", True)
+        layout = QtWidgets.QVBoxLayout(section)
+        layout.setContentsMargins(11, 8, 11, 8)
+        layout.setSpacing(5)
+        heading = QtWidgets.QLabel(tr(title), section)
+        heading.setObjectName("workflowSectionTitle")
+        layout.addWidget(heading)
+        return section, layout
 
     def _set_Ui_Text(self):
         self.statusLabel = QtWidgets.QPushButton(tr("Home"))

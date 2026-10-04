@@ -1275,5 +1275,9 @@
   "All tools": "T?t c? c?ng c?",
   "Open tool catalog": "M? danh m?c c?ng c?",
   "Workspace actions": "C?ng c? kh?ng gian l?m vi?c",
-  "Choose media, configure the steps, then start processing.": "Ch?n t?p media, thi?t l?p c?c b??c, r?i b?t ??u x? l?."
+  "Choose media, configure the steps, then start processing.": "Ch?n t?p media, thi?t l?p c?c b??c, r?i b?t ??u x? l?.",
+  "Preparation": "Chu?n b?",
+  "Transcription": "Ch?p l?i",
+  "Voice & subtitles": "L?ng ti?ng & ph? ??",
+  "Timing & output": "C?n ch?nh & xu?t"
 }
