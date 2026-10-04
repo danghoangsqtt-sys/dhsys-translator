@@ -4,9 +4,12 @@ Run with ``sp.exe smoke_frozen.py report.json`` from outside the install tree.
 The script uses generated media and never calls a remote provider.
 """
 
+import contextlib
+import io
 import json
 import os
 from pathlib import Path
+import runpy
 import subprocess
 import sys
 import tempfile
@@ -18,7 +21,7 @@ def require(condition, message):
         raise AssertionError(message)
 
 
-def run_check():
+def run_check(cli_script):
     require(getattr(sys, "frozen", False), "smoke must run inside the packaged executable")
     bundle = Path(sys.executable).resolve().parent
     install_root = bundle / "_internal"
@@ -57,6 +60,23 @@ def run_check():
     dialog.close()
     app.processEvents()
 
+    from videotrans import VERSION
+    require(cli_script.is_file(), "missing external CLI script")
+    cli_output = io.StringIO()
+    prior_argv = sys.argv
+    try:
+        sys.argv = [str(cli_script), "--version"]
+        with contextlib.redirect_stdout(cli_output):
+            try:
+                runpy.run_path(str(cli_script), run_name="__main__")
+            except SystemExit as cli_exit:
+                require(cli_exit.code in (None, 0),
+                        f"packaged CLI --version exited with {cli_exit.code}")
+    finally:
+        sys.argv = prior_argv
+    require(VERSION.removeprefix("v") in cli_output.getvalue(),
+            f"packaged CLI did not report version {VERSION}")
+
     from videotrans.util.help_srt import get_subtitle_from_srt
 
     sample_srt = "1\n00:00:00,000 --> 00:00:00,400\nCandidate smoke\n"
@@ -88,17 +108,19 @@ def run_check():
         "provider": provider.__module__,
         "recognizer": recognizer.__module__,
         "dialog": "videotrans.winform.chatgpt",
+        "cli_version": cli_output.getvalue().strip(),
         "srt_items": len(parsed),
         "media_streams": sorted(streams),
     }
 
 
 def main():
-    report = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else None
-    if report is None:
+    if len(sys.argv) < 3:
         return 2
+    report = Path(sys.argv[1]).resolve()
+    cli_script = Path(sys.argv[2]).resolve()
     try:
-        result = {"status": "pass", "checks": run_check()}
+        result = {"status": "pass", "checks": run_check(cli_script)}
         exit_code = 0
     except BaseException as error:
         result = {"status": "fail", "error": str(error), "traceback": traceback.format_exc()}

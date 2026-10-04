@@ -26,7 +26,7 @@
 
 - Python 3.10.19, 3.11.15 và 3.12.13 đều đã cài từ lockfile với extra `wetext` và chạy 540 bài test trên từng runtime; workflow candidate dùng 3.12.13 vì PyInstaller 3.10 tràn native stack khi xử lý `torchaudio`.
 - `uv lock --check --offline` đạt. Wheel `pynini` Windows được chọn theo ABI `cp310`, `cp311`, `cp312`. Xem bằng chứng chi tiết trong [runtime-matrix](runtime-matrix.md).
-- Chưa có smoke trên file Windows đóng gói, vì vậy các bài test trên mã nguồn không phải điều kiện phát hành đã đạt.
+- Artifact Windows Python 3.12.13 đã qua smoke cục bộ sau giải nén ZIP: provider/dialog động, CLI, SRT/MP4, GUI mở hai lần từ thư mục khác và vùng cài bị chặn ghi nội dung. Runner Windows sạch, luồng STT/TTS với provider thật và Git persistence vẫn là cổng phát hành chưa đạt.
 
 ## Baseline lịch sử (2026-10-03)
 

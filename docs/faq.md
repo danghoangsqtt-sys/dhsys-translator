@@ -58,7 +58,7 @@ description: 菜单栏--帮助/关于 中有很多链接，比如模型下载地
 ### 6. macOS / Linux 如何部署源码？
 
 *   **前置依赖**：
-    *   Python 3.10
+    *   Python 3.10–3.12
     *   FFmpeg（`brew install ffmpeg` / `apt install ffmpeg`）
     *   uv 包管理器
     *   libsndfile
@@ -76,7 +76,7 @@ description: 菜单栏--帮助/关于 中有很多链接，比如模型下载地
 常见原因及解决方案：
 *   **FFmpeg 未安装**：确保系统已安装 FFmpeg 且配置了环境变量
 *   **依赖缺失**：运行 `uv sync` 重新安装依赖
-*   **Python 版本不对**：源码支持 Python 3.10–3.12；`.python-version` 指定本地开发默认版本 3.10.19。Windows 候选打包工作流使用 3.12.13，打包媒体流程仍待验证，详见 [运行时矩阵](runtime-matrix.md)。
+*   **Python 版本不对**：源码支持 Python 3.10–3.12；`.python-version` 指定本地开发默认版本 3.10.19。Windows 候选打包工作流使用 3.12.13；本地 ZIP 已通过 SRT/MP4 smoke，完整 STT/TTS 流程和干净 runner 仍待验证，详见 [运行时矩阵](runtime-matrix.md)。
 
 ---
 

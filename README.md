@@ -136,17 +136,15 @@ uv run webui.py
 # Build
 docker build -t pyvideotrans-webui .
 
-# Run
-docker run -d -p 7860:7860 --name pyvideotrans pyvideotrans-webui
+# Create runtime credentials outside the image build context; change the example password.
+printf 'PYVIDEOTRANS_WEBUI_USER=admin\nPYVIDEOTRANS_WEBUI_PASSWORD=change-this-long-password\n' > ../webui.env
 
-# With persistent config and output
-docker run -d -p 7860:7860 \
-  -v ./data/output:/app/output \
-  -v ./data/config:/app/videotrans \
+# Expose the authenticated UI on the local host.
+docker run -d -p 127.0.0.1:7860:7860 --env-file ../webui.env \
   --name pyvideotrans pyvideotrans-webui
 ```
 
-> [WebUI documentation](docs/webui.md)
+For persistent output and config mounts, use the file-level mounts in the [WebUI documentation](docs/webui.md).
 
 ### 5. (Optional) NVIDIA GPU Acceleration Configuration
 

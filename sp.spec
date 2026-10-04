@@ -118,7 +118,6 @@ hidden_imports += [
 
 # Exclude unnecessary modules to reduce size
 excludes = [
-    "tkinter",
     "IPython",
     "jupyter",
     "notebook",
@@ -131,13 +130,6 @@ excludes = [
     "bandit",
     "sphinx",
     "docutils",
-    "test",
-    "tests",
-    "unittest",
-    "pdb",
-    "idlelib",
-    "pydoc",
-    "lib2to3",
     "pip",
     "wheel",
 ]

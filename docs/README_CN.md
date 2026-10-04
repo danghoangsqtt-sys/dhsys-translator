@@ -135,17 +135,15 @@ uv run webui.py
 # 构建镜像
 docker build -t pyvideotrans-webui .
 
-# 运行
-docker run -d -p 7860:7860 --name pyvideotrans pyvideotrans-webui
+# 在镜像构建目录外创建运行时凭据文件；请修改示例密码。
+printf 'PYVIDEOTRANS_WEBUI_USER=admin\nPYVIDEOTRANS_WEBUI_PASSWORD=change-this-long-password\n' > ../webui.env
 
-# 持久化配置和输出
-docker run -d -p 7860:7860 \
-  -v ./data/output:/app/output \
-  -v ./data/config:/app/videotrans \
+# 仅在宿主机本机开放经过身份验证的界面。
+docker run -d -p 127.0.0.1:7860:7860 --env-file ../webui.env \
   --name pyvideotrans pyvideotrans-webui
 ```
 
-> [WebUI 使用说明](webui.md)
+持久化输出和配置时，请使用 [WebUI 文档](webui.md) 中的文件级挂载方式。
 
 
 ### 5. (可选) GPU 加速配置(NVIDIA GPU only)

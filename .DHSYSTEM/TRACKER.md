@@ -1,14 +1,16 @@
 # Tracker
 
 - Current phase: 3 — supported runtime and Windows packaging
-- Current task: 3.3 — release gate and documentation; 3.6 artifact gates remain open
-- State: 3.4–3.5, 3.7–3.9 and 3.1 verified locally; 3.2, 3.6 and 3.3 in_progress; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
-- Local branch/checkpoint: `codex/phase3-release-gate` at `fbcd924f` for the prior Phase 1–3 changes; no upstream is configured for this branch
+- Current task: 3.3 — clean-runner release gate and documentation
+- State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
+- Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
 - Starting commit: `8cf344fe`
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 
 ## Evidence
+
+- Continuation on 2026-10-04: Python 3.12.13 final onedir rebuild passed executable provider/dialog, CLI `--version`, SRT parser and FFmpeg MP4 audio/video smoke. `Compress-Archive` failed with `OutOfMemoryException` on the 6.38 GB tree, so the workflow uses `tar.exe`; its 3.69 GB ZIP passed SHA-256 and `Expand-Archive`. The extracted app passed the same smoke with NTFS content writes denied and launched the GUI twice from another CWD, storing user data outside the install. Docker host-port/auth smoke also passed locally. Clean runner, full provider-backed media and upstream persistence remain release gates.
 
 - Continuation on 2026-10-04: Python 3.12.13 full suite 540 passed; Docker image rebuilt from the current workspace and host-port/auth probe returned 401 without login, 200 with valid login, 401 with wrong credentials. Network bind without credentials exits with an error. Packaged script probe on the older Python 3.12 artifact exposed missing `jaraco.text` in `pkg_resources` before app startup; task 3.2 remains in progress while `sp.spec` is corrected and rebuilt.
 

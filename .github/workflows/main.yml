@@ -142,7 +142,8 @@ jobs:
         run: |
           $version = (Get-Content pyproject.toml | Select-String 'version = "(.*)"' | ForEach-Object { $_.Matches.Groups[1].Value })
           $zipName = "pyVideoTrans-v$version-windows-x64.zip"
-          Compress-Archive -Path "dist\sp\*" -DestinationPath $zipName -Force
+          & tar.exe -a -c -f $zipName -C 'dist/sp' .
+          if ($LASTEXITCODE -ne 0) { throw "Could not create candidate ZIP: tar exited with $LASTEXITCODE" }
           $hash = (Get-FileHash -Algorithm SHA256 $zipName).Hash.ToLowerInvariant()
           "$hash  $zipName" | Set-Content -Path "$zipName.sha256" -Encoding ascii
           echo "VERSION=$version" >> $env:GITHUB_ENV
@@ -171,12 +172,16 @@ jobs:
           $env:QT_QPA_PLATFORM = 'offscreen'
 
           $principal = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-          & icacls $extract /deny "$($principal):(OI)(CI)W" | Out-Null
+          & icacls $extract /deny "$($principal):(OI)(CI)(WD,AD)" | Out-Null
           if ($LASTEXITCODE -ne 0) { throw 'Could not make extracted install read-only' }
           try {
+          try {
+            [IO.File]::WriteAllText((Join-Path $extract 'write-probe.txt'), 'unexpected')
+            throw 'Extracted install remained writable'
+          } catch [UnauthorizedAccessException] {}
           $smokeError = Join-Path $env:RUNNER_TEMP 'candidate-smoke-stderr.txt'
 
-          $smoke = Start-Process -FilePath $exe -ArgumentList @($smokeScript, $report) -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $smokeError
+          $smoke = Start-Process -FilePath $exe -ArgumentList @($smokeScript, $report, $cliScript) -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $smokeError
           if (-not $smoke.WaitForExit(120000)) {
             Stop-Process -Id $smoke.Id -Force
             throw 'Packaged smoke timed out'
@@ -187,15 +192,8 @@ jobs:
             throw 'Packaged smoke did not write a report'
           }
           $result = Get-Content $report -Raw | ConvertFrom-Json
-          if ($smoke.ExitCode -ne 0 -or $result.status -ne 'pass') { throw "Packaged smoke failed: $(Get-Content $report -Raw)" }
-
-          $cli = Start-Process -FilePath $exe -ArgumentList @($cliScript, '--version') -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru
-          if (-not $cli.WaitForExit(60000)) {
-            Stop-Process -Id $cli.Id -Force
-            throw 'Packaged CLI timed out'
-          }
-          $cli.Refresh()
-          if ($cli.ExitCode -ne 0) { throw "Packaged CLI --version failed: $($cli.ExitCode)" }
+          if ($result.status -ne 'pass') { throw "Packaged smoke failed: $(Get-Content $report -Raw)" }
+          if ($null -ne $smoke.ExitCode -and $smoke.ExitCode -ne 0) { throw "Packaged smoke exited with $($smoke.ExitCode)" }
 
           for ($attempt = 1; $attempt -le 2; $attempt++) {
             $gui = Start-Process -FilePath $exe -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru

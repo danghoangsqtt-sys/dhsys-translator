@@ -32,5 +32,11 @@ Mỗi task phải có test tái hiện lỗi trước sửa, thay đổi nhỏ t
 
 - `wetext` hiện chọn wheel Windows riêng cho cp310/cp311/cp312 và đã cài trong môi trường khóa trên cả ba runtime; kiểm chứng từ runner sạch và luồng media vẫn còn mở.
 - Chatterbox/Perth đã ghim commit và FFmpeg Windows ứng viên có bản cùng SHA-256 cố định; runner sạch vẫn phải xác nhận đầu vào tải được (BUG-009).
-- Sửa spec PyInstaller tĩnh chưa chứng minh module động đã được bundle. Kiểm tra trong artifact, không chỉ đọc spec (BUG-007).
+- Spec PyInstaller và module động đã được kiểm tra bằng executable trong ZIP giải nén tại máy cục bộ; cần lặp lại trên runner Windows sạch (BUG-007).
 - Các sửa đổi Phase 1–3 đã được lưu ở commit cục bộ `fbcd924f` trên nhánh `codex/phase3-release-gate`; chưa có upstream/push hoặc runner sạch. Giữ bằng chứng “verified locally” tách với “released”.
+
+## Kết quả cục bộ mới nhất — 2026-10-04
+
+Task 3.2 và 3.6 đã qua smoke cục bộ trên artifact Python 3.12.13: provider và dialog nạp động, CLI báo phiên bản, SRT được đọc, FFmpeg tạo MP4 có âm thanh và hình ảnh. ZIP 3,69 GB tạo bằng `tar.exe` đã qua SHA-256 và giải nén; thư mục cài bị chặn ghi nội dung nhưng GUI vẫn khởi động hai lần từ CWD khác và dữ liệu nằm ở vùng người dùng. Docker WebUI đã qua kiểm tra xác thực từ host. `Compress-Archive` thất bại do hết bộ nhớ với thư mục gói 6,38 GB nên workflow đã chuyển sang `tar.exe`.
+
+G3c vẫn mở: workflow chưa chạy trên runner Windows sạch; luồng STT/TTS có provider thật chưa được xác nhận trên gói; nhánh chưa có upstream/push. Giữ phiên bản sản phẩm 4.14 và chưa tuyên bố phát hành 4.14.1.
