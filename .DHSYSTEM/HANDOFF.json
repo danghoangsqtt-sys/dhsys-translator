@@ -14,16 +14,15 @@
   "parallel_work": {
     "phase": 4,
     "tasks": [
+      "4.1",
       "4.4",
       "4.5",
       "4.6",
       "4.7"
     ],
-    "status": "light interface slice and current Windows candidate verified locally; upstream persistence pending",
+    "status": "task 4.1 is grouping the existing workflow controls into five visible sections; no behavior changes",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
     "candidate_path": "dist/sp/sp.exe",
-    "candidate_sha256": "8c3396a06c41fee7f59effb22a03a0175e1db38be3c4345d6cd3f3a8236a7e3d",
-    "checkpoint_commit": "4e5d93fb",
     "candidate_checkpoint_commit": "da883c6e"
   }
 }
