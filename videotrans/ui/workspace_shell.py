@@ -16,6 +16,8 @@ from videotrans.configure.config import tr
 class WorkspaceShell(QWidget):
     """Light navigation and hierarchy around an already-built workspace."""
 
+    COMPACT_BREAKPOINT = 980
+
     QUICK_ACTIONS = (
         ("fn_recogn", "Speech Recognition Text"),
         ("fn_fanyisrt", "Text  Or Srt  Translation"),
@@ -31,7 +33,8 @@ class WorkspaceShell(QWidget):
         root = QHBoxLayout(self)
         root.setContentsMargins(0, 0, 0, 0)
         root.setSpacing(0)
-        root.addWidget(self._build_sidebar())
+        self.sidebar = self._build_sidebar()
+        root.addWidget(self.sidebar)
         root.addWidget(self._build_content(), 1)
 
     def _build_sidebar(self):
@@ -87,12 +90,27 @@ class WorkspaceShell(QWidget):
         header_layout = QVBoxLayout(header)
         header_layout.setContentsMargins(18, 14, 18, 14)
         header_layout.setSpacing(3)
+        title_row = QHBoxLayout()
+        title_row.setContentsMargins(0, 0, 0, 0)
+        title_copy = QVBoxLayout()
+        title_copy.setContentsMargins(0, 0, 0, 0)
+        title_copy.setSpacing(3)
         eyebrow = QLabel(tr("VIDEO WORKSPACE"))
         eyebrow.setObjectName("workspaceEyebrow")
-        header_layout.addWidget(eyebrow)
+        title_copy.addWidget(eyebrow)
         title = QLabel(tr("Video Workspace"))
         title.setObjectName("workspaceTitle")
-        header_layout.addWidget(title)
+        title_copy.addWidget(title)
+        title_row.addLayout(title_copy, 1)
+        self.compact_navigation = QToolButton(header)
+        self.compact_navigation.setObjectName("workspaceCompactNavigation")
+        self.compact_navigation.setText(tr("Menu"))
+        self.compact_navigation.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+        self.compact_navigation.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        self.compact_navigation.setMenu(self._build_compact_navigation_menu())
+        self.compact_navigation.setVisible(False)
+        title_row.addWidget(self.compact_navigation, 0, Qt.AlignmentFlag.AlignTop)
+        header_layout.addLayout(title_row)
         subtitle = QLabel(tr("Choose media, configure the steps, then start processing."))
         subtitle.setObjectName("workspaceSubtitle")
         subtitle.setWordWrap(True)
@@ -100,6 +118,26 @@ class WorkspaceShell(QWidget):
         layout.addWidget(header)
         layout.addWidget(self.workspace, 1)
         return content
+
+    def _build_compact_navigation_menu(self):
+        """Expose the same workspace actions when the full sidebar is hidden."""
+        menu = QMenu(self)
+        home = menu.addAction(tr("Home"))
+        home.triggered.connect(self.main_window.show_home)
+        menu.addSection(tr("Quick tools"))
+        for action_name, _ in self.QUICK_ACTIONS:
+            menu.addAction(getattr(self.main_window, action_name))
+        menu.addSeparator()
+        menu.addSection(tr("All tools"))
+        for action in self.main_window.toolBar.actions():
+            menu.addAction(action)
+        return menu
+
+    def resizeEvent(self, event):
+        compact = self.width() < self.COMPACT_BREAKPOINT
+        self.sidebar.setVisible(not compact)
+        self.compact_navigation.setVisible(compact)
+        super().resizeEvent(event)
 
     def _build_action_catalog(self):
         """Expose existing menu actions again without assigning new handlers."""

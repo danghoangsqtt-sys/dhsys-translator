@@ -3,12 +3,13 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QSizePolicy
 
 from videotrans.configure.config import tr, settings
+from videotrans.ui.responsive_layout import WrappingRowLayout
 
 _channel_com = 200
 
 
 def _create_file_row(ui, parent):
-    layout = QtWidgets.QHBoxLayout()
+    layout = WrappingRowLayout()
     layout.setObjectName("horizontalLayout_6")
 
     ui.btn_get_video = QtWidgets.QPushButton(parent)
@@ -67,7 +68,7 @@ def _create_file_row(ui, parent):
 
 
 def _create_asr_row(ui, parent):
-    layout = QtWidgets.QHBoxLayout()
+    layout = WrappingRowLayout()
     layout.setObjectName("horizontalLayout_4")
     ui.reglabel = QtWidgets.QLabel(parent)
     ui.reglabel.setStyleSheet("""background-color:transparent""")
@@ -109,8 +110,7 @@ def _create_asr_row(ui, parent):
 
 
 def _create_translation_row(ui, parent):
-    layout = QtWidgets.QHBoxLayout()
-    layout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
+    layout = WrappingRowLayout()
     layout.setObjectName("horizontalLayout_5")
 
     ui.label_9 = QtWidgets.QLabel(parent)
@@ -162,8 +162,7 @@ def _create_translation_row(ui, parent):
 
 
 def _create_tts_row(ui, parent):
-    layout = QtWidgets.QHBoxLayout()
-    layout.setSizeConstraint(QtWidgets.QLayout.SetMinimumSize)
+    layout = WrappingRowLayout()
     layout.setObjectName("horizontalLayout")
     ui.tts_text = QtWidgets.QLabel(parent)
     ui.tts_text.setObjectName("tts_text")
@@ -195,7 +194,7 @@ def _create_tts_row(ui, parent):
 
 
 def _create_alignment_row(ui, parent):
-    layout = QtWidgets.QHBoxLayout()
+    layout = WrappingRowLayout()
     ui.align_btn = QtWidgets.QLabel()
 
     ui.align_btn.setStyleSheet("background-color: rgba(255, 255, 255,0)")

@@ -78,6 +78,14 @@ def run_check():
             or window.scroll_area.parentWidget() is not window.workflowActivityArea
             or window.subtitle_area.parentWidget() is not window.verticalLayoutWidget):
         raise AssertionError('packaged workspace hierarchy did not retain existing controls')
+    shell.resize(900, 720)
+    shell.show()
+    app.processEvents()
+    transcription_row = window.transcriptionSection.layout().itemAt(1).layout()
+    if (not shell.sidebar.isHidden() or not shell.compact_navigation.isVisible()
+            or window.workflowScroll.widget() is not window.layoutWidget
+            or transcription_row.heightForWidth(440) <= transcription_row.heightForWidth(900)):
+        raise AssertionError('packaged workspace does not adapt to a narrow desktop width')
     window.set_workflow_view_state('running')
     if (window.workflowStatus.property('workflowState') != 'running'
             or any(section.property('workflowState') != 'running' for section in workflow_sections)):
@@ -92,6 +100,7 @@ def run_check():
         'workflow_sections': len(workflow_sections),
         'workflow_state': 'running',
         'workflow_hierarchy': True,
+        'responsive_layout': True,
     }
 
 

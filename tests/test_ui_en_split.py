@@ -104,3 +104,26 @@ def test_workflow_hierarchy_groups_existing_action_activity_and_subtitle_widgets
 
     badges = win.findChildren(type(win.workflowActivityTitle), "workflowStepBadge")
     assert [badge.text() for badge in badges] == ["1", "2", "3", "4", "5"]
+
+
+def test_workflow_rows_wrap_inside_a_narrow_desktop_pane():
+    win = _TestWindow()
+    win.resize(1024, 720)
+    win.show()
+    app.processEvents()
+
+    assert win.workflowScroll.widget() is win.layoutWidget
+    assert win.workflowScroll.verticalScrollBarPolicy().name == "ScrollBarAsNeeded"
+    transcription_row = win.transcriptionSection.layout().itemAt(1).layout()
+    assert transcription_row.heightForWidth(440) > transcription_row.heightForWidth(900)
+
+    for section in (
+        win.prepareSection,
+        win.transcriptionSection,
+        win.translationSection,
+        win.voiceSection,
+        win.outputSection,
+    ):
+        for child in section.findChildren(type(win.btn_get_video)):
+            if child.isVisible():
+                assert child.geometry().right() < section.width()

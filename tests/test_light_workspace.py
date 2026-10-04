@@ -63,6 +63,7 @@ def test_light_qss_has_approved_tokens_and_primary_control_rules():
     assert "QFrame#workflowActivityArea" in qss
     assert "QLabel#workflowStepBadge" in qss
     assert "QLabel#subtitlePanelTitle" in qss
+    assert "QToolButton#workspaceCompactNavigation" in qss
 
 
 def test_workspace_shell_accepts_generated_menu_bar_attribute():
@@ -79,3 +80,23 @@ def test_workspace_shell_accepts_generated_menu_bar_attribute():
     assert window.fn_fanyisrt in {
         action for section in shell._catalog_sections for action in section.actions()
     }
+
+
+def test_workspace_shell_compacts_navigation_on_narrow_desktop_width():
+    window = _WindowDouble()
+    shell = WorkspaceShell(window, QWidget())
+    shell.resize(900, 700)
+    shell.show()
+    app.processEvents()
+
+    assert shell.sidebar.isHidden()
+    assert shell.compact_navigation.isVisible()
+    assert all(
+        getattr(window, name) in shell.compact_navigation.menu().actions()
+        for name in ("fn_recogn", "fn_fanyisrt", "fn_peiyinrole", "fn_vas")
+    )
+
+    shell.resize(1200, 700)
+    app.processEvents()
+    assert shell.sidebar.isVisible()
+    assert shell.compact_navigation.isHidden()

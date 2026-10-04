@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The desktop workflow now wraps configuration controls, scrolls vertically when needed, and replaces the full sidebar with a compact menu on narrow desktops. Existing controls and actions are unchanged.
+
 - Frozen Windows startup now seeds bundled assets only when absent and serializes first-run copying, preventing `WinError 32` when a shared AppData asset is already in use.
 
 - The desktop workflow now numbers its five existing steps and separates the existing Start/Retry, task activity, and subtitle-preview areas for faster scanning. No processing controls or behavior changed.

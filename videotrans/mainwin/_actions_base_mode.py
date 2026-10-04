@@ -5,9 +5,15 @@ from videotrans.recognition import ALLOW_CHANGE_MODEL
 
 class WinActionBaseModeMixin:
 
+    def _reset_workspace_splitter(self):
+        """Restore a readable subtitle pane without assuming the launch width."""
+        available = max(self.main.splitter.width(), 1)
+        subtitle_width = max(220, min(360, round(available * 0.30)))
+        self.main.splitter.setSizes([max(1, available - subtitle_width), subtitle_width])
+
     def set_biaozhun(self):
         self.main.action_biaozhun.setChecked(True)
-        self.main.splitter.setSizes([self.main.width - 300, 300])
+        self._reset_workspace_splitter()
         self.main.app_mode = 'biaozhun'
         self.main.show_tips.setText(
             tr("Customize each configuration to batch video translation. When selecting a single video, you can pause to edit subtitles during processing."))
@@ -72,7 +78,7 @@ class WinActionBaseModeMixin:
 
     def set_tiquzimu(self):
         self.main.action_tiquzimu.setChecked(True)
-        self.main.splitter.setSizes([self.main.width - 300, 300])
+        self._reset_workspace_splitter()
         self.main.app_mode = 'tiqu'
         self.main.show_tips.setText(tr('tiquzimu'))
         self.main.startbtn.setText(tr('kaishitiquhefanyi'))

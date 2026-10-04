@@ -13,6 +13,7 @@ from videotrans.ui._setup_rows import (
     _create_tts_row,
     _create_alignment_row,
 )
+from videotrans.ui.responsive_layout import WrappingRowLayout
 from videotrans.ui.workflow_state import WORKFLOW_IDLE, WORKFLOW_STATUS_LABELS
 
 
@@ -36,14 +37,20 @@ class Ui_MainWindow(object):
         self.splitter.setObjectName("splitter")
         self.splitter.setSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Preferred)
 
-        self.splitter.setMinimumWidth(600)
+        self.splitter.setMinimumWidth(0)
+        self.splitter.setChildrenCollapsible(False)
 
-        self.layoutWidget = QtWidgets.QWidget(self.splitter)
+        self.workflowScroll = QtWidgets.QScrollArea(self.splitter)
+        self.workflowScroll.setObjectName("workflowScroll")
+        self.workflowScroll.setWidgetResizable(True)
+        self.workflowScroll.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        self.layoutWidget = QtWidgets.QWidget()
         self.layoutWidget.setObjectName("layoutWidget")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.layoutWidget)
         self.verticalLayout_3.setContentsMargins(0, 0, 3, 0)
         self.verticalLayout_3.setObjectName("verticalLayout_3")
         self.verticalLayout_3.setSpacing(8)
+        self.verticalLayout_3.setSizeConstraint(QtWidgets.QLayout.SizeConstraint.SetMinAndMaxSize)
 
         self.prepareSection, prepare_layout = self._create_workflow_section(
             "workflowPrepare", 1, "Preparation")
@@ -70,7 +77,7 @@ class Ui_MainWindow(object):
         output_layout.addLayout(_create_alignment_row(self, self.outputSection))
         self.verticalLayout_3.addWidget(self.outputSection)
 
-        self.bgm_layout = QtWidgets.QHBoxLayout()
+        self.bgm_layout = WrappingRowLayout()
         self.bgm_layout.setObjectName("bgm_layout")
 
         self.is_separate = QtWidgets.QCheckBox(self.layoutWidget)
@@ -169,7 +176,7 @@ class Ui_MainWindow(object):
         self.pitch_rate.setMinimumWidth(60)
         self.pitch_rate.setObjectName("pitch_rate")
 
-        self.dubb_thread_layout = QtWidgets.QHBoxLayout()
+        self.dubb_thread_layout = WrappingRowLayout()
         self.dubb_thread_layout.addWidget(self.label_6)
         self.dubb_thread_layout.addWidget(self.voice_rate)
         self.dubb_thread_layout.addWidget(self.volume_label)
@@ -215,7 +222,7 @@ class Ui_MainWindow(object):
         self.workflowActionLayout.setContentsMargins(12, 10, 12, 10)
         self.workflowActionLayout.setSpacing(6)
 
-        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3 = WrappingRowLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
 
         self.enable_cuda = QtWidgets.QCheckBox(self.layoutWidget)
@@ -268,6 +275,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.workflowActivityArea)
         self.verticalLayoutWidget = QtWidgets.QWidget(self.splitter)
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
+        self.verticalLayoutWidget.setMinimumWidth(180)
 
         self.subtitle_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.subtitle_layout.setContentsMargins(3, 0, 0, 0)
@@ -279,7 +287,8 @@ class Ui_MainWindow(object):
 
         self.subtitle_area = QPlainTextEdit()
         self.subtitle_area.setReadOnly(True)
-        self.subtitle_area.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Preferred)
+        self.subtitle_area.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred)
+        self.subtitle_area.setMinimumWidth(0)
         self.subtitle_area.setObjectName("subtitle_area")
         self.subtitle_area.setPlaceholderText(
             f"\n{tr('subtitle_tips')}\n\n{tr('meitiaozimugeshi')}")
@@ -290,6 +299,10 @@ class Ui_MainWindow(object):
         self.import_subtitle.setText(tr('Import SRT(only effective for single-video)'))
         self.import_subtitle.setCursor(Qt.PointingHandCursor)
         self.subtitle_layout.addWidget(self.import_subtitle)
+
+        self.workflowScroll.setWidget(self.layoutWidget)
+        self.splitter.setStretchFactor(0, 4)
+        self.splitter.setStretchFactor(1, 2)
 
         self.horizontalLayout_7.addWidget(self.splitter)
         MainWindow.setCentralWidget(self.centralwidget)

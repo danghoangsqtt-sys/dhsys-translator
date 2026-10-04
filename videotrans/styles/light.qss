@@ -57,6 +57,7 @@ QPushButton#workspaceHome, QToolButton#workspaceAllTools, QPushButton#workspaceQ
     border: 0; border-radius: 7px; text-align: left; background: transparent; padding: 7px 10px;
 }
 QPushButton#workspaceHome:hover, QToolButton#workspaceAllTools:hover, QPushButton#workspaceQuickAction:hover { background: #E7F0EA; color: #14452F; }
+QToolButton#workspaceCompactNavigation { font-weight: 700; min-width: 64px; }
 QFrame#workspaceContent { background: #F5F7F6; }
 QFrame#workspaceHeader { background: #FFFFFF; border: 1px solid #DDE4DF; border-radius: 12px; }
 QWidget#layoutWidget, QWidget#verticalLayoutWidget { background: #FFFFFF; border: 1px solid #DDE4DF; border-radius: 10px; }
