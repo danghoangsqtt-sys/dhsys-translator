@@ -1,12 +1,12 @@
 # Runtime matrix — 2026-10-04
 
-The release runner remains on Python 3.10. The manifest now allows Python 3.10–3.12, but a green unit suite alone does not establish packaged media compatibility.
+The Windows candidate workflow uses Python 3.12.13. The manifest allows Python 3.10–3.12 for source use, but a green unit suite alone does not establish packaged media compatibility.
 
 | Windows runtime | Install evidence | Unit tests | Packaging/media smoke | Decision |
 | --- | --- | --- | --- | --- |
-| Python 3.10.19 | Locked core + `wetext` installed | 540 passed | Source CLI/GUI smoke; packaged media pending | Default build runtime |
+| Python 3.10.19 | Locked core + `wetext` installed | 540 passed | Source CLI/GUI smoke; PyInstaller `torchaudio` hook stack overflow | Source runtime verified locally; not candidate build runtime |
 | Python 3.11.15 | Isolated locked core + `wetext` installed | 540 passed | CLI help/list and GUI locale import; packaged media pending | Core and extra verified locally |
-| Python 3.12.13 | Isolated locked core + `wetext` installed | 540 passed | CLI help and GUI locale import; packaged media pending | Core and extra verified locally |
+| Python 3.12.13 | Isolated locked core + `wetext` installed | 540 passed | Local onedir artifact started twice offscreen; packaged media pending | Windows candidate build runtime |
 
 `wetext` now selects separate pinned Windows `pynini` wheels for the `cp310`, `cp311`, and `cp312` ABIs. Each runtime installed the extra and imported `pynini` 2.1.6.post1; WeTextProcessing 1.2.0 metadata was present. This does not prove every optional voice channel's media path.
 

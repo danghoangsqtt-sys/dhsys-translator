@@ -1,5 +1,7 @@
 # Rà soát phần mã được bổ sung ngày 2026-10-04
 
+> **Biên bản lịch sử:** các số liệu và lựa chọn Python 3.10 bên dưới là ảnh chụp tại thời điểm rà soát. Sau đó dự án đã kiểm chứng thêm Python 3.11/3.12, đạt 540 test và chuyển workflow Windows ứng viên sang 3.12.13. Trạng thái hiện hành nằm ở [runtime matrix](runtime-matrix.md) và [task 3.3](../.DHSYSTEM/phases/3/tasks/3.3.md).
+
 ## Đã kiểm tra và sửa
 
 | Vấn đề | Bằng chứng | Xử lý |

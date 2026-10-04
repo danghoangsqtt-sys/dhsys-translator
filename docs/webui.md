@@ -36,35 +36,36 @@ uv run webui.py --share            # 公网链接需要先设置 PYVIDEOTRANS_WE
 ### 1.2 Docker 部署
 
 ```bash
-# 构建镜像
-git clone https://github.com/jianchang512/pyvideotrans.git
-cd pyvideotrans
+# 在包含当前补丁的源码检出目录中构建镜像
+cd /path/to/pyvideotrans
 docker build -t pyvideotrans-webui .
 
 # 在构建目录外创建运行时凭据文件；替换下面的示例密码。
-printf 'PYVIDEOTRANS_WEBUI_USER=admin\nPYVIDEOTRANS_WEBUI_PASSWORD=change-this-long-password\n' > webui.env
+printf 'PYVIDEOTRANS_WEBUI_USER=admin\nPYVIDEOTRANS_WEBUI_PASSWORD=change-this-long-password\n' > ../webui.env
 
 # 运行：容器内监听 0.0.0.0，宿主机只开放本机端口。
-docker run -d -p 127.0.0.1:7860:7860 --env-file ./webui.env \
+docker run -d -p 127.0.0.1:7860:7860 --env-file ../webui.env \
   --name pyvideotrans pyvideotrans-webui
 
 # 持久化配置和输出
 mkdir -p data/output data/config
 printf '{}\n' > data/config/params.json
 printf '{}\n' > data/config/cfg.json
-docker run -d -p 127.0.0.1:7860:7860 --env-file ./webui.env \
+docker run -d -p 127.0.0.1:7860:7860 --env-file ../webui.env \
   --mount type=bind,src="$(pwd)/data/output",dst=/app/output \
   --mount type=bind,src="$(pwd)/data/config/params.json",dst=/app/videotrans/params.json \
   --mount type=bind,src="$(pwd)/data/config/cfg.json",dst=/app/videotrans/cfg.json \
   --name pyvideotrans pyvideotrans-webui
 
 # GPU 加速
-docker run -d -p 127.0.0.1:7860:7860 --gpus all --env-file ./webui.env \
+docker run -d -p 127.0.0.1:7860:7860 --gpus all --env-file ../webui.env \
   --mount type=bind,src="$(pwd)/data/output",dst=/app/output \
   --mount type=bind,src="$(pwd)/data/config/params.json",dst=/app/videotrans/params.json \
   --mount type=bind,src="$(pwd)/data/config/cfg.json",dst=/app/videotrans/cfg.json \
   --name pyvideotrans pyvideotrans-webui
 ```
+
+上面的三个 `docker run` 命令是不同部署方式，任选一个执行；重复使用同一个 `--name` 前需先停止原容器。
 
 三个 `docker run` 命令是不同的启动方案，只运行其中一个；重复运行前先停止并移除同名容器。浏览器打开 `http://127.0.0.1:7860` 后输入 `webui.env` 中的用户名和密码。`webui.env` 与个人配置不会进入镜像（由 `.dockerignore` 排除）。不要把整个 `/app/videotrans` 目录挂载为卷，否则会覆盖应用源码。
 

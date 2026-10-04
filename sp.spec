@@ -109,10 +109,11 @@ hidden_imports = [
 # Include the smoke-tested paths explicitly. Packaging every source module makes
 # PyInstaller's Windows graph recurse until the interpreter stack overflows.
 hidden_imports += [
-    "videotrans.recognition._faster_whisper",
+    "videotrans.recognition._whisper",
     "videotrans.translator._google",
     "videotrans.tts._edgetts",
     "videotrans.winform.chatgpt",
+    "videotrans.ui.chatgpt",
 ]
 
 # Exclude unnecessary modules to reduce size
@@ -137,7 +138,6 @@ excludes = [
     "idlelib",
     "pydoc",
     "lib2to3",
-    "setuptools",
     "pip",
     "wheel",
 ]

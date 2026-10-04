@@ -8,6 +8,9 @@ __pycache__
 .dockerignore
 .venv
 venv
+build/
+dist/
+ffmpeg/
 deps/
 output/
 tmp

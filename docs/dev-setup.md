@@ -1,6 +1,6 @@
 # Thiết lập phát triển và kiểm thử
 
-Áp dụng cho mã 4.14 trong giai đoạn kiểm thử bản vá. `.python-version` chọn Python 3.10.19 cho build; `pyproject.toml` cho phép Python 3.10–3.12 ở bộ core. Ma trận kiểm thử và giới hạn extra nằm trong [runtime-matrix](runtime-matrix.md). Bản đóng gói vẫn cần kiểm thử trên artifact thật trước khi phát hành.
+Áp dụng cho mã 4.14 trong giai đoạn kiểm thử bản vá. `.python-version` giữ Python 3.10.19 làm mặc định phát triển; workflow đóng gói Windows ứng viên chọn Python 3.12.13. `pyproject.toml` cho phép Python 3.10–3.12 ở bộ core. Ma trận kiểm thử và giới hạn extra nằm trong [runtime-matrix](runtime-matrix.md). Bản đóng gói vẫn cần kiểm thử trên artifact thật trước khi phát hành.
 
 ## Windows: môi trường sạch
 

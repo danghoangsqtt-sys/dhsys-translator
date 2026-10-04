@@ -1,6 +1,6 @@
 # Kế hoạch sửa lỗi sau audit — pyVideoTrans 4.14
 
-Ngày lập: 2026-10-04. Nguồn: `.DHSYSTEM/audit-report.md` và 16 phiếu trong `.DHSYSTEM/requests/`. Đây là kế hoạch cho bản vá dự kiến **4.14.1**, chưa phải kết quả triển khai hay xác nhận phát hành.
+Ngày lập: 2026-10-04. Nguồn: `.DHSYSTEM/audit-report.md` và 16 phiếu trong `.DHSYSTEM/requests/`. Đây là kế hoạch cho bản vá dự kiến **4.14.1**, chưa phải xác nhận phát hành. Nhiều sửa đổi trong hàng đợi đã được kiểm chứng cục bộ; trạng thái hiện hành nằm ở `.DHSYSTEM/TRACKER.md` và Phase 3 state.
 
 ## Nguyên tắc và thứ tự
 
@@ -30,7 +30,7 @@ Mỗi task phải có test tái hiện lỗi trước sửa, thay đổi nhỏ t
 
 ## Phụ thuộc và rủi ro còn mở
 
-- `wetext` dùng wheel Windows cp310; chưa được coi là hỗ trợ Python 3.12 cho tới khi có giải pháp và test cài sạch. Giải quyết trong 3.1, không làm sai công bố của core.
-- URL Chatterbox/FFmpeg có thể thay đổi; xác định bản hoặc checksum cố định trước khi xác nhận khả năng build lặp lại (BUG-009).
+- `wetext` hiện chọn wheel Windows riêng cho cp310/cp311/cp312 và đã cài trong môi trường khóa trên cả ba runtime; kiểm chứng từ runner sạch và luồng media vẫn còn mở.
+- Chatterbox/Perth đã ghim commit và FFmpeg Windows ứng viên có bản cùng SHA-256 cố định; runner sạch vẫn phải xác nhận đầu vào tải được (BUG-009).
 - Sửa spec PyInstaller tĩnh chưa chứng minh module động đã được bundle. Kiểm tra trong artifact, không chỉ đọc spec (BUG-007).
-- Các sửa đổi Phase 1–2 và 3.1/3.2 vẫn ở working tree, chưa có commit/runner. Giữ bằng chứng “verified locally” tách với “released”. Không ghi đè các sửa đổi đó khi thực thi kế hoạch.
+- Các sửa đổi Phase 1–3 đã được lưu ở commit cục bộ `fbcd924f` trên nhánh `codex/phase3-release-gate`; chưa có upstream/push hoặc runner sạch. Giữ bằng chứng “verified locally” tách với “released”.

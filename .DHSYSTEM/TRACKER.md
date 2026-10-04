@@ -2,12 +2,15 @@
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — release gate and documentation; 3.6 artifact gates remain open
-- State: 3.4–3.5, 3.7–3.9, 3.1 and 3.2 verified locally; 3.6 and 3.3 in_progress; phases 1–2 verified locally; git persistence pending
+- State: 3.4–3.5, 3.7–3.9 and 3.1 verified locally; 3.2, 3.6 and 3.3 in_progress; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
+- Local branch/checkpoint: `codex/phase3-release-gate` at `fbcd924f` for the prior Phase 1–3 changes; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
 - Starting commit: `8cf344fe`
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 
 ## Evidence
+
+- Continuation on 2026-10-04: Python 3.12.13 full suite 540 passed; Docker image rebuilt from the current workspace and host-port/auth probe returned 401 without login, 200 with valid login, 401 with wrong credentials. Network bind without credentials exits with an error. Packaged script probe on the older Python 3.12 artifact exposed missing `jaraco.text` in `pkg_resources` before app startup; task 3.2 remains in progress while `sp.spec` is corrected and rebuilt.
 
 - Task 3.3 on 2026-10-04: runtime documentation and state records reconciled. The Python 3.12 artifact starts twice headlessly with temporary user data and staged FFmpeg. Focused release-path suite: 97 passed; lock/YAML/diff checks pass. Docker daemon is unavailable, and clean-runner, packaged provider/media, checksum and Git persistence gates remain open.
 

@@ -6,6 +6,6 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | --- | --- | --- |
 | 1 | Reproducible tests, stale tests, version and docs | verified locally; git persistence pending |
 | 2 | ASR parsing, TLS, WebUI access, output safety | verified locally; git persistence pending |
-| 3 | Audit repair queue 3.4–3.9, supported Python, dependencies, Windows packaging and release gate | in_progress; repair plan ready, execution pending |
+| 3 | Audit repair queue 3.4–3.9, supported Python, dependencies, Windows packaging and release gate | in_progress; source repairs locally verified, artifact/container/release gates open |
 | 4 | PySide6 workflow UI | planned; design decision pending |
 | 5 | Timeline editor | conditional; scope decision pending |

@@ -28,18 +28,61 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Sync dependencies
-        run: uv sync --locked --group dev
+        run: uv sync --python $env:PYTHON_VERSION --locked --group dev
 
       - name: Run unit tests
-        run: uv run --locked --group dev pytest -q --tb=short
+        run: uv run --python $env:PYTHON_VERSION --locked --group dev pytest -q --tb=short
 
       - name: Verify lockfile
         run: uv lock --check
 
+  docker:
+    name: Smoke authenticated WebUI container
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build CPU WebUI image
+        run: docker build --build-arg USE_CUDA=false -t pyvideotrans-webui:candidate .
+
+      - name: Verify network access and authentication
+        shell: bash
+        run: |
+          set -euo pipefail
+          if docker run --rm pyvideotrans-webui:candidate > noauth.log 2>&1; then
+            echo 'Container accepted a network bind without credentials'
+            exit 1
+          fi
+          grep -q 'requires PYVIDEOTRANS_WEBUI_USER and PYVIDEOTRANS_WEBUI_PASSWORD' noauth.log
+
+          docker run -d --rm --name pyvideotrans-ci -p 127.0.0.1:17860:7860 \
+            -e PYVIDEOTRANS_WEBUI_USER=audit \
+            -e PYVIDEOTRANS_WEBUI_PASSWORD=audit-pass-for-ci \
+            pyvideotrans-webui:candidate
+          trap 'docker rm -f pyvideotrans-ci >/dev/null 2>&1 || true' EXIT
+          code=''
+          for attempt in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://127.0.0.1:17860/config || true)
+            if [ "$code" = '401' ]; then break; fi
+            sleep 2
+          done
+          test "$code" = '401'
+          curl -sS -c cookies.txt -d 'username=audit' -d 'password=audit-pass-for-ci' \
+            http://127.0.0.1:17860/login > /dev/null
+          valid=$(curl -sS -b cookies.txt -o /dev/null -w '%{http_code}' http://127.0.0.1:17860/config)
+          test "$valid" = '200'
+          curl -sS -c wrong-cookies.txt -d 'username=audit' -d 'password=wrong' \
+            http://127.0.0.1:17860/login > /dev/null
+          invalid=$(curl -sS -b wrong-cookies.txt -o /dev/null -w '%{http_code}' http://127.0.0.1:17860/config)
+          test "$invalid" = '401'
+          docker exec pyvideotrans-ci sh -c 'test ! -e /app/.env && test ! -e /app/webui.env'
+
   build:
     name: Build Windows Executable
     runs-on: windows-latest
-    needs: test
+    needs: [test, docker]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -55,7 +98,7 @@ jobs:
           python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Sync dependencies
-        run: uv sync --locked
+        run: uv sync --python $env:PYTHON_VERSION --locked
 
       - name: Download verified FFmpeg build
         run: |
@@ -71,7 +114,7 @@ jobs:
           Copy-Item "$ffmpegDir\bin\*" ffmpeg\ -Recurse -Force
 
       - name: Build with PyInstaller (using tracked spec)
-        run: uv run pyinstaller sp.spec --clean --noconfirm
+        run: uv run --python $env:PYTHON_VERSION --locked pyinstaller sp.spec --clean --noconfirm
 
       - name: Stage application resources beside executable
         run: |
@@ -105,6 +148,68 @@ jobs:
           echo "VERSION=$version" >> $env:GITHUB_ENV
           echo "ZIP_NAME=$zipName" >> $env:GITHUB_ENV
           echo "SHA256=$hash" >> $env:GITHUB_ENV
+
+      - name: Smoke extracted candidate and verify archive
+        run: |
+          $archive = $env:ZIP_NAME
+          $checksumLine = (Get-Content "$archive.sha256" -Raw).Trim()
+          $expectedHash = ($checksumLine -split '\s+')[0].ToLowerInvariant()
+          $actualHash = (Get-FileHash -Algorithm SHA256 $archive).Hash.ToLowerInvariant()
+          if ($actualHash -ne $expectedHash) { throw "Candidate archive checksum mismatch: $actualHash" }
+
+          $extract = Join-Path $env:RUNNER_TEMP 'pyvideotrans-extracted'
+          Expand-Archive -Path $archive -DestinationPath $extract
+          $exe = Join-Path $extract 'sp.exe'
+          if (-not (Test-Path $exe)) { throw 'Extracted candidate is missing sp.exe' }
+
+          $smokeScript = Join-Path $env:RUNNER_TEMP 'smoke_frozen.py'
+          $cliScript = Join-Path $env:RUNNER_TEMP 'cli.py'
+          $report = Join-Path $env:RUNNER_TEMP 'candidate-smoke.json'
+          Copy-Item 'scripts/smoke_frozen.py' $smokeScript
+          Copy-Item 'cli.py' $cliScript
+          $env:LOCALAPPDATA = Join-Path $env:RUNNER_TEMP 'pyvideotrans-user-data'
+          $env:QT_QPA_PLATFORM = 'offscreen'
+
+          $principal = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
+          & icacls $extract /deny "$($principal):(OI)(CI)W" | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw 'Could not make extracted install read-only' }
+          try {
+          $smokeError = Join-Path $env:RUNNER_TEMP 'candidate-smoke-stderr.txt'
+
+          $smoke = Start-Process -FilePath $exe -ArgumentList @($smokeScript, $report) -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $smokeError
+          if (-not $smoke.WaitForExit(120000)) {
+            Stop-Process -Id $smoke.Id -Force
+            throw 'Packaged smoke timed out'
+          }
+          $smoke.Refresh()
+          if (-not (Test-Path $report)) {
+            if (Test-Path $smokeError) { Get-Content $smokeError -Tail 40 }
+            throw 'Packaged smoke did not write a report'
+          }
+          $result = Get-Content $report -Raw | ConvertFrom-Json
+          if ($smoke.ExitCode -ne 0 -or $result.status -ne 'pass') { throw "Packaged smoke failed: $(Get-Content $report -Raw)" }
+
+          $cli = Start-Process -FilePath $exe -ArgumentList @($cliScript, '--version') -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru
+          if (-not $cli.WaitForExit(60000)) {
+            Stop-Process -Id $cli.Id -Force
+            throw 'Packaged CLI timed out'
+          }
+          $cli.Refresh()
+          if ($cli.ExitCode -ne 0) { throw "Packaged CLI --version failed: $($cli.ExitCode)" }
+
+          for ($attempt = 1; $attempt -le 2; $attempt++) {
+            $gui = Start-Process -FilePath $exe -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru
+            try {
+              Start-Sleep -Seconds 15
+              $gui.Refresh()
+              if ($gui.HasExited) { throw "Packaged GUI exited during startup $attempt with code $($gui.ExitCode)" }
+            } finally {
+              if (-not $gui.HasExited) { Stop-Process -Id $gui.Id -Force }
+            }
+          }
+          } finally {
+            & icacls $extract /remove:d $principal | Out-Null
+          }
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

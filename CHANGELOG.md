@@ -6,7 +6,8 @@ Planned for patch 4.14.1: repair legacy configuration startup, data and secret h
 
 - Locally verified: legacy `params.json` migration no longer crashes on missing/invalid fields; Docker build context excludes local configuration and credential files. Release and Git persistence gates remain open.
 - Locally verified: startup/completion cache cleanup rejects outside and symlinked paths; CLI now reserves distinct output and cache directories for every run, preserving prior exports and concurrent results.
-- In progress: Docker WebUI now receives explicit bind host/port and runtime credentials; frozen desktop paths separate bundled resources from writable user data. Container and extracted artifact smoke remain open.
+- Locally verified: Docker WebUI listens on the host port and requires credentials; a fresh local image returned 401/200/401 for unauthenticated/valid/invalid access. Frozen desktop paths separate bundled resources from writable user data. Extracted artifact smoke remains open.
+- In progress: executable smoke exposed a missing `jaraco.text` package in the previous Python 3.12 Windows artifact. Packaging repair and rebuilt candidate verification are under way; no release is claimed.
 - Locally verified: explicit CA bundles remain configured; GUI shutdown targets only app-owned FFmpeg descendants. A live process probe preserved an unrelated FFmpeg render.
 - Locally verified: Hugging Face download callbacks no longer patch global functions; model cache/downloads validate size and SHA-256 before atomic replacement.
 - Locally verified: persisted language codes select valid WebUI labels and voices; desktop short language flags take effect before configuration loads. CLI/Qt tests exercise actual actions and worker stages.
