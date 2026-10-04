@@ -2,7 +2,7 @@
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
-- Parallel UI task: 4.2 — workflow view-state bridge verified locally; task 4.1 sections verified locally; persistence pending
+- Parallel UI task: 4.3 — workflow hierarchy and action-area layout in progress; tasks 4.1–4.2 verified locally; persistence pending
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
