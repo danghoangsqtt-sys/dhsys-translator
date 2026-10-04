@@ -1,6 +1,6 @@
 {
   "id": "debug-20261004-jaraco-user",
-  "status": "active",
+  "status": "resolved",
   "created_at": "2026-10-04",
   "updated_at": "2026-10-04",
   "problem": {
@@ -11,20 +11,23 @@
   },
   "investigation": {
     "hypotheses": [
-      {"id": 1, "description": "The user launched an earlier executable built while setuptools was excluded", "status": "testing"},
-      {"id": 2, "description": "The current candidate ZIP lost jaraco.text during packaging or extraction", "status": "rejected"}
+      {"id": 1, "description": "The user launched an earlier executable built while setuptools was excluded", "status": "rejected"},
+      {"id": 2, "description": "The current candidate ZIP lost jaraco.text during packaging or extraction", "status": "rejected"},
+      {"id": 3, "description": "The user-selected extraction directory is incomplete", "status": "confirmed"}
     ],
     "tests_run": [
       {"command": "Inspect sp.spec and prior executable smoke evidence", "output": "Current spec does not exclude setuptools; prior extracted ZIP smoke report passes before and after the runtime hook", "timestamp": "2026-10-04"},
       {"command": "Compare current dist/sp/sp.exe and extracted candidate executable SHA-256", "output": "Hashes match", "timestamp": "2026-10-04"},
-      {"command": "Run current dist/sp/sp.exe with packaged smoke script", "output": "PASS, CLI reports 4.14, stderr is empty; runtime hook loaded successfully", "timestamp": "2026-10-04"}
+      {"command": "Run current dist/sp/sp.exe with packaged smoke script", "output": "PASS, CLI reports 4.14, stderr is empty; runtime hook loaded successfully", "timestamp": "2026-10-04"},
+      {"command": "Compare user-selected directory with verified extraction", "output": "Same sp.exe SHA-256; user directory had 5,266 files and 0.34 GB versus 11,407 files and 6.38 GB; Lorem ipsum.txt was absent", "timestamp": "2026-10-04"},
+      {"command": "Copy verified files after stopping the failed sp.exe process, then smoke the user-selected directory", "output": "Robocopy exit 1; 11,407 files and Lorem ipsum.txt present; packaged smoke PASS with empty stderr; GUI remained running for 15 seconds and created user data", "timestamp": "2026-10-04"}
     ],
-    "findings": ["The screenshot traceback matches a defect recorded for an earlier local artifact in task 3.2", "The current dist executable and matching extracted ZIP pass the runtime hook and smoke", "The path of the executable shown in the user report is not yet known"]
+    "findings": ["The reported sp.exe hash matched the verified candidate, so the executable itself was current", "The user-selected extraction directory was incomplete and lacked most bundled data files", "The mechanism that interrupted the user's extraction was not observed"]
   },
   "resolution": {
-    "root_cause": "pending executable path comparison",
-    "fix_applied": "pending",
-    "files_changed": [],
-    "verification": "pending"
+    "root_cause": "The user launched the current executable from a partially extracted onedir bundle; its bundled setuptools jaraco data file was missing",
+    "fix_applied": "Completed the user-selected extraction directory from the SHA-256-verified, fully extracted candidate copy",
+    "files_changed": ["external candidate directory pyVideoTrans-v4.14-windows-x64"],
+    "verification": "11,407 files and 6.38 GB present; direct packaged smoke passed, CLI reported 4.14, stderr empty; normal GUI startup survived 15 seconds"
   }
 }
