@@ -2,7 +2,7 @@
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
-- Parallel UI task: 4.2 — workflow view-state bridge in progress; task 4.1 sections verified locally; persistence pending
+- Parallel UI task: 4.2 — workflow view-state bridge verified locally; task 4.1 sections verified locally; persistence pending
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
@@ -10,6 +10,8 @@
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 
 ## Evidence
+
+- Task 4.2 workflow view state 2026-10-04: a pure presentation mapper receives existing action status and `SignMsg.type`, without changing queue, media, settings, output, dialog or CLI behavior. Focused Python 3.12 UI/state tests: 11 passed; full suite: 554 passed. Rebuilt candidate `dist/sp/sp.exe` SHA-256 `A37D876AA535802538EBA223714DD3E830B95C633248B91EECEFF3A05829ED02` passed frozen resource/media and UI probes; the UI probe reported five sections and `workflow_state: running`.
 
 - Task 4.1 workflow cards 2026-10-04: existing preparation, transcription, translation, voice/subtitles and timing/output controls are grouped without changing their object names or handlers. Focused UI: 11 passed; full Python 3.12: 550 passed. Rebuilt candidate `dist/sp/sp.exe` SHA-256 `6b5d70b334489d976a5c96f54cf6d8a331cc523f9d80bd2a228d7a9faf1c816e` passed frozen resource and UI probes with 5 sections.
 

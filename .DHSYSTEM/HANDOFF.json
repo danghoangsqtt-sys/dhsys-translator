@@ -21,10 +21,10 @@
       "4.6",
       "4.7"
     ],
-    "status": "task 4.2 workflow view-state bridge in progress; five existing workflow sections verified locally; source and packaged UI checks pass; persistence pending",
+    "status": "task 4.2 workflow view-state bridge and five existing workflow sections verified locally; source and packaged UI checks pass; persistence pending",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
     "candidate_path": "dist/sp/sp.exe",
-    "candidate_sha256": "6b5d70b334489d976a5c96f54cf6d8a331cc523f9d80bd2a228d7a9faf1c816e",
-    "candidate_checkpoint_commit": "f29af7af"
+    "candidate_sha256": "A37D876AA535802538EBA223714DD3E830B95C633248B91EECEFF3A05829ED02",
+    "candidate_checkpoint_commit": "pending task 4.2 state commit"
   }
 }

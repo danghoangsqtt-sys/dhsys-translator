@@ -25,8 +25,8 @@ def run_check(cli_script):
     require(getattr(sys, "frozen", False), "smoke must run inside the packaged executable")
     bundle = Path(sys.executable).resolve().parent
     install_root = bundle / "_internal"
-    ffmpeg = bundle / "ffmpeg" / "ffmpeg.exe"
-    ffprobe = bundle / "ffmpeg" / "ffprobe.exe"
+    ffmpeg = install_root / "ffmpeg" / "ffmpeg.exe"
+    ffprobe = install_root / "ffmpeg" / "ffprobe.exe"
     require(install_root.is_dir(), "missing bundled Python resources")
     require(ffmpeg.is_file() and ffprobe.is_file(), "missing bundled FFmpeg tools")
 
