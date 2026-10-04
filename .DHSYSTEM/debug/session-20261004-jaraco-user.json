@@ -1,0 +1,30 @@
+{
+  "id": "debug-20261004-jaraco-user",
+  "status": "active",
+  "created_at": "2026-10-04",
+  "updated_at": "2026-10-04",
+  "problem": {
+    "description": "User reports a Windows sp.exe dialog failing in pyi_rth_pkgres.py before application startup",
+    "symptoms": ["Unhandled exception in script"],
+    "error_messages": ["ModuleNotFoundError: No module named 'jaraco.text'"],
+    "affected_files": ["sp.spec", "Windows onedir distribution"]
+  },
+  "investigation": {
+    "hypotheses": [
+      {"id": 1, "description": "The user launched an earlier executable built while setuptools was excluded", "status": "testing"},
+      {"id": 2, "description": "The current candidate ZIP lost jaraco.text during packaging or extraction", "status": "rejected"}
+    ],
+    "tests_run": [
+      {"command": "Inspect sp.spec and prior executable smoke evidence", "output": "Current spec does not exclude setuptools; prior extracted ZIP smoke report passes before and after the runtime hook", "timestamp": "2026-10-04"},
+      {"command": "Compare current dist/sp/sp.exe and extracted candidate executable SHA-256", "output": "Hashes match", "timestamp": "2026-10-04"},
+      {"command": "Run current dist/sp/sp.exe with packaged smoke script", "output": "PASS, CLI reports 4.14, stderr is empty; runtime hook loaded successfully", "timestamp": "2026-10-04"}
+    ],
+    "findings": ["The screenshot traceback matches a defect recorded for an earlier local artifact in task 3.2", "The current dist executable and matching extracted ZIP pass the runtime hook and smoke", "The path of the executable shown in the user report is not yet known"]
+  },
+  "resolution": {
+    "root_cause": "pending executable path comparison",
+    "fix_applied": "pending",
+    "files_changed": [],
+    "verification": "pending"
+  }
+}
