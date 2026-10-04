@@ -3,12 +3,13 @@
 | Task | State | Gate |
 | --- | --- | --- |
 | 4.1 Existing workflow section cards | verified locally; persistence pending | 5 section cards preserve original widgets; source and packaged UI probes pass |
+| 4.2 Workflow view state bridge | in_progress | Presentation-only mapping from action/`SignMsg` events to card state; no task behavior changes |
 | 4.4 Light application shell and theme | verified locally; persistence pending | Existing workspace is reparented into shell; shared light QSS and 1280?720/1920?1080 smoke pass |
 | 4.5 Navigation parity and workspace hierarchy | verified locally; persistence pending | Sidebar shortcuts and tool catalog reuse original QAction instances; focused Qt tests pass |
 | 4.6 Regression evidence and handoff | verified locally; persistence pending | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved |
 | 4.7 Rebuild and smoke-test light Windows candidate | verified locally; persistence pending | Python 3.12 candidate has light QSS; frozen/UI/sidebar/menu smoke pass |
 
-Phase state: in_progress. The approved light-layout slice, including a rebuilt local Windows candidate, is verified locally. Task 4.1 is verified locally; the remaining wider Phase 4 workflow redesign remains planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+Phase state: in_progress. Task 4.2 is active. The approved light-layout slice, including a rebuilt local Windows candidate, and task 4.1 are verified locally; the remaining wider Phase 4 workflow redesign remains planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
 
 ## Evidence ? 2026-10-04
 

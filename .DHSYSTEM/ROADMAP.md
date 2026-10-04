@@ -7,5 +7,5 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | 1 | Reproducible tests, stale tests, version and docs | verified locally; git persistence pending |
 | 2 | ASR parsing, TLS, WebUI access, output safety | verified locally; git persistence pending |
 | 3 | Audit repair queue 3.4–3.9, supported Python, dependencies, Windows packaging and release gate | in_progress; source, Docker and extracted Windows smoke locally verified; clean-runner/release/persistence gates open |
-| 4 | PySide6 workflow UI and approved light workspace layout | in_progress; light-layout tasks 4.4?4.7 verified locally; task 4.1 workflow cards in progress; tasks 4.2?4.3 and Phase 3 release gates remain open |
+| 4 | PySide6 workflow UI and approved light workspace layout | in_progress; light-layout tasks 4.4?4.7 and task 4.1 verified locally; task 4.2 workflow view state is in progress; task 4.3 and Phase 3 release gates remain open |
 | 5 | Timeline editor | conditional; scope decision pending |
