@@ -13,11 +13,13 @@ def run_check():
     os.environ['QT_QPA_PLATFORM'] = 'offscreen'
     os.environ['PYVIDEOTRANS_LANG'] = 'vi'
 
-    from PySide6.QtWidgets import QApplication, QPushButton
+    from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
     from videotrans.configure.config import defaulelang, tr
     from videotrans.configure._paths import resource_path
     from videotrans.ui.home import HomePage
     from videotrans.ui.info import Ui_info
+    from videotrans.ui.en import Ui_MainWindow
+    from videotrans.ui.workspace_shell import WorkspaceShell
 
     app = QApplication.instance() or QApplication([])
     if defaulelang != 'vi_VN' or tr('Video Workshop') != 'Xưởng Video':
@@ -42,7 +44,28 @@ def run_check():
         raise AssertionError('legacy website appears in About title')
     about.close()
     page.close()
-    return {'locale': defaulelang, 'brand': tr('Video Workshop'), 'routes': routes}
+
+    class GeneratedWindow(QMainWindow, Ui_MainWindow):
+        def show_home(self):
+            pass
+
+    window = GeneratedWindow()
+    window.setupUi(window)
+    workspace = window.takeCentralWidget()
+    shell = WorkspaceShell(window, workspace)
+    catalog_actions = {
+        action for section in shell._catalog_sections for action in section.actions()
+    }
+    if shell.findChild(type(workspace), 'centralwidget') is not workspace or window.fn_fanyisrt not in catalog_actions:
+        raise AssertionError('packaged workspace shell did not retain original actions')
+    window.close()
+    return {
+        'locale': defaulelang,
+        'brand': tr('Video Workshop'),
+        'routes': routes,
+        'workspace_shell': True,
+        'light_style': resource_path('videotrans', 'styles', 'light.qss').is_file(),
+    }
 
 
 def main():

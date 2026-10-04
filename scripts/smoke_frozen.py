@@ -38,6 +38,8 @@ def run_check(cli_script):
             "frozen user data is inside the installation")
     require(resource_path("videotrans", "styles", "style.qss").is_file(),
             "bundled style.qss could not be resolved")
+    require(resource_path("videotrans", "styles", "light.qss").is_file(),
+            "bundled light.qss could not be resolved")
 
     from videotrans import get_class
     from videotrans import recognition

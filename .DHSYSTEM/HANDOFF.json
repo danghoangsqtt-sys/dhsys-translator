@@ -19,8 +19,10 @@
       "4.6",
       "4.7"
     ],
-    "status": "light interface slice verified locally; packaged candidate rebuild and frozen smoke in progress",
+    "status": "light interface slice and current Windows candidate verified locally; upstream persistence pending",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
+    "candidate_path": "dist/sp/sp.exe",
+    "candidate_sha256": "8c3396a06c41fee7f59effb22a03a0175e1db38be3c4345d6cd3f3a8236a7e3d",
     "checkpoint_commit": "4e5d93fb"
   }
 }

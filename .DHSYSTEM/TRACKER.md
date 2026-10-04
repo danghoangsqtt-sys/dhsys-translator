@@ -2,6 +2,7 @@
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
+- Parallel UI packaging task: 4.7 ? verified locally; persistence pending
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
@@ -9,6 +10,9 @@
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 
 ## Evidence
+
+- Phase 4 packaged light candidate 2026-10-04: Python 3.12.13 rebuild at `dist/sp/sp.exe` contains `light.qss`; SHA-256 `8c3396a06c41fee7f59effb22a03a0175e1db38be3c4345d6cd3f3a8236a7e3d`. Frozen resource/provider/dialog/CLI/SRT/MP4 smoke, frozen WorkspaceShell/UI smoke, 5 sidebar routes and 71 dynamic-menu routes pass from an isolated CWD. Clean runner, live provider-media and upstream persistence remain open.
+
 
 - Phase 4 light-layout slice 2026-10-04: white/gray/`#14452F` stylesheet, light launch/home/about surfaces and `DHSYSTEM.SYS` identity applied without changing processing code. `WorkspaceShell` reparents the original generated workspace and its sidebar triggers the same QAction objects. Focused UI suite: 10 passed; full Python 3.12 suite: 549 passed. Offscreen 1280?720 and 1920?1080 workspace smoke screenshots saved. Local checkpoint `4e5d93fb` preserves this slice; the broader Phase 4 redesign and all Phase 3 release gates remain open.
 
