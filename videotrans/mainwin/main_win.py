@@ -19,6 +19,7 @@ from videotrans.util.checkgpu import AiLoaderThread
 from videotrans.ui.en import Ui_MainWindow
 from videotrans.ui.home import HomePage
 from videotrans.ui.workspace_shell import WorkspaceShell
+from videotrans.ui.workflow_state import WorkflowStatePresenter
 from videotrans.task.simple_runnable_qt import run_in_threadpool
 
 from videotrans.mainwin._bind_signals import BindSignalsMixin
@@ -34,6 +35,7 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.resize(width, height)
         self.screen_size=screen_size
         self.setupUi(self)
+        self.workflow_presenter = WorkflowStatePresenter(self.set_workflow_view_state)
         self._setup_home()
         self.callback("SetupUI end...")
 

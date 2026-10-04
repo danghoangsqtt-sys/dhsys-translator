@@ -13,6 +13,7 @@ from videotrans.ui._setup_rows import (
     _create_tts_row,
     _create_alignment_row,
 )
+from videotrans.ui.workflow_state import WORKFLOW_IDLE, WORKFLOW_STATUS_LABELS
 
 
 class Ui_MainWindow(object):
@@ -197,11 +198,16 @@ class Ui_MainWindow(object):
         self.show_tips.setText(
             tr("Customize each configuration to batch video translation. When selecting a single video, you can pause to edit subtitles during processing."))
         self.show_tips.setObjectName("show_tips")
+        self.workflowStatus = QtWidgets.QLabel(self.layoutWidget)
+        self.workflowStatus.setObjectName("workflowStatus")
+        self.workflowStatus.setProperty("workflowState", WORKFLOW_IDLE)
+        self.workflowStatus.setText(tr(WORKFLOW_STATUS_LABELS[WORKFLOW_IDLE]))
         self.output_dir = QtWidgets.QLabel(self.layoutWidget)
         self.output_dir.setWordWrap(True)
         self.output_dir.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.output_dir.setObjectName("output_dir")
         self.verticalLayout_3.addWidget(self.show_tips)
+        self.verticalLayout_3.addWidget(self.workflowStatus)
 
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -290,6 +296,25 @@ class Ui_MainWindow(object):
         heading.setObjectName("workflowSectionTitle")
         layout.addWidget(heading)
         return section, layout
+
+    def set_workflow_view_state(self, state):
+        """Apply a presentation state to the existing workflow cards only."""
+        label_key = WORKFLOW_STATUS_LABELS.get(state, WORKFLOW_STATUS_LABELS[WORKFLOW_IDLE])
+        widgets = (
+            self.workflowStatus,
+            self.prepareSection,
+            self.transcriptionSection,
+            self.translationSection,
+            self.voiceSection,
+            self.outputSection,
+        )
+        for widget in widgets:
+            widget.setProperty("workflowState", state)
+            style = widget.style()
+            style.unpolish(widget)
+            style.polish(widget)
+            widget.update()
+        self.workflowStatus.setText(tr(label_key))
 
     def _set_Ui_Text(self):
         self.statusLabel = QtWidgets.QPushButton(tr("Home"))

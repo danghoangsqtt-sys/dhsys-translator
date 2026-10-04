@@ -62,5 +62,12 @@ QFrame#workspaceHeader { background: #FFFFFF; border: 1px solid #DDE4DF; border-
 QWidget#layoutWidget, QWidget#verticalLayoutWidget { background: #FFFFFF; border: 1px solid #DDE4DF; border-radius: 10px; }
 QWidget#advContainer { background: #F8FAF8; border: 1px solid #DDE4DF; border-radius: 8px; }
 QLabel#show_tips, QLabel#output_dir { color: #65736B; }
+QLabel#workflowStatus { color: #668074; font-size: 11px; font-weight: 700; padding: 2px 0; }
+QLabel#workflowStatus[workflowState="running"] { color: #14452F; }
+QLabel#workflowStatus[workflowState="error"] { color: #A83232; }
+QLabel#workflowStatus[workflowState="complete"] { color: #2E6E45; }
 QFrame[workflowSection="true"] { background: #FBFDFC; border: 1px solid #DDE4DF; border-radius: 9px; }
+QFrame[workflowSection="true"][workflowState="running"] { border-color: #6D9E7A; }
+QFrame[workflowSection="true"][workflowState="error"] { border-color: #C76161; }
+QFrame[workflowSection="true"][workflowState="complete"] { border-color: #85AE91; }
 QLabel#workflowSectionTitle { color: #14452F; font-size: 11px; font-weight: 700; }

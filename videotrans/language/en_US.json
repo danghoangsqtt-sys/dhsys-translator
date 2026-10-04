@@ -1028,5 +1028,9 @@
   "Transcription": "Transcription",
   "Translation": "Translation",
   "Voice & subtitles": "Voice & subtitles",
-  "Timing & output": "Timing & output"
+  "Timing & output": "Timing & output",
+  "Workflow ready": "Workflow ready",
+  "Workflow in progress": "Workflow in progress",
+  "Workflow needs attention": "Workflow needs attention",
+  "Workflow complete": "Workflow complete"
 }

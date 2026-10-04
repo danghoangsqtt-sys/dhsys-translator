@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QApplication, QMainWindow
 
 from videotrans.ui.en import Ui_MainWindow
+from videotrans.ui.workflow_state import WORKFLOW_RUNNING
 from videotrans.ui.menu_list import (
     MENU_CFG_TRANS, MENU_CFG_TTS, MENU_CFG_STT,
     MENU_CFG_TOOLS, MENU_CFG_HELP, MENU_CFG_PANEL,
@@ -69,3 +70,20 @@ def test_existing_rows_are_grouped_into_five_workflow_sections():
     assert win.translate_type.parentWidget() is win.translationSection
     assert win.tts_type.parentWidget() is win.voiceSection
     assert win.subtitle_type.parentWidget() is win.outputSection
+
+
+def test_workflow_view_state_updates_existing_cards_without_replacing_controls():
+    win = _TestWindow()
+    win.set_workflow_view_state(WORKFLOW_RUNNING)
+
+    assert win.workflowStatus.property("workflowState") == WORKFLOW_RUNNING
+    for section in (
+        win.prepareSection,
+        win.transcriptionSection,
+        win.translationSection,
+        win.voiceSection,
+        win.outputSection,
+    ):
+        assert section.property("workflowState") == WORKFLOW_RUNNING
+    assert win.btn_get_video.parentWidget() is win.prepareSection
+    assert win.recogn_type.parentWidget() is win.transcriptionSection

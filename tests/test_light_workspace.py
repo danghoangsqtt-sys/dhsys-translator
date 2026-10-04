@@ -57,6 +57,8 @@ def test_light_qss_has_approved_tokens_and_primary_control_rules():
     assert "QPushButton#startbtn" in qss
     assert "QMenuBar" in qss
     assert 'QFrame[workflowSection="true"]' in qss
+    assert 'QFrame[workflowSection="true"][workflowState="running"]' in qss
+    assert 'QLabel#workflowStatus[workflowState="error"]' in qss
 
 
 def test_workspace_shell_accepts_generated_menu_bar_attribute():

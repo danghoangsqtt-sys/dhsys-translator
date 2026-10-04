@@ -53,6 +53,7 @@ runtime
 __pycache__
 .idea
 .pytest_cache
+.pytest-*
 .mimocode
 .ruff_cache
 

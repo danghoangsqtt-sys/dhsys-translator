@@ -73,6 +73,10 @@ def run_check():
             or window.tts_type.parentWidget() is not window.voiceSection
             or window.subtitle_type.parentWidget() is not window.outputSection):
         raise AssertionError('packaged workflow controls are not in their intended sections')
+    window.set_workflow_view_state('running')
+    if (window.workflowStatus.property('workflowState') != 'running'
+            or any(section.property('workflowState') != 'running' for section in workflow_sections)):
+        raise AssertionError('packaged workflow view state did not reach every section')
     window.close()
     return {
         'locale': defaulelang,
@@ -81,6 +85,7 @@ def run_check():
         'workspace_shell': True,
         'light_style': resource_path('videotrans', 'styles', 'light.qss').is_file(),
         'workflow_sections': len(workflow_sections),
+        'workflow_state': 'running',
     }
 
 

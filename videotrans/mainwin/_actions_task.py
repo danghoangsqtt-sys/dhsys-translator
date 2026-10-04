@@ -184,6 +184,7 @@ class WinActionTaskMixin:
         if self.had_click_btn: return
         self.had_click_btn = True
         app_cfg.current_status = type
+        self.main.workflow_presenter.handle_action_status(type)
         if type == 'ing':
             self.disabled_widget(True)
             self.main.startbtn.setText(tr("starting..."))
@@ -224,6 +225,8 @@ class WinActionTaskMixin:
 
         if uuid and uuid not in [it['uuid'] for it in self.obj_list]:
             return
+
+        self.main.workflow_presenter.handle_message_type(d['type'])
 
         if d['type'] == 'ffmpeg':
             self.main.startbtn.setText(d['text'])

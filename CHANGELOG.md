@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Workflow cards now show a localized ready, processing, attention, or complete state from existing task events. The new presentation bridge does not alter queues, media processing, saved settings, output paths, dialogs, or CLI behavior.
+
 - Light workspace now groups the original controls into five labeled workflow sections while preserving every widget/action handler. Local candidate `dist/sp/sp.exe` SHA-256 `6b5d70b334489d976a5c96f54cf6d8a331cc523f9d80bd2a228d7a9faf1c816e` passes frozen resource and UI probes with all five sections.
 
 - Local Windows light-interface candidate rebuilt from tracked `sp.spec`; `dist/sp/sp.exe` SHA-256 `8c3396a06c41fee7f59effb22a03a0175e1db38be3c4345d6cd3f3a8236a7e3d`. Frozen resource/provider/dialog/CLI/SRT/MP4 smoke, WorkspaceShell/UI smoke, 5 sidebar routes and 71 dynamic-menu routes pass. This is local verification, not release 4.14.1.
