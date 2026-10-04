@@ -9,13 +9,15 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 from PySide6.QtCore import QEvent, QTimer
 from PySide6.QtGui import QIcon
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtGui import QAction
+from PySide6.QtWidgets import QMainWindow, QMessageBox, QStackedWidget
 from videotrans.configure import config
 config.init_run()
 from videotrans.configure.config import tr, params, settings, app_cfg, logger, ROOT_DIR
 from videotrans import VERSION
 from videotrans.util.checkgpu import AiLoaderThread
 from videotrans.ui.en import Ui_MainWindow
+from videotrans.ui.home import HomePage
 from videotrans.task.simple_runnable_qt import run_in_threadpool
 
 from videotrans.mainwin._bind_signals import BindSignalsMixin
@@ -31,6 +33,7 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.resize(width, height)
         self.screen_size=screen_size
         self.setupUi(self)
+        self._setup_home()
         self.callback("SetupUI end...")
 
         self.worker_threads = []
@@ -43,7 +46,7 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.app_mode = "biaozhun"
         self.current_rolelist = []
         self.setWindowIcon(QIcon(f"{ROOT_DIR}/videotrans/styles/icon.ico"))
-        self.rawtitle = f"{tr('softname')} {VERSION} {tr('Documents')} pyvideotrans.com"
+        self.rawtitle = f"{tr('Video Workshop')} {VERSION}"
         self.setWindowTitle(self.rawtitle)
 
         self.moshi = {
@@ -57,6 +60,53 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.startbtn.setText(tr('Checking GPUs...'))
         s.start()
         self._set_default()
+
+    def _setup_home(self):
+        workspace = self.takeCentralWidget()
+        self.page_stack = QStackedWidget(self)
+        self.home_page = HomePage(config.defaulelang, self.page_stack)
+        self.page_stack.addWidget(self.home_page)
+        self.page_stack.addWidget(workspace)
+        self.setCentralWidget(self.page_stack)
+        self.home_page.workspace_requested.connect(self.show_workspace)
+        self.home_page.tool_requested.connect(self._open_home_tool)
+        self.home_page.locale_requested.connect(self._set_home_locale)
+        self.home_action = QAction(tr("Home"), self)
+        self.home_action.triggered.connect(self.show_home)
+        self.menuBar.insertAction(self.menuBar.actions()[0], self.home_action)
+        self.show_home()
+
+    def show_home(self):
+        self.page_stack.setCurrentWidget(self.home_page)
+        self.toolBar.hide()
+
+    def show_workspace(self):
+        self.page_stack.setCurrentIndex(1)
+        self.toolBar.show()
+
+    def _open_home_tool(self, name):
+        action = getattr(self, name, None)
+        if action is not None:
+            action.trigger()
+
+    def _set_home_locale(self, locale):
+        if locale == config.defaulelang:
+            return
+        reply = QMessageBox.question(
+            self,
+            tr("Change interface language"),
+            tr("Restart now to apply the new interface language?"),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            self.home_page.reset_locale(config.defaulelang)
+            return
+        settings.lang = locale
+        settings.save()
+        self._restart_locale = locale
+        self.is_restarting = True
+        self.close()
 
     def _set_default(self):
         self.callback('import recognition ...')
@@ -177,8 +227,7 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
     @staticmethod
     def _daemon():
         from videotrans.util.help_ffmpeg import check_hw_on_start
-        from videotrans.util.help_misc import check_new_version, is_connect_hf
-        check_new_version()
+        from videotrans.util.help_misc import is_connect_hf
         is_connect_hf()
         check_hw_on_start(force=True)
 
@@ -204,5 +253,3 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         if event.type() == QEvent.Type.ActivationChange:
             if self.isActiveWindow():
                 self.aisendsrt.setChecked(settings.get('aisendsrt'))
-    
-    

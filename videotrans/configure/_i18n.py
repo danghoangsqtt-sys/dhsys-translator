@@ -31,7 +31,7 @@ def _get_transobj(lang:str=None):
     if not lang:
         return _tobj
     for n in [lang,lang.split('_')[0].lower()]:
-        _langfile=SUPPORT_LANG.get(lang)
+        _langfile=SUPPORT_LANG.get(n)
         if _langfile and Path(_langfile).exists():
             try:
                 _tobj = json.loads(Path(_langfile).read_text(encoding='utf-8'))
@@ -43,7 +43,8 @@ def _normalize_ui_locale(value):
     """Resolve documented short CLI aliases without changing other locale names."""
     if not isinstance(value, str):
         return value
-    aliases = {'en': 'en_US', 'zh': 'zh_CN', 'zh-cn': 'zh_CN'}
+    aliases = {'en': 'en_US', 'zh': 'zh_CN', 'zh-cn': 'zh_CN',
+               'vi': 'vi_VN', 'vi-vn': 'vi_VN'}
     return aliases.get(value.lower(), value)
 
 
@@ -51,14 +52,15 @@ def _init_language(settings):
     global defaulelang, _transobj
     SUPPORT_LANG = _get_langjson_list()
     try:
-        _lang = _normalize_ui_locale(os.environ.get('PYVIDEOTRANS_LANG', settings.lang))
+        requested = os.environ.get('PYVIDEOTRANS_LANG') or settings.lang
+        _lang = _normalize_ui_locale(requested) if requested else 'vi_VN'
         if not _lang or not SUPPORT_LANG.get(_lang) or not Path(SUPPORT_LANG.get(_lang)).exists():
             _lang = QLocale.system().name()
     except Exception:
-        _lang = "en_US"
+        _lang = "vi_VN"
 
     if _lang not in SUPPORT_LANG:
-        _lang = "en_US"
+        _lang = "vi_VN" if 'vi_VN' in SUPPORT_LANG else "en_US"
     if not settings.lang:
         settings.lang = _lang
         settings.save()

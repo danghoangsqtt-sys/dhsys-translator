@@ -80,10 +80,23 @@ class LifecycleMixin:
             event.accept()
             return
 
+        args = sys.argv[1:]
+        locale = getattr(self, '_restart_locale', None)
+        if locale:
+            clean_args = []
+            skip_next = False
+            for arg in args:
+                if skip_next:
+                    skip_next = False
+                elif arg == '--lang':
+                    skip_next = True
+                elif not arg.startswith('--lang='):
+                    clean_args.append(arg)
+            args = clean_args + ['--lang', locale]
         if getattr(sys, 'frozen', False):
-            subprocess.Popen([sys.executable] + sys.argv[1:])
+            subprocess.Popen([sys.executable] + args)
         else:
-            subprocess.Popen([sys.executable, sys.argv[0]] + sys.argv[1:])
+            subprocess.Popen([sys.executable, sys.argv[0]] + args)
 
         event.accept()
         os._exit(0)

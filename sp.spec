@@ -52,6 +52,10 @@ def menu_hidden_imports():
 def collect_data_files():
     data_files = []
 
+    license_file = PROJECT_ROOT / "LICENSE"
+    if license_file.is_file():
+        data_files.append((str(license_file), "."))
+
     # Styles (QSS, icons, fonts, logos)
     styles_dir = PROJECT_ROOT / "videotrans" / "styles"
     if styles_dir.exists():

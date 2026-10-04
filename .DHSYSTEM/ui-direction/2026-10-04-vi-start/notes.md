@@ -2,7 +2,7 @@
 
 ## Mục đích
 
-Bản phác thảo cho splash desktop. Sản phẩm cuối dùng PySide6/Qt Widgets và chạy offline. Tên “Xưởng Video” là chữ tạm để kiểm tra bố cục, chưa phải quyết định thương hiệu.
+Bản phác thảo cho splash desktop. Bản thực hiện dùng PySide6/Qt Widgets và chạy offline. Tên “Xưởng Video” là tên hiển thị tạm, chưa phải quyết định thương hiệu.
 
 ## Quy tắc
 
@@ -15,9 +15,11 @@ Bản phác thảo cho splash desktop. Sản phẩm cuối dùng PySide6/Qt Widg
 
 | Trang | Vai trò | Trạng thái |
 | --- | --- | --- |
-| `index.html` | Bản phác thảo splash; độc lập với website gốc | Chờ người dùng chọn phạm vi và tên |
+| `index.html` | Bản phác thảo splash; độc lập với website gốc | Đã chuyển thành Qt splash và trang chủ |
 
 Ảnh chụp kiểm tra bố cục: `preview.png` (900×650, thẻ splash bên trong 560×350).
+
+Ảnh Qt thực tế: `qt-splash-preview.png` và `qt-home-preview.png`.
 
 ## design_tokens
 
@@ -40,6 +42,6 @@ font: "Segoe UI, system sans-serif"
 | Tiếng Việt desktop | `vi_VN.json`, Qt Widgets, cài đặt ngôn ngữ | Màn hình chính, sidebar, ba công cụ và lỗi thông dụng hiển thị tiếng Việt |
 | Ba mục lỗi | Sidebar `fn_fanyisrt`, `fn_peiyinrole`, `fn_vas` | Mở từ executable mới; log nếu còn lỗi |
 
-## Chưa chốt
+## Còn mở
 
-Tên sản phẩm, màu sắc cuối, phạm vi cửa sổ chính và WebUI, đường dẫn executable người dùng đang chạy.
+Tên sản phẩm chính thức và luồng biên tập đầy đủ của Phase 4. WebUI nằm ngoài đợt giao diện desktop này.

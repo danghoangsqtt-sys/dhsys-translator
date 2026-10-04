@@ -64,13 +64,12 @@ def show_error(tb_str):
     if defaulelang == 'zh_CN':
         ok_button.setText("知道了")
 
-    # 添加自定义的“报告错误”按钮
-    report_button = msg_box.addButton(tr("Report Error"), QtWidgets.QMessageBox.ButtonRole.NoRole)
+    copy_button = msg_box.addButton(tr("Copy error details"), QtWidgets.QMessageBox.ButtonRole.ActionRole)
     url_button = None
     tb_str = redact(str(tb_str))
     urls = re.findall(r'\[(https?:.*?)\]', tb_str)
-    if urls and urls[0]:
-        url_button = msg_box.addButton(tr('Download URL' if "pyvideotrans.com" not in urls[0] else 'Help document'), QtWidgets.QMessageBox.ButtonRole.NoRole)
+    if urls and urls[0] and 'pyvideotrans.com' not in urls[0]:
+        url_button = msg_box.addButton(tr('Download URL'), QtWidgets.QMessageBox.ButtonRole.NoRole)
         tb_str=tb_str.replace(f'[{urls[0]}]','')
         
     msg_box.setDefaultButton(ok_button)
@@ -92,26 +91,10 @@ def show_error(tb_str):
 
     msg_box.buttonClicked.connect(record_clicked_button)
     msg_box.exec()
-    # if report and clicked_button_storage == report_button:
-    full_url = None
-    if clicked_button_storage == report_button:
-        if msg_box.clickedButton() == report_button:
-            import urllib.parse
-            import os, platform, sys
-            from videotrans import VERSION
-            # 对全部错误信息进行URL编码
-            _isfrozen = getattr(sys, 'frozen', False)
-            _msg = f"{tb_str}\n=====\nsystem:{platform.platform()}\nversion:{VERSION}\nfrozen:{_isfrozen}\nlanguage:{defaulelang}\nroot_dir:{ROOT_DIR}\n"
-            if not _isfrozen:
-                _msg += f"Python: {sys.version}\n"
-            encoded_content = urllib.parse.quote(_msg)
-            full_url = f"https://bbs.pyvideotrans.com/?type=post&content={encoded_content}"
+    if clicked_button_storage == copy_button:
+        QtWidgets.QApplication.clipboard().setText(tb_str)
     elif url_button and clicked_button_storage == url_button:
-        if msg_box.clickedButton() == url_button:
-            full_url = urls[0]
-    # 调用系统默认浏览器打开链接
-    if full_url:
-        QDesktopServices.openUrl(QUrl(full_url))
+        QDesktopServices.openUrl(QUrl(urls[0]))
 
 
 def open_url(url: str = None):

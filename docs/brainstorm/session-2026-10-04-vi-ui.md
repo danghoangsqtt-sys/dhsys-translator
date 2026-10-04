@@ -2,7 +2,7 @@
 
 - Ngày: 2026-10-04
 - `workflow_version`: 2.19.0
-- Trạng thái: đang thu thập quyết định; chưa khóa phạm vi triển khai
+- Trạng thái: người dùng đã đồng ý triển khai desktop ngày 2026-10-04; đang xác minh bản đóng gói
 - Nguồn: phản hồi người dùng, ảnh lỗi, mã `sp.py`, `videotrans/configure/_i18n.py`, `videotrans/ui/en.py`, `videotrans/ui/menu_list.py`, kết quả BUG-016
 
 ## Mục tiêu
@@ -37,17 +37,16 @@ Người dùng có thể hiểu và vận hành ứng dụng bằng tiếng Vi�
 | 4 — giao diện và ngôn ngữ | Tiếng Việt cho desktop và màn hình mở đầu độc lập | Lựa chọn `vi_VN` hoạt động sau khởi động; luồng chính và lỗi thông dụng có tiếng Việt; các bề mặt chính không quảng bá logo/URL gốc; smoke gói Windows đạt |
 | 4 — mở rộng có điều kiện | Trang tổng quan mới và/hoặc Việt hóa WebUI | Chỉ chốt sau khi người dùng xác nhận phạm vi; chức năng hiện có vẫn truy cập được |
 
-## Quyết định đang mở
+## Quyết định triển khai
 
-- Đã xác nhận Windows đang chạy executable cũ (PID 18404); người dùng cần chuyển sang bản mới để kiểm tra tương tác thực tế.
-- “Trang mở đầu” chỉ là splash hay bao gồm cửa sổ làm việc sau khi tải?
-- Chọn trang tổng quan, luồng năm bước hay bố cục tối giản nếu đổi cửa sổ chính?
-- Ưu tiên Việt hóa toàn desktop hay cả WebUI? Có muốn dùng tên sản phẩm mới nào không?
+- Phạm vi được duyệt: giao diện desktop tiếng Việt, splash Qt mới và trang chủ desktop mới; giữ lối vào không gian làm việc và các công cụ hiện có. WebUI không nằm trong đợt này.
+- “Xưởng Video” là tên hiển thị tạm cho bản thử desktop; có thể thay khi người dùng chọn tên chính thức.
+- Ba công cụ từng báo lỗi được kiểm tra trên chính executable bàn giao. Bản cũ đang chạy phải được đóng sau khi lưu công việc rồi mới mở bản mới.
 
 ## Project meta intake (FEAT-009)
 
-Hoãn vì phạm vi giao diện/ngôn ngữ chưa khóa. Không tạo hồ sơ sản phẩm toàn cục từ tên tạm trong bản phác thảo.
+Phạm vi desktop đã chốt; tên sản phẩm chính thức vẫn mở. Không tạo hồ sơ sản phẩm toàn cục từ tên tạm trong bản phác thảo.
 
 ## Hành động tiếp theo
 
-Nhận các lựa chọn đang mở, cập nhật bản phác thảo, rồi chuyển quyết định sang SPEC/PLAN qua `dh-crystallize` trước khi triển khai bằng `dh-auto`. Nếu người dùng muốn triển khai trực tiếp trong phiên này, dùng các quyết định đã chốt làm tiêu chí nghiệm thu.
+Hoàn tất smoke trên bản Windows mới, ghi kết quả và đường dẫn executable, sau đó cập nhật cổng nghiệm thu Phase 4 trong PLAN/SPEC. Luồng biên tập năm bước toàn diện vẫn là công việc Phase 4 tiếp theo.

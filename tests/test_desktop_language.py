@@ -7,7 +7,10 @@ import sys
 import pytest
 
 
-@pytest.mark.parametrize('flag,locale', [('en', 'en_US'), ('zh', 'zh_CN'), ('zh-cn', 'zh_CN')])
+@pytest.mark.parametrize('flag,locale', [
+    ('en', 'en_US'), ('zh', 'zh_CN'), ('zh-cn', 'zh_CN'),
+    ('vi', 'vi_VN'), ('vi-vn', 'vi_VN'),
+])
 def test_desktop_language_flag_precedes_config_import(flag, locale):
     env = os.environ.copy()
     env['QT_QPA_PLATFORM'] = 'offscreen'

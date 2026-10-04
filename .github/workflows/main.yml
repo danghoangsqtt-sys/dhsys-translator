@@ -166,13 +166,16 @@ jobs:
           $smokeScript = Join-Path $env:RUNNER_TEMP 'smoke_frozen.py'
           $sidebarScript = Join-Path $env:RUNNER_TEMP 'smoke_sidebar.py'
           $menusScript = Join-Path $env:RUNNER_TEMP 'smoke_dynamic_menus.py'
+          $uiScript = Join-Path $env:RUNNER_TEMP 'smoke_frozen_ui.py'
           $cliScript = Join-Path $env:RUNNER_TEMP 'cli.py'
           $report = Join-Path $env:RUNNER_TEMP 'candidate-smoke.json'
           $sidebarReport = Join-Path $env:RUNNER_TEMP 'candidate-sidebar.json'
           $menusReport = Join-Path $env:RUNNER_TEMP 'candidate-menus.json'
+          $uiReport = Join-Path $env:RUNNER_TEMP 'candidate-ui.json'
           Copy-Item 'scripts/smoke_frozen.py' $smokeScript
           Copy-Item 'scripts/smoke_sidebar.py' $sidebarScript
           Copy-Item 'scripts/smoke_dynamic_menus.py' $menusScript
+          Copy-Item 'scripts/smoke_frozen_ui.py' $uiScript
           Copy-Item 'cli.py' $cliScript
           $env:LOCALAPPDATA = Join-Path $env:RUNNER_TEMP 'pyvideotrans-user-data'
           $env:QT_QPA_PLATFORM = 'offscreen'
@@ -213,6 +216,19 @@ jobs:
           }
           $sidebarResult = Get-Content $sidebarReport -Raw | ConvertFrom-Json
           if ($sidebarResult.status -ne 'pass') { throw "Packaged sidebar smoke failed: $(Get-Content $sidebarReport -Raw)" }
+
+          $uiError = Join-Path $env:RUNNER_TEMP 'candidate-ui-stderr.txt'
+          $ui = Start-Process -FilePath $exe -ArgumentList @($uiScript, $uiReport) -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $uiError
+          if (-not $ui.WaitForExit(120000)) {
+            Stop-Process -Id $ui.Id -Force
+            throw 'Packaged Vietnamese UI smoke timed out'
+          }
+          if (-not (Test-Path $uiReport)) {
+            if (Test-Path $uiError) { Get-Content $uiError -Tail 40 }
+            throw 'Packaged Vietnamese UI smoke did not write a report'
+          }
+          $uiResult = Get-Content $uiReport -Raw | ConvertFrom-Json
+          if ($uiResult.status -ne 'pass') { throw "Packaged Vietnamese UI smoke failed: $(Get-Content $uiReport -Raw)" }
 
           $menusError = Join-Path $env:RUNNER_TEMP 'candidate-menus-stderr.txt'
           $menus = Start-Process -FilePath $exe -ArgumentList @($menusScript, $menusReport, '--open') -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $menusError

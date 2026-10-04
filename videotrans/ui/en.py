@@ -270,11 +270,10 @@ class Ui_MainWindow(object):
         self._set_Ui_Text()
 
     def _set_Ui_Text(self):
-        self.statusLabel = QtWidgets.QPushButton(tr("Open Documents"))
-        self.statusLabel.setStyleSheet("""color:#ffff66""")
+        self.statusLabel = QtWidgets.QPushButton(tr("Home"))
         self.statusBar.addWidget(self.statusLabel)
 
-        self.rightbottom = QtWidgets.QPushButton(tr('juanzhu'))
+        self.rightbottom = QtWidgets.QPushButton(tr('About'))
 
         self.container = QtWidgets.QToolBar()
         self.container.addWidget(self.rightbottom)
@@ -282,8 +281,6 @@ class Ui_MainWindow(object):
         self.container.addWidget(self.restart_btn)
         self.statusBar.addPermanentWidget(self.container)
 
-        self.rightbottom.setStyleSheet("""color:#ffff66""")
-        self.restart_btn.setStyleSheet("""color:#ffffbb""")
         self.restart_btn.setToolTip(
             tr("Click to end all tasks immediately and restart"))
 
@@ -300,8 +297,7 @@ class Ui_MainWindow(object):
         self.translate_type.setToolTip(
             tr("Translation channels used in translating subtitle text"))
         self.label.setText(tr("Proxy"))
-        self.label.setToolTip(
-            tr("Click to view the tutorial for filling in the network proxy"))
+        self.label.setToolTip(tr("Proxy help text"))
         self.label.setCursor(Qt.PointingHandCursor)
 
         self.proxy.setPlaceholderText(tr("Failed to access Google services. Please set up the proxy correctly"))

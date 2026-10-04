@@ -100,6 +100,10 @@ Nguồn phạm vi: [brainstorm 2026-10-03](brainstorm/session-2026-10-03.md) và
 
 ### Phase 4 — Giao diện theo quy trình
 
+**Lát cắt desktop được duyệt 2026-10-04:** bổ sung `vi_VN`, splash Qt mới, trang chủ “Xưởng Video” với lối vào không gian làm việc và bốn công cụ nhanh. Kiểm tra nguồn, bản đóng gói, sidebar và menu động là cổng nghiệm thu riêng của lát cắt này. Tên hiển thị đang là tên tạm. Thiết kế lại toàn bộ màn hình xử lý năm bước ở 4.1–4.3 vẫn là việc tiếp theo; không đánh dấu Phase 4 hoàn tất chỉ vì trang chủ mới đã hoạt động.
+
+**Bằng chứng cục bộ:** 546 test nguồn đạt; candidate `pytransvideo-vietnamese-ui-20261004` đạt smoke tiếng Việt/trang chủ, 5/5 sidebar, 71/71 menu động, CLI/SRT/media mẫu và khởi động GUI 15 giây từ thư mục khác. Chưa thực hiện kiểm thử nhà cung cấp API, GPU và runner Windows sạch cho cổng phát hành 3.3.
+
 **4.1. Chốt hướng thiết kế bằng mẫu màn hình — vừa, P1; SPEC UI-01, UI-03**
 
 - Dùng PySide6. Thiết kế một cửa sổ chính với các bước chuẩn bị, chép lời, dịch, lồng tiếng, xem trước/xuất; giữ menu công cụ và cấu hình kênh nâng cao.

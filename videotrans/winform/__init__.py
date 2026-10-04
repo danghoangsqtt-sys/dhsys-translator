@@ -10,6 +10,7 @@
 
 import importlib
 from videotrans.configure.config import app_cfg
+from videotrans.ui.localize import localize_widget_tree
 
 _loaded_modules = {}  # 用于缓存已经加载过的模块
 
@@ -31,6 +32,7 @@ def get_win(name):
         module = importlib.import_module(f'..component.{name}', package=__package__)
         _win = getattr(module, name.upper())()
         app_cfg.child_forms[name] = _win
+        localize_widget_tree(_win)
         _win.show()
         return _win
 
@@ -41,6 +43,7 @@ def get_win(name):
         app_cfg.child_forms[name] = obj
         if hasattr(obj, 'update_ui'):
             obj.update_ui()
+        localize_widget_tree(obj)
         obj.show()
         return obj
     except ImportError as e:

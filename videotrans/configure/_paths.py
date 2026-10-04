@@ -36,7 +36,7 @@ def _prepare_frozen_home(resource_dir, data_dir, legacy_dir):
         for source in source_dir.rglob('*'):
             if source.is_file():
                 destination = data_dir / source.relative_to(resource_dir)
-                if not destination.exists():
+                if not destination.exists() or source.relative_to(resource_dir).as_posix() == 'videotrans/styles/icon.ico':
                     destination.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copy2(source, destination)
     for name in ('cfg.json', 'params.json'):

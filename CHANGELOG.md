@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Desktop candidate ngày 2026-10-04: thêm `vi_VN` cho giao diện, bộ chọn ngôn ngữ trên trang chủ, splash Qt và trang chủ “Xưởng Video”, cùng lối tắt đến không gian làm việc và bốn công cụ. Bỏ liên kết quảng bá dự án cũ khỏi các bề mặt mở đầu và menu trợ giúp; giữ thông tin GPL trong About. Kiểm tra nguồn đạt 546 test; gói Windows mới đạt smoke giao diện, 5/5 sidebar, 71/71 menu động, CLI/SRT/media mẫu và khởi động GUI. Tên hiển thị và bản dịch dài cần người dùng rà soát; đây chưa phải phát hành 4.14.1.
+
 Planned for patch 4.14.1: repair legacy configuration startup, data and secret handling, Docker/frozen runtime paths, process/network/download reliability, locale compatibility, and binding release tests. These audit fixes remain open until implemented and verified; current product version is 4.14. See `docs/BUGFIX-PLAN.md`.
 
 - Locally verified: legacy `params.json` migration no longer crashes on missing/invalid fields; Docker build context excludes local configuration and credential files. Release and Git persistence gates remain open.

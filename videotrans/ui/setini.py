@@ -429,6 +429,14 @@ if defaulelang != 'zh_CN':
         "prompt_init": "Whisper Prompt"
     }
 
+if defaulelang == 'vi_VN':
+    notices = {
+        section: {key: tr(value) for key, value in values.items()}
+        for section, values in notices.items()
+    }
+    titles = {key: tr(value) for key, value in titles.items()}
+    heads = {key: tr(value) for key, value in heads.items()}
+
 
 titles.update(prompt_dicts)
 notices['prompt_init'].update(prompt_dicts)

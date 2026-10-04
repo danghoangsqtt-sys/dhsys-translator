@@ -111,19 +111,9 @@ MENU_CFG_TOOLS = [
 ]
 # 菜单--帮助，每个  tuple 是一个菜单，
 MENU_CFG_HELP = [
-    # 帮助
-    ("website", tr("Documents"), "https://pyvideotrans.com"),
-    ("bbs", tr("Having problems? Ask"), "https://bbs.pyvideotrans.com"),
-    ("git", "Github Repository", "https://github.com/jianchang512/pyvideotrans"),
-    ("issue", tr("Post issue"), "https://github.com/jianchang512/pyvideotrans/issues"),
-    ("download", tr("Solution to model download failure"), "https://pyvideotrans.com/allmodels"),
-    ("cuda", 'CUDA & cuDNN', "https://pyvideotrans.com/gpu"),
-
+    # Product help stays inside the application; third-party tools keep their own link.
     ("ffmpeg", "FFmpeg", "https://www.ffmpeg.org/download.html"),
-    ("ocrsp", tr("Download Hard Subtitle Extraction Software"), "https://pyvideotrans.com/ocrsp"),
-
-    ("lawalert", tr("Disclaimer"), None),
-    ("info", tr("Donating developers"), None),
+    ("info", tr("About"), None),
 ]
 
 # 主界面左侧面板菜单，每个  tuple 是一个菜单，

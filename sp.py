@@ -22,11 +22,13 @@ Author says: it runs, doesn't it?
 
 """
 
+import json
 import os
 import atexit, sys, time
-from PySide6.QtWidgets import QApplication, QWidget, QLabel, QVBoxLayout, QMessageBox
-from PySide6.QtCore import Qt, qInstallMessageHandler, QTimer
-from PySide6.QtGui import QPixmap, QGuiApplication, QIcon
+from PySide6.QtWidgets import (QApplication, QFrame, QHBoxLayout, QLabel,
+                               QMessageBox, QProgressBar, QVBoxLayout, QWidget)
+from PySide6.QtCore import Qt, QRectF, qInstallMessageHandler, QTimer
+from PySide6.QtGui import QColor, QGuiApplication, QIcon, QPainter, QPen
 import argparse
 import tempfile
 from pathlib import Path
@@ -41,7 +43,7 @@ if _language_args.lang:
     os.environ['PYVIDEOTRANS_LANG'] = _language_args.lang
 
 from videotrans import VERSION
-from videotrans.configure._paths import resource_path, LOGS_DIR
+from videotrans.configure._paths import resource_path, LOGS_DIR, ROOT_DIR
 
 
 # Suppress warnings
@@ -61,10 +63,68 @@ def cleanup():
 
 def show_global_error_dialog(exctype, value, tb):
     tb_str = "".join(traceback.format_exception(exctype, value, tb))
-    QMessageBox.critical(None, 'Error', tb_str)
+    title = {'vi_VN': 'Lỗi', 'zh_CN': '错误'}.get(_splash_locale(), 'Error')
+    QMessageBox.critical(None, title, tb_str)
 
 
-# Splash screen
+# Splash screen text is intentionally available before the main configuration import.
+_SPLASH_COPY = {
+    'vi_VN': {
+        'brand': 'XƯỞNG VIDEO',
+        'top': 'KHÔNG GIAN BIÊN TẬP',
+        'eyebrow': 'ÂM THANH · NGÔN NGỮ · HÌNH ẢNH',
+        'title': 'Biến nội dung thành câu chuyện cho mọi ngôn ngữ.',
+        'loading': 'Đang chuẩn bị không gian làm việc',
+        'ready': 'Sẵn sàng',
+    },
+    'en_US': {
+        'brand': 'VIDEO WORKSHOP',
+        'top': 'CREATIVE WORKSPACE',
+        'eyebrow': 'AUDIO · LANGUAGE · IMAGE',
+        'title': 'Make your story understandable in every language.',
+        'loading': 'Preparing your workspace',
+        'ready': 'Ready',
+    },
+    'zh_CN': {
+        'brand': '视频工作室',
+        'top': '创作空间',
+        'eyebrow': '声音 · 语言 · 画面',
+        'title': '让每种语言都能理解你的故事。',
+        'loading': '正在准备工作空间',
+        'ready': '准备就绪',
+    },
+}
+
+
+def _splash_locale():
+    lang = os.environ.get('PYVIDEOTRANS_LANG')
+    if not lang:
+        try:
+            cfg_path = Path(ROOT_DIR) / 'videotrans' / 'cfg.json'
+            lang = json.loads(cfg_path.read_text(encoding='utf-8')).get('lang')
+        except (OSError, ValueError, AttributeError):
+            pass
+    aliases = {'vi': 'vi_VN', 'vi-vn': 'vi_VN', 'en': 'en_US',
+               'zh': 'zh_CN', 'zh-cn': 'zh_CN'}
+    return aliases.get(str(lang).lower(), lang) if lang in _SPLASH_COPY or str(lang).lower() in aliases else 'vi_VN'
+
+
+class SplashArtwork(QWidget):
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.translate(self.width() / 2, self.height() / 2)
+        painter.rotate(-10)
+        for offset, color in ((24, '#27434a'), (10, '#315b5d'), (-6, '#416e6b')):
+            painter.setPen(QPen(QColor('#669a93'), 1))
+            painter.setBrush(QColor(color))
+            painter.drawRoundedRect(QRectF(-66 + offset, -72, 142, 154), 18, 18)
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.setPen(QPen(QColor('#6fe0c4'), 9))
+        painter.drawEllipse(QRectF(-25, -30, 69, 69))
+        painter.end()
+
+
 class StartWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -72,34 +132,65 @@ class StartWindow(QWidget):
         self.LoadNotif = None
         self.start_time = time.time()
         self.loader = None
-        self.setWindowTitle('pyVideoTrans')
+        self.setWindowTitle('Xưởng Video')
         self.screen=None
 
         self.resize(560, 350)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)  # Window background transparent
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        copy = _SPLASH_COPY[_splash_locale()]
 
-        self.background_label = QLabel(self)
-        self.pixmap = QPixmap(str(resource_path('videotrans', 'styles', 'logo.png')))
-        self.background_label.setPixmap(self.pixmap)
-        self.background_label.setScaledContents(True)
-        self.background_label.setGeometry(self.rect())
-
-        # Overlay text on background
-        v_layout = QVBoxLayout(self)
-        v_layout.addStretch(1)
-        self.status_label = QLabel(f"pyVideoTrans {VERSION} Loading...")
-        self.status_label.setAlignment(Qt.AlignmentFlag.AlignRight)
-        self.status_label.setStyleSheet("font-size:16px; color:white; background-color:transparent;")
-
-        v_layout.addWidget(self.status_label)
-        v_layout.setContentsMargins(0, 0, 0, 20)
+        root = QVBoxLayout(self)
+        root.setContentsMargins(0, 0, 0, 0)
+        panel = QFrame(self)
+        panel.setObjectName('splashPanel')
+        panel.setStyleSheet('''
+            #splashPanel { background: #101820; border: 1px solid #34545a; border-radius: 24px; }
+            #splashPanel QLabel { color: #f4f7f4; background: transparent; }
+            #splashPanel QLabel#splashEyebrow { color: #6fe0c4; font-size: 11px; font-weight: 700; }
+            #splashPanel QLabel#splashBrand { font-size: 34px; font-weight: 700; }
+            #splashPanel QLabel#splashDescription { color: #b7cbcb; font-size: 13px; }
+            #splashPanel QLabel#splashStatus { color: #d6e5e1; font-size: 12px; }
+            #splashPanel QProgressBar { border: 0; border-radius: 3px; background: #314650; height: 5px; }
+            #splashPanel QProgressBar::chunk { background: #6fe0c4; border-radius: 3px; }
+        ''')
+        root.addWidget(panel)
+        layout = QVBoxLayout(panel)
+        layout.setContentsMargins(34, 25, 34, 31)
+        layout.setSpacing(8)
+        top = QHBoxLayout()
+        top.addWidget(QLabel(copy['top']))
+        top.addStretch()
+        top.addWidget(QLabel(VERSION))
+        layout.addLayout(top)
+        content = QHBoxLayout()
+        text = QVBoxLayout()
+        text.addStretch()
+        eyebrow = QLabel(copy['eyebrow'])
+        eyebrow.setObjectName('splashEyebrow')
+        text.addWidget(eyebrow)
+        brand = QLabel(copy['brand'])
+        brand.setObjectName('splashBrand')
+        text.addWidget(brand)
+        description = QLabel(copy['title'])
+        description.setObjectName('splashDescription')
+        description.setWordWrap(True)
+        text.addWidget(description)
+        text.addStretch()
+        content.addLayout(text, 3)
+        art = SplashArtwork(panel)
+        art.setMinimumSize(170, 190)
+        content.addWidget(art, 2)
+        layout.addLayout(content, 1)
+        self.status_label = QLabel(copy['loading'])
+        self.status_label.setObjectName('splashStatus')
+        layout.addWidget(self.status_label)
+        self.progress = QProgressBar()
+        self.progress.setRange(0, 0)
+        self.progress.setTextVisible(False)
+        layout.addWidget(self.progress)
 
     def closeEvent(self, event):
-        # Release splash screen resources
-        if hasattr(self, 'pixmap') and self.pixmap:
-            self.pixmap = None
-
         # If main window doesn't exist, quit application
         if self.main_window is None:
             QApplication.instance().quit()
@@ -108,11 +199,12 @@ class StartWindow(QWidget):
 
     def update_lable(self, t):
         print(f'{t}')
+        copy = _SPLASH_COPY[_splash_locale()]
         if t == 'end':
-            self.status_label.setText(f'Total time {int(time.time() - self.start_time)}s')
+            self.status_label.setText(copy['ready'])
             QTimer.singleShot(1000, lambda: self.close())
         else:
-            self.status_label.setText(f'{t}  {int(time.time() - self.start_time)}s')
+            self.status_label.setText(copy['loading'])
         QApplication.processEvents()
 
     def center(self):
@@ -239,8 +331,11 @@ if __name__ == "__main__":
             Path(tempfile.gettempdir()).as_posix()):
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Critical)
-        msg_box.setWindowTitle('Error')
-        msg_box.setText('Please extract first, then double-click sp.exe. Cannot run directly from archive.')
+        msg_box.setWindowTitle({'vi_VN': 'Lỗi', 'zh_CN': '错误'}.get(_splash_locale(), 'Error'))
+        msg_box.setText({
+            'vi_VN': 'Hãy giải nén toàn bộ gói rồi mở sp.exe. Không chạy trực tiếp từ tệp nén.',
+            'zh_CN': '请先完整解压，然后运行 sp.exe。不要直接从压缩包启动。',
+        }.get(_splash_locale(), 'Extract the complete archive before opening sp.exe.'))
         msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint)
         msg_box.exec()
         app.quit()

@@ -10,7 +10,9 @@ class BindSignalsMixin:
         from videotrans.mainwin._actions import WinAction
         from videotrans.configure.signal_hub import SignalHub
         from videotrans.configure.config import settings, params
-        from videotrans.util.help_misc import open_url, show_glossary_editor
+        from PySide6.QtWidgets import QMessageBox
+        from videotrans.configure.config import tr
+        from videotrans.util.help_misc import show_glossary_editor
 
         self.win_action = WinAction(self)
         self.restart_btn.clicked.connect(self.restart_app)
@@ -36,7 +38,8 @@ class BindSignalsMixin:
         self.recogn_type.currentIndexChanged.connect(self.win_action.recogn_type_change)
         self.model_name.currentIndexChanged.connect(self.win_action.model_type_change)
 
-        self.label.clicked.connect(lambda: open_url(url='https://pyvideotrans.com/proxy'))
+        self.label.clicked.connect(lambda: QMessageBox.information(
+            self, tr('Proxy'), tr('Proxy help text')))
         self.glossary.clicked.connect(lambda: show_glossary_editor(self))
         self.action_biaozhun.triggered.connect(self.win_action.set_biaozhun)
         self.action_tiquzimu.triggered.connect(self.win_action.set_tiquzimu)
@@ -46,7 +49,7 @@ class BindSignalsMixin:
 
         self.aisendsrt.toggled.connect(self.checkbox_state_changed)
         self.rightbottom.clicked.connect(lambda : get_win('info'))
-        self.statusLabel.clicked.connect(lambda: open_url('https://pyvideotrans.com'))
+        self.statusLabel.clicked.connect(self.show_home)
 
         def _setcursor():
             self.callback('set cursor...')

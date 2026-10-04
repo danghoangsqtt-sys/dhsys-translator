@@ -2,7 +2,7 @@
 
 Ngày lập: 2026-10-03
 
-Trạng thái: Đặc tả triển khai Phase 1–3; Phase 4 là hướng thiết kế tạm thời; Phase 5 cần quyết định phạm vi
+Trạng thái: Đặc tả triển khai Phase 1–3; lát cắt trang chủ/Việt hóa Phase 4 được duyệt ngày 2026-10-04; luồng biên tập đầy đủ và Phase 5 còn theo kế hoạch
 Kế hoạch thứ tự: [PLAN](PLAN.md)
 
 ## 1. Phạm vi sản phẩm
@@ -12,7 +12,7 @@ pyVideoTrans nhận video/âm thanh, tạo phụ đề, dịch, tạo tiếng n�
 ### Ràng buộc và quyết định còn mở
 
 - **Mặc định:** Windows desktop là mục tiêu đóng gói đầu tiên; macOS/Linux và WebUI vẫn có thể chạy từ nguồn nhưng chưa có cổng build phát hành mới.
-- **Giao diện:** PySide6, bố cục theo quy trình như CapCap; chưa chọn React/Remotion. Đây là giả định thiết kế, cần người dùng chốt trước Phase 4.
+- **Giao diện:** PySide6. Đợt đầu Phase 4 gồm splash, trang chủ desktop và tiếng Việt; luồng biên tập theo quy trình vẫn cần nghiệm thu riêng. Chưa chọn React/Remotion.
 - **Timeline:** chỉ là Phase 5 có điều kiện. Chưa có yêu cầu để sao chép toàn bộ chức năng CapCap hoặc Remotion.
 - **Python:** hiện khóa 3.10; phiên bản thay thế được chọn qua ma trận tương thích, không ấn định trước khi thử mô hình và gói đóng.
 
