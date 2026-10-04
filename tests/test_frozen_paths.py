@@ -2,6 +2,7 @@ import json
 import os
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from videotrans.configure import _paths
 from videotrans.configure._paths import _frozen_roots, _prepare_frozen_home
@@ -63,6 +64,38 @@ def test_frozen_home_creates_config_directory_when_bundle_has_no_assets(tmp_path
     _prepare_frozen_home(tmp_path / "empty_bundle", data, tmp_path / "install")
 
     assert (data / "videotrans").is_dir()
+
+
+def test_frozen_home_never_overwrites_an_existing_icon(tmp_path):
+    resources = tmp_path / "bundle"
+    data = tmp_path / "userdata"
+    bundled_icon = resources / "videotrans" / "styles" / "icon.ico"
+    bundled_icon.parent.mkdir(parents=True)
+    bundled_icon.write_bytes(b"bundled icon")
+    existing_icon = data / "videotrans" / "styles" / "icon.ico"
+    existing_icon.parent.mkdir(parents=True)
+    existing_icon.write_bytes(b"in use icon")
+
+    _prepare_frozen_home(resources, data, tmp_path / "install")
+
+    assert existing_icon.read_bytes() == b"in use icon"
+
+
+def test_frozen_home_concurrent_seed_has_one_writer_and_no_errors(tmp_path):
+    resources = tmp_path / "bundle"
+    data = tmp_path / "userdata"
+    bundled_language = resources / "videotrans" / "language" / "en_US.json"
+    bundled_language.parent.mkdir(parents=True)
+    bundled_language.write_text('{"seed":"bundle"}', encoding="utf-8")
+
+    with ThreadPoolExecutor(max_workers=6) as executor:
+        list(executor.map(
+            lambda _: _prepare_frozen_home(resources, data, tmp_path / "install"),
+            range(12),
+        ))
+
+    copied_language = data / "videotrans" / "language" / "en_US.json"
+    assert copied_language.read_text(encoding="utf-8") == '{"seed":"bundle"}'
 
 
 def test_frozen_config_import_writes_only_to_user_data_from_other_cwd(tmp_path):

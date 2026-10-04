@@ -3,6 +3,7 @@ import os
 import shutil
 import sys
 import tempfile
+import time
 from pathlib import Path
 
 
@@ -24,6 +25,47 @@ def _frozen_roots(executable, bundled_root=None, local_app_data=None, home=None,
     return resource_dir.resolve(), data_dir.resolve(), executable_dir
 
 
+def _copy_missing_frozen_asset(source, destination):
+    """Seed an asset once without overwriting or racing another app instance."""
+    if destination.exists():
+        return
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    lock_path = destination.with_name(f".{destination.name}.seed.lock")
+    for _ in range(100):
+        try:
+            lock_descriptor = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            if destination.exists():
+                return
+            time.sleep(0.05)
+            continue
+        os.close(lock_descriptor)
+        try:
+            if destination.exists():
+                return
+            temporary_path = None
+            try:
+                with tempfile.NamedTemporaryFile(
+                        dir=destination.parent,
+                        prefix=f".{destination.name}.",
+                        suffix=".tmp",
+                        delete=False) as temporary_file:
+                    temporary_path = Path(temporary_file.name)
+                    with source.open("rb") as source_file:
+                        shutil.copyfileobj(source_file, temporary_file)
+                if not destination.exists():
+                    os.replace(temporary_path, destination)
+                    temporary_path = None
+            finally:
+                if temporary_path is not None:
+                    temporary_path.unlink(missing_ok=True)
+        finally:
+            lock_path.unlink(missing_ok=True)
+        return
+    if not destination.exists():
+        raise RuntimeError(f"Timed out seeding frozen asset: {destination}")
+
+
 def _prepare_frozen_home(resource_dir, data_dir, legacy_dir):
     """Copy missing bundled assets and legacy configuration without replacing user data."""
     data_dir.mkdir(parents=True, exist_ok=True)
@@ -36,20 +78,17 @@ def _prepare_frozen_home(resource_dir, data_dir, legacy_dir):
         for source in source_dir.rglob('*'):
             if source.is_file():
                 destination = data_dir / source.relative_to(resource_dir)
-                if not destination.exists() or source.relative_to(resource_dir).as_posix() == 'videotrans/styles/icon.ico':
-                    destination.parent.mkdir(parents=True, exist_ok=True)
-                    shutil.copy2(source, destination)
+                _copy_missing_frozen_asset(source, destination)
     for name in ('cfg.json', 'params.json'):
         source = legacy_dir / 'videotrans' / name
         destination = data_dir / 'videotrans' / name
-        if source.is_file() and not destination.exists():
-            destination.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(source, destination)
+        if source.is_file():
+            _copy_missing_frozen_asset(source, destination)
     for name in ('languages.json',):
         source = legacy_dir / 'videotrans' / name
         destination = data_dir / 'videotrans' / name
-        if source.is_file() and not destination.exists():
-            shutil.copy2(source, destination)
+        if source.is_file():
+            _copy_missing_frozen_asset(source, destination)
 
 
 IS_FROZEN = bool(getattr(sys, 'frozen', False))
