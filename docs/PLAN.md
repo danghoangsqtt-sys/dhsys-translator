@@ -168,3 +168,11 @@ This slice changes presentation and navigation only. It keeps every existing QAc
 - Add focused Qt tests for the application shell, shared actions and required style tokens; run the full source suite with the supported Python 3.12 runtime.
 - Perform an offscreen GUI smoke and record the result; leave the Phase 3 clean-runner and provider-media release gates open.
 - **Gate:** focused UI tests and the full source test suite pass; no Phase 3 release claim is made from UI-only evidence.
+
+
+**4.7. Rebuild and smoke-test the light Windows candidate ? P1; SPEC UI-05, UI-06, UI-07, PKG-01**
+
+- Rebuild the tracked `sp.spec` artifact with Python 3.12 after the light interface changes; keep the one-directory layout and existing FFmpeg staging.
+- Extend the frozen smoke check so the candidate must resolve `light.qss`, then verify the executable, dynamic provider/dialog, CLI, SRT parser and generated MP4 fixture from outside the install directory.
+- Record the artifact path, hash and exact smoke result. This proves the UI assets ship with the candidate but does not replace the clean-runner or provider-backed release gates.
+- **Gate:** the rebuilt local candidate contains `light.qss`, starts from another working directory and passes frozen smoke with no source-tree imports.

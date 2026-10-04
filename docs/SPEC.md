@@ -146,3 +146,8 @@ Every pre-existing QAction remains instantiated and reachable from the menu bar.
 The desktop workspace has a persistent identity/navigation area, a clear page title, a visually primary start control, and the original configuration, subtitle and queue controls. At 1280?720, users can reach the primary action and scrolling controls without hidden modal navigation. At 1920?1080, the content uses the extra space without changing widget semantics. The original top menu remains the full tool catalog.
 
 **Acceptance for the approved light-layout slice:** the light theme and shell load in the packaged source path; original actions are still used for all shortcuts; focused Qt tests plus the full Python 3.12 suite pass; visual smoke covers 1280?720 and 1920?1080. This slice does not close Phase 3 release gates.
+
+
+### UI-08 ? Packaged light interface integrity
+
+The Windows candidate built from tracked `sp.spec` must bundle `videotrans/styles/light.qss` and load it through `sp.py`. Its frozen smoke runs from outside the installation directory and confirms that the light stylesheet resolves alongside the existing style, icon, FFmpeg, dynamic provider/dialog, CLI and fixture-media checks. Passing this local candidate gate does not claim clean-runner, live-provider or release completion.

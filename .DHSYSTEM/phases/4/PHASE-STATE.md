@@ -5,6 +5,7 @@
 | 4.4 Light application shell and theme | verified locally; persistence pending | Existing workspace is reparented into shell; shared light QSS and 1280?720/1920?1080 smoke pass |
 | 4.5 Navigation parity and workspace hierarchy | verified locally; persistence pending | Sidebar shortcuts and tool catalog reuse original QAction instances; focused Qt tests pass |
 | 4.6 Regression evidence and handoff | verified locally; persistence pending | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved |
+| 4.7 Rebuild and smoke-test light Windows candidate | in_progress | Rebuild from tracked spec and assert packaged light stylesheet before frozen smoke |
 
 Phase state: in_progress. The approved light-layout slice is verified locally. The wider Phase 4 workflow redesign remains planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
 
