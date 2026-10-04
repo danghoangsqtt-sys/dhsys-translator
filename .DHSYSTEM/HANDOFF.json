@@ -23,6 +23,7 @@
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
     "candidate_path": "dist/sp/sp.exe",
     "candidate_sha256": "8c3396a06c41fee7f59effb22a03a0175e1db38be3c4345d6cd3f3a8236a7e3d",
-    "checkpoint_commit": "4e5d93fb"
+    "checkpoint_commit": "4e5d93fb",
+    "candidate_checkpoint_commit": "da883c6e"
   }
 }
