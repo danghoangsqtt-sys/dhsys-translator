@@ -22,9 +22,9 @@
       "4.6",
       "4.7"
     ],
-    "status": "task 4.3 responsive workflow hierarchy verified locally; deployment to dist/sp waits for its open process; tasks 4.1?4.3 verified locally; persistence pending",
+    "status": "task 4.3 responsive workflow hierarchy deployed and verified locally; tasks 4.1?4.3 verified locally; persistence pending",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
-    "candidate_path": "tmp/responsive-dist/sp/sp.exe",
+    "candidate_path": "dist/sp/sp.exe",
     "candidate_sha256": "B4CF72937F57790380018A4571731FA16C18340BE51D10099C06504AE59FF827",
     "candidate_checkpoint_commit": "23d0752c"
   }

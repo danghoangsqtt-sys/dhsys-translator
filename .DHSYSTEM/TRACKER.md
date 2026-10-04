@@ -2,7 +2,7 @@
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
-- Parallel UI task: 4.3 responsive workflow hierarchy verified locally; deployment waits for the open `dist/sp` process; tasks 4.1?4.3 verified locally; persistence pending
+- Parallel UI task: 4.3 responsive workflow hierarchy deployed and verified locally; tasks 4.1?4.3 verified locally; persistence pending
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress with the frozen startup contention repair verified locally; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
@@ -11,7 +11,7 @@
 
 ## Evidence
 
-- Responsive workspace repair 2026-10-04: workflow rows wrap instead of compressing, the workflow pane scrolls vertically, the subtitle pane can shrink, and navigation collapses into a menu below 980 px while reusing existing QAction instances. Focused UI: 11 passed; full Python 3.12: 559 passed with one existing external `pydub` warning. Source screenshots at 1280?720, 1024?720 and 900?720 are stored in `.DHSYSTEM/ui-direction/2026-10-04-light-workspace/`. Candidate `tmp/responsive-dist/sp/sp.exe` SHA-256 `B4CF72937F57790380018A4571731FA16C18340BE51D10099C06504AE59FF827` passed frozen resource/provider/dialog/CLI/SRT/MP4 and responsive UI smoke; concurrent startup smoke passed. Deployment to `dist/sp` is pending because its process is open.
+- Responsive workspace repair 2026-10-04: workflow rows wrap instead of compressing, the workflow pane scrolls vertically, the subtitle pane can shrink, and navigation collapses into a menu below 980 px while reusing existing QAction instances. Focused UI: 11 passed; full Python 3.12: 559 passed with one existing external `pydub` warning. Source screenshots at 1280?720, 1024?720 and 900?720 are stored in `.DHSYSTEM/ui-direction/2026-10-04-light-workspace/`. Candidate `tmp/responsive-dist/sp/sp.exe` SHA-256 `B4CF72937F57790380018A4571731FA16C18340BE51D10099C06504AE59FF827` passed frozen resource/provider/dialog/CLI/SRT/MP4 and responsive UI smoke; concurrent startup smoke passed. The candidate was synchronized to `dist/sp`; the deployed resource and responsive UI smoke checks passed.
 
 - Frozen startup contention repair 2026-10-04: the path initializer no longer overwrites the shared icon on every launch. Missing bundled assets are seeded through an exclusive lock and atomic destination replacement. `tests/test_frozen_paths.py` plus `tests/test_config_split.py`: 39 passed; full Python 3.12 suite: 557 passed with one existing external `pydub` warning. Candidate SHA-256 `05AB4C46E56A3042A5876119A4710A1C6C068F33376A24D98A69170994CC3EE3` started twice concurrently with one isolated `LOCALAPPDATA`; both returned 0 and passed resource, provider/dialog, CLI, SRT and generated MP4 smoke checks. The verified package was synchronized to `dist/sp` and the same two-process smoke passed again there. Clean runner, full provider media and upstream persistence remain open.
 
