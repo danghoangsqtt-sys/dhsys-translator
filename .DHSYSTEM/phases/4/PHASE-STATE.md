@@ -4,7 +4,7 @@
 | --- | --- | --- |
 | 4.1 Existing workflow section cards | verified locally; persistence pending | 5 section cards preserve original widgets; source and packaged UI probes pass |
 | 4.2 Workflow view state bridge | verified locally; persistence pending | Presentation-only mapping from action/`SignMsg` events to card state; source and frozen UI/resource probes pass |
-| 4.3 Workflow hierarchy and action areas | verified locally; persistence pending | Numbered steps, presentation-only action/activity/subtitle areas, wrapping workflow rows, narrow navigation menu; 559 tests and deployed frozen smoke pass |
+| 4.3 Workflow hierarchy and action areas | verified locally; persistence pending | Responsive rows/menu, one visible Home route; 560 tests and deployed frozen smoke pass |
 | 4.4 Light application shell and theme | verified locally; persistence pending | Existing workspace is reparented into shell; shared light QSS and 1280?720/1920?1080 smoke pass |
 | 4.5 Navigation parity and workspace hierarchy | verified locally; persistence pending | Sidebar shortcuts and tool catalog reuse original QAction instances; focused Qt tests pass |
 | 4.6 Regression evidence and handoff | verified locally; persistence pending | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved |
