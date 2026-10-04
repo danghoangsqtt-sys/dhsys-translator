@@ -73,6 +73,11 @@ def run_check():
             or window.tts_type.parentWidget() is not window.voiceSection
             or window.subtitle_type.parentWidget() is not window.outputSection):
         raise AssertionError('packaged workflow controls are not in their intended sections')
+    if (window.startbtn.parentWidget() is not window.workflowActionArea
+            or window.retrybtn.parentWidget() is not window.workflowActionArea
+            or window.scroll_area.parentWidget() is not window.workflowActivityArea
+            or window.subtitle_area.parentWidget() is not window.verticalLayoutWidget):
+        raise AssertionError('packaged workspace hierarchy did not retain existing controls')
     window.set_workflow_view_state('running')
     if (window.workflowStatus.property('workflowState') != 'running'
             or any(section.property('workflowState') != 'running' for section in workflow_sections)):
@@ -86,6 +91,7 @@ def run_check():
         'light_style': resource_path('videotrans', 'styles', 'light.qss').is_file(),
         'workflow_sections': len(workflow_sections),
         'workflow_state': 'running',
+        'workflow_hierarchy': True,
     }
 
 

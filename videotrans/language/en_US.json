@@ -1032,5 +1032,7 @@
   "Workflow ready": "Workflow ready",
   "Workflow in progress": "Workflow in progress",
   "Workflow needs attention": "Workflow needs attention",
-  "Workflow complete": "Workflow complete"
+  "Workflow complete": "Workflow complete",
+  "Task activity": "Task activity",
+  "Subtitles & preview": "Subtitles & preview"
 }

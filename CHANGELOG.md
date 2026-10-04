@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The desktop workflow now numbers its five existing steps and separates the existing Start/Retry, task activity, and subtitle-preview areas for faster scanning. No processing controls or behavior changed.
+
 - Workflow cards now show a localized ready, processing, attention, or complete state from existing task events. The new presentation bridge does not alter queues, media processing, saved settings, output paths, dialogs, or CLI behavior.
 
 - Light workspace now groups the original controls into five labeled workflow sections while preserving every widget/action handler. Local candidate `dist/sp/sp.exe` SHA-256 `6b5d70b334489d976a5c96f54cf6d8a331cc523f9d80bd2a228d7a9faf1c816e` passes frozen resource and UI probes with all five sections.

@@ -87,3 +87,20 @@ def test_workflow_view_state_updates_existing_cards_without_replacing_controls()
         assert section.property("workflowState") == WORKFLOW_RUNNING
     assert win.btn_get_video.parentWidget() is win.prepareSection
     assert win.recogn_type.parentWidget() is win.transcriptionSection
+
+
+def test_workflow_hierarchy_groups_existing_action_activity_and_subtitle_widgets():
+    win = _TestWindow()
+
+    assert win.workflowActionArea.objectName() == "workflowActionArea"
+    assert win.startbtn.parentWidget() is win.workflowActionArea
+    assert win.retrybtn.parentWidget() is win.workflowActionArea
+    assert win.output_dir.parentWidget() is win.workflowActionArea
+    assert win.workflowActivityArea.objectName() == "workflowActivityArea"
+    assert win.scroll_area.parentWidget() is win.workflowActivityArea
+    assert win.subtitlePanelTitle.parentWidget() is win.verticalLayoutWidget
+    assert win.subtitle_area.parentWidget() is win.verticalLayoutWidget
+    assert win.import_subtitle.parentWidget() is win.verticalLayoutWidget
+
+    badges = win.findChildren(type(win.workflowActivityTitle), "workflowStepBadge")
+    assert [badge.text() for badge in badges] == ["1", "2", "3", "4", "5"]

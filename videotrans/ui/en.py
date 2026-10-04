@@ -46,27 +46,27 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.setSpacing(8)
 
         self.prepareSection, prepare_layout = self._create_workflow_section(
-            "workflowPrepare", "Preparation")
+            "workflowPrepare", 1, "Preparation")
         prepare_layout.addLayout(_create_file_row(self, self.prepareSection))
         self.verticalLayout_3.addWidget(self.prepareSection)
 
         self.transcriptionSection, transcription_layout = self._create_workflow_section(
-            "workflowTranscription", "Transcription")
+            "workflowTranscription", 2, "Transcription")
         transcription_layout.addLayout(_create_asr_row(self, self.transcriptionSection))
         self.verticalLayout_3.addWidget(self.transcriptionSection)
 
         self.translationSection, translation_layout = self._create_workflow_section(
-            "workflowTranslation", "Translation")
+            "workflowTranslation", 3, "Translation")
         translation_layout.addLayout(_create_translation_row(self, self.translationSection))
         self.verticalLayout_3.addWidget(self.translationSection)
 
         self.voiceSection, voice_layout = self._create_workflow_section(
-            "workflowVoice", "Voice & subtitles")
+            "workflowVoice", 4, "Voice & subtitles")
         voice_layout.addLayout(_create_tts_row(self, self.voiceSection))
         self.verticalLayout_3.addWidget(self.voiceSection)
 
         self.outputSection, output_layout = self._create_workflow_section(
-            "workflowOutput", "Timing & output")
+            "workflowOutput", 5, "Timing & output")
         output_layout.addLayout(_create_alignment_row(self, self.outputSection))
         self.verticalLayout_3.addWidget(self.outputSection)
 
@@ -209,6 +209,12 @@ class Ui_MainWindow(object):
         self.verticalLayout_3.addWidget(self.show_tips)
         self.verticalLayout_3.addWidget(self.workflowStatus)
 
+        self.workflowActionArea = QtWidgets.QFrame(self.layoutWidget)
+        self.workflowActionArea.setObjectName("workflowActionArea")
+        self.workflowActionLayout = QtWidgets.QVBoxLayout(self.workflowActionArea)
+        self.workflowActionLayout.setContentsMargins(12, 10, 12, 10)
+        self.workflowActionLayout.setSpacing(6)
+
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
 
@@ -231,10 +237,20 @@ class Ui_MainWindow(object):
         self.horizontalLayout_3.addWidget(self.startbtn)
         self.horizontalLayout_3.addWidget(self.retrybtn)
         self.horizontalLayout_3.addStretch(1)
-        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
-        self.verticalLayout_3.addWidget(self.output_dir)
+        self.workflowActionLayout.addLayout(self.horizontalLayout_3)
+        self.workflowActionLayout.addWidget(self.output_dir)
+        self.verticalLayout_3.addWidget(self.workflowActionArea)
 
-        self.scroll_area = QtWidgets.QScrollArea(self.layoutWidget)
+        self.workflowActivityArea = QtWidgets.QFrame(self.layoutWidget)
+        self.workflowActivityArea.setObjectName("workflowActivityArea")
+        self.workflowActivityLayout = QtWidgets.QVBoxLayout(self.workflowActivityArea)
+        self.workflowActivityLayout.setContentsMargins(12, 10, 12, 10)
+        self.workflowActivityLayout.setSpacing(6)
+        self.workflowActivityTitle = QtWidgets.QLabel(tr("Task activity"), self.workflowActivityArea)
+        self.workflowActivityTitle.setObjectName("workflowActivityTitle")
+        self.workflowActivityLayout.addWidget(self.workflowActivityTitle)
+
+        self.scroll_area = QtWidgets.QScrollArea(self.workflowActivityArea)
         self.scroll_area.setWidgetResizable(True)
         self.scroll_area.setObjectName("scroll_area")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
@@ -248,13 +264,18 @@ class Ui_MainWindow(object):
         self.processlayout = QtWidgets.QVBoxLayout(viewport)
         self.processlayout.setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
 
-        self.verticalLayout_3.addWidget(self.scroll_area)
+        self.workflowActivityLayout.addWidget(self.scroll_area)
+        self.verticalLayout_3.addWidget(self.workflowActivityArea)
         self.verticalLayoutWidget = QtWidgets.QWidget(self.splitter)
         self.verticalLayoutWidget.setObjectName("verticalLayoutWidget")
 
         self.subtitle_layout = QtWidgets.QVBoxLayout(self.verticalLayoutWidget)
         self.subtitle_layout.setContentsMargins(3, 0, 0, 0)
         self.subtitle_layout.setObjectName("subtitle_layout")
+
+        self.subtitlePanelTitle = QtWidgets.QLabel(tr("Subtitles & preview"), self.verticalLayoutWidget)
+        self.subtitlePanelTitle.setObjectName("subtitlePanelTitle")
+        self.subtitle_layout.addWidget(self.subtitlePanelTitle)
 
         self.subtitle_area = QPlainTextEdit()
         self.subtitle_area.setReadOnly(True)
@@ -285,16 +306,24 @@ class Ui_MainWindow(object):
 
         self._set_Ui_Text()
 
-    def _create_workflow_section(self, object_name, title):
+    def _create_workflow_section(self, object_name, step, title):
         section = QtWidgets.QFrame(self.layoutWidget)
         section.setObjectName(object_name)
         section.setProperty("workflowSection", True)
         layout = QtWidgets.QVBoxLayout(section)
         layout.setContentsMargins(11, 8, 11, 8)
         layout.setSpacing(5)
+        heading_layout = QtWidgets.QHBoxLayout()
+        heading_layout.setSpacing(7)
+        badge = QtWidgets.QLabel(str(step), section)
+        badge.setObjectName("workflowStepBadge")
+        badge.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        heading_layout.addWidget(badge)
         heading = QtWidgets.QLabel(tr(title), section)
         heading.setObjectName("workflowSectionTitle")
-        layout.addWidget(heading)
+        heading_layout.addWidget(heading)
+        heading_layout.addStretch()
+        layout.addLayout(heading_layout)
         return section, layout
 
     def set_workflow_view_state(self, state):

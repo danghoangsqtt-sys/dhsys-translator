@@ -1032,5 +1032,7 @@
   "Workflow ready": "流程已准备就绪",
   "Workflow in progress": "流程处理中",
   "Workflow needs attention": "流程需要处理",
-  "Workflow complete": "流程已完成"
+  "Workflow complete": "流程已完成",
+  "Task activity": "任务活动",
+  "Subtitles & preview": "字幕与预览"
 }

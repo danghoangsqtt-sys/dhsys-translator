@@ -59,6 +59,10 @@ def test_light_qss_has_approved_tokens_and_primary_control_rules():
     assert 'QFrame[workflowSection="true"]' in qss
     assert 'QFrame[workflowSection="true"][workflowState="running"]' in qss
     assert 'QLabel#workflowStatus[workflowState="error"]' in qss
+    assert "QFrame#workflowActionArea" in qss
+    assert "QFrame#workflowActivityArea" in qss
+    assert "QLabel#workflowStepBadge" in qss
+    assert "QLabel#subtitlePanelTitle" in qss
 
 
 def test_workspace_shell_accepts_generated_menu_bar_attribute():
