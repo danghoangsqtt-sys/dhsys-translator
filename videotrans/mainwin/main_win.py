@@ -9,7 +9,6 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 from PySide6.QtCore import QEvent, QTimer
 from PySide6.QtGui import QIcon
-from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMainWindow, QMessageBox, QStackedWidget
 from videotrans.configure import config
 config.init_run()
@@ -75,9 +74,6 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.home_page.workspace_requested.connect(self.show_workspace)
         self.home_page.tool_requested.connect(self._open_home_tool)
         self.home_page.locale_requested.connect(self._set_home_locale)
-        self.home_action = QAction(tr("Home"), self)
-        self.home_action.triggered.connect(self.show_home)
-        self.menuBar.insertAction(self.menuBar.actions()[0], self.home_action)
         self.show_home()
 
     def show_home(self):

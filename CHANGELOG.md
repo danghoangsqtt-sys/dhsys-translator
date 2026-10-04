@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The workspace now has one visible Home route: the sidebar on wide desktops and its compact Menu equivalent on narrow desktops.
+
 - The desktop workflow now wraps configuration controls, scrolls vertically when needed, and replaces the full sidebar with a compact menu on narrow desktops. Existing controls and actions are unchanged.
 
 - Frozen Windows startup now seeds bundled assets only when absent and serializes first-run copying, preventing `WinError 32` when a shared AppData asset is already in use.

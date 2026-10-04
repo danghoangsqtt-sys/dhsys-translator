@@ -51,6 +51,12 @@ def test_labels_and_mode_actions_have_text():
         assert action.toolTip()
 
 
+def test_legacy_home_status_button_is_not_visible():
+    win = _TestWindow()
+
+    assert win.statusLabel.isHidden()
+
+
 def test_existing_rows_are_grouped_into_five_workflow_sections():
     win = _TestWindow()
     expected = {

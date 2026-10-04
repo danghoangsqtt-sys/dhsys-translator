@@ -360,7 +360,7 @@ class Ui_MainWindow(object):
 
     def _set_Ui_Text(self):
         self.statusLabel = QtWidgets.QPushButton(tr("Home"))
-        self.statusBar.addWidget(self.statusLabel)
+        self.statusLabel.setVisible(False)
 
         self.rightbottom = QtWidgets.QPushButton(tr('About'))
 
