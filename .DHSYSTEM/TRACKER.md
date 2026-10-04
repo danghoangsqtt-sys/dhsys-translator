@@ -3,13 +3,15 @@
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
 - Parallel UI task: 4.3 — workflow hierarchy and action-area layout in progress; tasks 4.1–4.2 verified locally; persistence pending
-- State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
+- State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress with the frozen startup contention repair verified locally; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
 - Starting commit: `8cf344fe`
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 
 ## Evidence
+
+- Frozen startup contention repair 2026-10-04: the path initializer no longer overwrites the shared icon on every launch. Missing bundled assets are seeded through an exclusive lock and atomic destination replacement. `tests/test_frozen_paths.py` plus `tests/test_config_split.py`: 39 passed; full Python 3.12 suite: 557 passed with one existing external `pydub` warning. Fresh candidate `tmp/frozen-contention-dist/sp/sp.exe` SHA-256 `05AB4C46E56A3042A5876119A4710A1C6C068F33376A24D98A69170994CC3EE3` started twice concurrently with one isolated `LOCALAPPDATA`; both returned 0 and passed resource, provider/dialog, CLI, SRT and generated MP4 smoke checks. Clean runner, full provider media and upstream persistence remain open.
 
 - Task 4.2 workflow view state 2026-10-04: a pure presentation mapper receives existing action status and `SignMsg.type`, without changing queue, media, settings, output, dialog or CLI behavior. Focused Python 3.12 UI/state tests: 11 passed; full suite: 554 passed. Rebuilt candidate `dist/sp/sp.exe` SHA-256 `A37D876AA535802538EBA223714DD3E830B95C633248B91EECEFF3A05829ED02` passed frozen resource/media and UI probes; the UI probe reported five sections and `workflow_state: running`.
 

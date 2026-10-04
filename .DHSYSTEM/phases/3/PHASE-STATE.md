@@ -10,7 +10,7 @@
 | 3.9 Language and binding tests | verified locally; persistence pending | 102 focused and 540 full tests pass; saved locale and real Qt/CLI bindings verified |
 | 3.1 Python compatibility matrix | verified locally; artifact and persistence gates pending | 3.10/3.11/3.12 locked installs with wetext, 540 tests each; FFmpeg hash/media smoke |
 | 3.2 Windows packaging pipeline | verified locally; clean-runner/persistence pending | Python 3.12 onedir; packaged CLI/provider/dialog/SRT/MP4 smoke; new candidate opens 5/5 sidebar and 72/72 dynamic menu windows; earlier ZIP SHA-256 and extraction pass |
-| 3.3 Release gate and documentation | in_progress | Local Docker and extracted Windows smoke pass; clean runner, full media flow and persistence remain open |
+| 3.3 Release gate and documentation | in_progress | Local Docker and extracted Windows smoke pass; concurrent frozen startup repair passes 39 focused/557 full tests and two-process candidate smoke; clean runner, full media flow and persistence remain open |
 
 Execution order: **3.4 → 3.5 → 3.6 → 3.7 → 3.8 → 3.9 → 3.1 → 3.2 → 3.3**. Existing 3.1/3.2 edits remain in progress, but their completion is gated by audit remediation and artifact checks. See `docs/BUGFIX-PLAN.md` and `.DHSYSTEM/requests/` for acceptance per finding. Planned patch version: 4.14.1; current product version remains 4.14.
 
