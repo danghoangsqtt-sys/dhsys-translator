@@ -19,6 +19,7 @@
       "4.6"
     ],
     "status": "approved light interface slice verified locally; original actions and behavior retained; 10 focused UI and 549 full Python 3.12 tests pass; persistence pending",
-    "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md"
+    "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
+    "checkpoint_commit": "4e5d93fb"
   }
 }

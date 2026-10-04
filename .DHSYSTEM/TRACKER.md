@@ -10,7 +10,7 @@
 
 ## Evidence
 
-- Phase 4 light-layout slice 2026-10-04: white/gray/`#14452F` stylesheet, light launch/home/about surfaces and `DHSYSTEM.SYS` identity applied without changing processing code. `WorkspaceShell` reparents the original generated workspace and its sidebar triggers the same QAction objects. Focused UI suite: 10 passed; full Python 3.12 suite: 549 passed. Offscreen 1280?720 and 1920?1080 workspace smoke screenshots saved. The broader Phase 4 redesign and all Phase 3 release gates remain open.
+- Phase 4 light-layout slice 2026-10-04: white/gray/`#14452F` stylesheet, light launch/home/about surfaces and `DHSYSTEM.SYS` identity applied without changing processing code. `WorkspaceShell` reparents the original generated workspace and its sidebar triggers the same QAction objects. Focused UI suite: 10 passed; full Python 3.12 suite: 549 passed. Offscreen 1280?720 and 1920?1080 workspace smoke screenshots saved. Local checkpoint `4e5d93fb` preserves this slice; the broader Phase 4 redesign and all Phase 3 release gates remain open.
 
 
 - Sidebar audit 2026-10-04: BUG-016 reproduced on the older executable (5/5 sidebar failures, 65/72 dynamic menu imports missing). The new Python 3.12 candidate opens 5/5 sidebar and 72/72 dynamic menu windows; packaged provider/dialog, CLI, SRT, generated MP4 and 15-second GUI startup smoke pass from the copied delivery directory. Python 3.12 suite: 540 passed. The candidate workflow now checks those routes on the extracted package. Clean Windows runner, full provider-backed media workflow and upstream persistence remain open.
