@@ -176,3 +176,10 @@ This slice changes presentation and navigation only. It keeps every existing QAc
 - Extend the frozen smoke check so the candidate must resolve `light.qss`, then verify the executable, dynamic provider/dialog, CLI, SRT parser and generated MP4 fixture from outside the install directory.
 - Record the artifact path, hash and exact smoke result. This proves the UI assets ship with the candidate but does not replace the clean-runner or provider-backed release gates.
 - **Gate:** the rebuilt local candidate contains `light.qss`, starts from another working directory and passes frozen smoke with no source-tree imports.
+
+**4.8. Hoàn thiện responsive cho trang chủ và công cụ nhanh — P1; SPEC UI-03, UI-05, UI-06, UI-09**
+
+- Chuyển thẻ công cụ ở trang chủ về một cột khi không đủ chiều rộng; phần tiêu đề, chọn ngôn ngữ và nút mở nhanh phải tự xuống dòng.
+- Giữ nguyên widget, object name, signal và QAction của Translate SRT, Multiple speakers, Merge video/âm thanh/SRT và Speech recognition; thay các hàng cố định bằng bố cục tự xuống dòng hoặc vùng cuộn phù hợp.
+- Bỏ màu tối cục bộ ở bảng Multiple speakers, đưa trạng thái chọn và nhãn về light QSS; bổ sung bản dịch Việt cho menu điều hướng thu gọn.
+- **Gate:** source và frozen UI probe ở 480, 720, 900 và 1280 px không có điều khiển chính vượt khỏi canvas; các route cũ vẫn mở đúng cửa sổ và test hồi quy đầy đủ đạt.

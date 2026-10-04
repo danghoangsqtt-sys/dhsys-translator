@@ -151,3 +151,9 @@ The desktop workspace has a persistent identity/navigation area, a clear page ti
 ### UI-08 ? Packaged light interface integrity
 
 The Windows candidate built from tracked `sp.spec` must bundle `videotrans/styles/light.qss` and load it through `sp.py`. Its frozen smoke runs from outside the installation directory and confirms that the light stylesheet resolves alongside the existing style, icon, FFmpeg, dynamic provider/dialog, CLI and fixture-media checks. Passing this local candidate gate does not claim clean-runner, live-provider or release completion.
+
+### UI-09 — Responsive home and core utility windows
+
+Trang chủ và bốn công cụ nhanh (chép lời, dịch SRT, lồng tiếng nhiều người, ghép video/âm thanh/SRT) phải dùng được khi cửa sổ chỉ rộng 480 px, 720 px, 900 px và 1280 px. Thẻ, nút và hàng cấu hình tự xuống dòng hoặc nằm trong vùng cuộn hợp lệ; không cắt nút chọn tệp, khởi chạy, dừng hay mở thư mục kết quả. Multiple speakers dùng cùng hệ màu sáng, gồm bảng và trạng thái được chọn. Điều hướng thu gọn có nhãn tiếng Việt. Mọi object name, QAction, signal, cài đặt và xử lý media giữ nguyên.
+
+**Nghiệm thu:** source và executable frozen có probe cho bốn kích thước; probe xác nhận các route cũ mở đúng cửa sổ, không có phần tử điều khiển chính vượt canvas và light QSS vẫn được nạp. Focused Qt suite cùng full suite tiếp tục đạt.

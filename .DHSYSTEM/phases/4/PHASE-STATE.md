@@ -9,8 +9,9 @@
 | 4.5 Navigation parity and workspace hierarchy | verified locally; persistence pending | Sidebar shortcuts and tool catalog reuse original QAction instances; focused Qt tests pass |
 | 4.6 Regression evidence and handoff | verified locally; persistence pending | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved |
 | 4.7 Rebuild and smoke-test light Windows candidate | verified locally; persistence pending | Python 3.12 candidate has light QSS; frozen/UI/sidebar/menu smoke pass |
+| 4.8 Responsive home and core utility surfaces | in_progress | Home cards, core quick tools, light-table parity and compact Vietnamese navigation at 480/720/900/1280 px |
 
-Phase state: in_progress. Task 4.3 is active. Tasks 4.1–4.2 and the approved light-layout slice are verified locally. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+Phase state: in_progress. Task 4.8 is active. Tasks 4.1–4.7 are verified locally. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
 
 ## Evidence ? 2026-10-04
 

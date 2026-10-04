@@ -20,9 +20,10 @@
       "4.4",
       "4.5",
       "4.6",
-      "4.7"
+      "4.7",
+      "4.8"
     ],
-    "status": "task 4.3 responsive workflow hierarchy and one visible Home route deployed and verified locally; tasks 4.1?4.3 verified locally; persistence pending",
+    "status": "task 4.8 responsive home and core utility surfaces in progress; tasks 4.1-4.7 verified locally; persistence pending",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
     "candidate_path": "dist/sp/sp.exe",
     "candidate_sha256": "3F6C8B89DB50D1C91F0E8BC73E1E1E9CFE483BE820596B0A082656F87582CD12",
