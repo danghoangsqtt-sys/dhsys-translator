@@ -43,22 +43,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY pyproject.toml uv.lock .python-version* ./
 
 # 修复丢失了变量的 if 语句，正确引用 "${USE_CUDA}"
-RUN if [ "${USE_CUDA}" = "true" ]; then \
+RUN --mount=type=cache,target=/root/.cache/uv if [ "${USE_CUDA}" = "true" ]; then \
         echo ">>> CUDA" && \
-        uv pip install --system -r pyproject.toml --all-extras && \
+        uv pip install --system -r pyproject.toml --extra webui && \
         uv pip install --system torch==2.7.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu128 && \
         uv pip install --system nvidia-cublas-cu12 nvidia-cudnn-cu12; \
     else \
         echo ">>> CPU" && \
         # Pre-install CPU PyTorch so that 'uv pip install -r pyproject.toml' sees torch as satisfied and does not download NVIDIA CUDA wheels \
         uv pip install --system torch==2.7.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cpu && \
-        uv pip install --system -r pyproject.toml --all-extras; \
+        uv pip install --system -r pyproject.toml --extra webui; \
     fi && \
-    rm -rf /root/.cache/uv /tmp/*
+    rm -rf /tmp/*
 
 # Copy application source code
 COPY . .
 
 EXPOSE 7860
 
-CMD ["python", "webui.py"]
+CMD ["python", "webui.py", "--host", "0.0.0.0", "--port", "7860"]

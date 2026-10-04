@@ -72,18 +72,17 @@ class TestBaseTTSGetters:
         btts = BaseTTS(queue_tts=[{"text": "hello", "volume": "-50%"}])
         assert btts.get_volume() == 0.5
 
-    def test_get_pitch_zero_hz_returns_default(self):
-        # _cleantts normalizes 'hz' to 'Hz'; get_pitch regex [hz%] misses 'H'
+    def test_get_pitch_zero_hz(self):
         btts = BaseTTS(queue_tts=[{"text": "hello", "pitch": "+0Hz"}])
-        assert btts.get_pitch() == 1.0
+        assert btts.get_pitch() == 0.0
 
-    def test_get_pitch_positive_hz_returns_default(self):
+    def test_get_pitch_positive_hz(self):
         btts = BaseTTS(queue_tts=[{"text": "hello", "pitch": "+12Hz"}])
-        assert btts.get_pitch() == 1.0
+        assert btts.get_pitch() == 12.0
 
-    def test_get_pitch_negative_hz_returns_default(self):
+    def test_get_pitch_negative_hz(self):
         btts = BaseTTS(queue_tts=[{"text": "hello", "pitch": "-6Hz"}])
-        assert btts.get_pitch() == 1.0
+        assert btts.get_pitch() == -6.0
 
 
 class TestBaseTTSInitFields:
@@ -91,7 +90,6 @@ class TestBaseTTSInitFields:
         btts = BaseTTS(queue_tts=[{"text": "hello", "rate": "+0%", "volume": "+0%", "pitch": "+0Hz"}])
         assert btts.tts_type == 0
         assert btts.play is False
-        assert btts.is_test is False
         assert btts.is_cuda is False
         assert btts.len == 1
 

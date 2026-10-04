@@ -49,10 +49,19 @@ class AppParams:
         if Path(self._json_path).exists():
             try:
                 loaded = json.loads(Path(self._json_path).read_text(encoding='utf-8'))
-                # 单独更新 f5tts_role
-                loaded['f5tts_role'] = (
-                    "\n".join(set((loaded['f5tts_role'].strip() + "\n" + default['f5tts_role']).split("\n")))).strip()
-                default.update(loaded)
+                if isinstance(loaded, dict):
+                    roles = loaded.get('f5tts_role')
+                    if isinstance(roles, str):
+                        loaded['f5tts_role'] = "\n".join(dict.fromkeys(
+                            line for line in (roles + "\n" + default['f5tts_role']).splitlines()
+                            if line.strip()
+                        ))
+                    for key, value in loaded.items():
+                        expected = default.get(key)
+                        if key not in default or type(value) is type(expected):
+                            default[key] = value
+                        elif isinstance(expected, float) and type(value) is int:
+                            default[key] = float(value)
             except (OSError, json.JSONDecodeError):
                 pass
         else:

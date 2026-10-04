@@ -69,14 +69,14 @@ description: 菜单栏--帮助/关于 中有很多链接，比如模型下载地
     uv sync
     uv run sp.py
     ```
-*   **可选依赖**：`uv sync --all-extra` 安装所有可选渠道（qwen-tts, qwen-asr, moss-tts, chatterbox）
+*   **可选依赖**：`uv sync --extra webui` 安装 WebUI；其他渠道依赖已在基础安装中声明。
 
 ### 7. 源码部署后启动报错怎么办？
 
 常见原因及解决方案：
 *   **FFmpeg 未安装**：确保系统已安装 FFmpeg 且配置了环境变量
 *   **依赖缺失**：运行 `uv sync` 重新安装依赖
-*   **Python 版本不对**：必须使用 Python 3.10（`.python-version` 文件已指定）
+*   **Python 版本不对**：源码支持 Python 3.10–3.12；`.python-version` 指定默认构建版本 3.10.19。Windows 打包仍按 3.10 验证，详见 [运行时矩阵](runtime-matrix.md)。
 
 ---
 

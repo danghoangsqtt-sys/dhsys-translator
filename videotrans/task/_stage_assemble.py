@@ -15,6 +15,19 @@ from videotrans.util.help_ffmpeg import get_video_codec, get_audio_time, runffmp
 from videotrans.util.help_misc import vail_file, read_last_n_lines, is_novoice_mp4
 
 
+def _unused_video_path(path):
+    """Pick a new final filename without replacing a previous export."""
+    path = Path(path)
+    if not path.exists():
+        return path
+    index = 2
+    while True:
+        candidate = path.with_name(f"{path.stem}-{index}{path.suffix}")
+        if not candidate.exists():
+            return candidate
+        index += 1
+
+
 class AssembleMixin:
 
     def assembling(self) -> None:
@@ -49,8 +62,8 @@ class AssembleMixin:
 
         try:
             if self.cfg.only_out_mp4:
-                shutil.move(self.cfg.targetdir_mp4, Path(self.cfg.target_dir).parent / Path(self.cfg.targetdir_mp4).name)
-                shutil.rmtree(self.cfg.target_dir, ignore_errors=True)
+                destination = _unused_video_path(Path(self.cfg.target_dir).parent / Path(self.cfg.targetdir_mp4).name)
+                shutil.move(self.cfg.targetdir_mp4, destination)
         except OSError as e:
             logger.exception(f'仅输出mp4时清理临时文件移动视频位置出错，跳过 {e}', exc_info=True)
 

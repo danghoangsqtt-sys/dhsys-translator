@@ -13,7 +13,7 @@
 
 [English](../README.md) | [**文档**](https://pyvideotrans.com) | [**在线问答**](https://bbs.pyvideotrans.com) 
 
-[![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](../LICENSE) [![Python](https://img.shields.io/badge/Python-3.10%2B-green.svg)](https://www.python.org/) [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
+[![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](../LICENSE) [![Python](https://img.shields.io/badge/Python-3.10--3.12-green.svg)](https://www.python.org/) [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
 </div>
 
@@ -63,7 +63,7 @@
 
 ### 1. 前置准备
 
-* **Python**: 建议版本 3.10
+* **Python**: 源码支持 3.10–3.12；Windows 候选构建使用 3.12.13。验证范围见 [运行时矩阵](runtime-matrix.md)。
 * **FFmpeg**: 必须安装并配置到环境变量。
   * **macOS**: 
   ```
@@ -96,8 +96,7 @@ cd pyvideotrans
 uv sync
 ```
 
-> 默认不安装 `whisper.net` 本地渠道，若需要全部安装请执行 `uv sync --all-extras`
-> - 单独安装 `whisper.net`：`uv sync --extra dotnet`
+> WebUI 为可选功能，可执行 `uv sync --extra webui` 安装。Windows 下 Whisper.NET 所需的 `pythonnet` 已包含在基础依赖中。
 
 ### 4. 启动软件
 

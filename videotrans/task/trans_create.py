@@ -1,5 +1,5 @@
 import time
-import threading,shutil
+import threading
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List, Dict
@@ -8,6 +8,7 @@ from videotrans.configure.config import tr, app_cfg, settings, logger
 from videotrans.configure import config
 from videotrans.translator import get_audio_code
 from videotrans.task._base import BaseTask
+from videotrans.task._cache import _clear_managed_cache
 from videotrans.task.taskcfg import TaskCfgVTT
 from videotrans.configure import constants
 
@@ -58,10 +59,7 @@ class TransCreate(
         if not self.cfg.cache_folder:
             self.cfg.cache_folder = f"{config.TEMP_DIR}/{self.uuid}"
         if self.cfg.clear_cache:
-            if self.cfg.target_dir and Path(self.cfg.target_dir).is_dir():
-                shutil.rmtree(self.cfg.target_dir, ignore_errors=True)
-            if self.cfg.cache_folder and Path(self.cfg.cache_folder).is_dir():
-                shutil.rmtree(self.cfg.cache_folder, ignore_errors=True)
+            _clear_managed_cache(self.cfg.cache_folder)
 
         self.signal(text=tr('kaishichuli'))
         self.max_speakers = max(self.cfg.nums_diariz,0) if self.cfg.enable_diariz else -1
@@ -131,4 +129,4 @@ class TransCreate(
             threading.Thread(target=runing, daemon=True).start()
 
     def __repr__(self):        
-        return f'[TransCreate]: {self.is_copy_video=},{self.video_codec_num=},{self.video_info=},{self.is_audio_trans=}\n{self.cfg=}' 
+        return f'[TransCreate]: {self.is_copy_video=},{self.video_codec_num=},{self.video_info=},{self.is_audio_trans=}\n{self.cfg=}'

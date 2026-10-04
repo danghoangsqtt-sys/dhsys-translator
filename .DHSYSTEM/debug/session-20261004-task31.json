@@ -1,0 +1,22 @@
+{
+  "id": "debug-20261004-task31",
+  "status": "resolved",
+  "created_at": "2026-10-04",
+  "updated_at": "2026-10-04",
+  "problem": {
+    "description": "Python 3.11/3.12 lock could not resolve wetext with a cp310-only Windows wheel; compatibility audit also emitted invalid escape warnings",
+    "affected_files": ["pyproject.toml", "uv.lock", "videotrans/recognition/_sttapi.py", "videotrans/util/_srt_parse.py"]
+  },
+  "investigation": {
+    "findings": [
+      "The wheel publisher provides cp311 and cp312 Windows assets in the same fixed release.",
+      "A piped PowerShell CLI probe returned exit 1 because Select-Object stopped the producer; unpiped CLI help returned exit 0.",
+      "Two existing string literals produced escape warnings on newer Python runtimes."
+    ]
+  },
+  "resolution": {
+    "root_cause": "A single cp310 source rule covered the entire declared Python range; two literals used accidental escape syntax.",
+    "fix_applied": "Select wheel URLs by Python ABI, pin mutable Git sources, and correct the literals.",
+    "verification": "Locked installs and 540 tests each on Python 3.10/3.11/3.12; 42 focused tests on 3.10 and 3.12 after literal repair; lock and diff checks pass."
+  }
+}

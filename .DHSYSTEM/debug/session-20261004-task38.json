@@ -1,0 +1,28 @@
+{
+  "id": "debug-20261004-task38",
+  "status": "resolved",
+  "created_at": "2026-10-04",
+  "updated_at": "2026-10-04",
+  "problem": {
+    "description": "Downloaded model could still be one byte if the remote server declared Content-Length: 1",
+    "symptoms": ["A cached one-byte model could match remote size metadata"],
+    "error_messages": [],
+    "affected_files": ["videotrans/util/help_down.py", "tests/test_help_down.py"]
+  },
+  "investigation": {
+    "hypotheses": [
+      {"id": 1, "description": "Content-Length equality alone does not establish model-file validity", "status": "confirmed"}
+    ],
+    "tests_run": [
+      {"command": "uv run --python 3.10 --locked pytest -q tests/test_help_down.py", "output": "7 passed after repair", "timestamp": "2026-10-04"},
+      {"command": "uv run --python 3.10 --locked pytest -q", "output": "546 passed, 2 warnings", "timestamp": "2026-10-04"}
+    ],
+    "findings": ["A model-format file smaller than 1024 bytes is invalid even if HTTP metadata reports the same size."]
+  },
+  "resolution": {
+    "root_cause": "Remote size was treated as sufficient evidence of a usable model",
+    "fix_applied": "Require a minimum size for model-format files in both cache and completed download paths; keep SHA-256 and atomic replacement checks",
+    "files_changed": ["videotrans/util/help_down.py", "tests/test_help_down.py"],
+    "verification": "One-byte server fixture rejected; local HTTP model and offline sidecar reuse pass"
+  }
+}

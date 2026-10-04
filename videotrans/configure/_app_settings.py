@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict
 
-from videotrans.configure._paths import ROOT_DIR
+from videotrans.configure._paths import ROOT_DIR, LEGACY_ROOT_DIR, IS_FROZEN
 from videotrans.configure._logging import _write_with_retry
 from videotrans.configure.constants import (
     DEFAULT_GEMINI_MODEL, ChatTTS_VOICE, Qwentts_Models,
@@ -89,6 +89,9 @@ class AppSettings:
             merged_settings[m] = ",".join(_de)
 
         default.update(merged_settings)
+
+        if IS_FROZEN and Path(default.get('homedir', '')).resolve() == (Path(LEGACY_ROOT_DIR) / 'output').resolve():
+            default['homedir'] = str(Path(ROOT_DIR) / 'output')
 
 
 

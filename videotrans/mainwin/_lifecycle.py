@@ -1,10 +1,10 @@
 import os
-import platform
 import shutil
 import subprocess
 import sys
-import getpass
 from pathlib import Path
+
+import psutil
 
 
 class LifecycleMixin:
@@ -28,33 +28,27 @@ class LifecycleMixin:
     @staticmethod
     def kill_ffmpeg_processes():
         from videotrans.configure.config import logger
-
-        current_user = getpass.getuser()
-        if platform.system() == "Windows":
-            try:
-                result = subprocess.run(
-                    f'taskkill /F /FI "USERNAME eq {current_user}" /IM ffmpeg.exe',
-                    shell=True,
-                    capture_output=True,
-                    text=True
-                )
-                if result.returncode != 0:
-                    logger.warning(f"taskkill returned: {result.returncode}, output: {result.stdout}")
-            except Exception as e:
-                logger.exception(f"Error using taskkill: {e}", exc_info=True)
-
-            return
-
+        owned = []
         try:
-            result = subprocess.run(
-                ['pkill', '-9', '-u', current_user, 'ffmpeg'],
-                capture_output=True,
-                text=True
-            )
-            if result.returncode != 0:
-                logger.warning(f"pkill returned: {result.returncode}", exc_info=True)
-        except Exception as e:
-            logger.exception(f"Error using pkill: {e}", exc_info=True)
+            for child in psutil.Process().children(recursive=True):
+                try:
+                    if child.name().lower() in ('ffmpeg', 'ffmpeg.exe'):
+                        owned.append(child)
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+            for child in owned:
+                try:
+                    child.terminate()
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+            _, alive = psutil.wait_procs(owned, timeout=3)
+            for child in alive:
+                try:
+                    child.kill()
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+        except (psutil.NoSuchProcess, psutil.AccessDenied) as exc:
+            logger.warning(f'Could not inspect FFmpeg child processes: {exc}')
 
     def closeEvent(self, event):
         self.hide()

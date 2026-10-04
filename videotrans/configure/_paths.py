@@ -1,14 +1,74 @@
 # -*- coding: utf-8 -*-
 import os
+import shutil
 import sys
 import tempfile
 from pathlib import Path
 
 
 
-IS_FROZEN = True if getattr(sys, 'frozen', False) else False
+def _frozen_roots(executable, bundled_root=None, local_app_data=None, home=None, platform_name=None):
+    """Return separate read-only bundle and writable user-data directories."""
+    executable_dir = Path(executable).resolve().parent
+    resource_dir = Path(bundled_root) if bundled_root else executable_dir / '_internal'
+    platform_name = platform_name or sys.platform
+    home = Path(home) if home else Path.home()
+    if platform_name == 'win32':
+        data_base = Path(local_app_data) if local_app_data else Path(os.environ.get('LOCALAPPDATA', home / 'AppData' / 'Local'))
+        data_dir = data_base / 'pyVideoTrans'
+    elif platform_name == 'darwin':
+        data_dir = home / 'Library' / 'Application Support' / 'pyVideoTrans'
+    else:
+        data_base = Path(os.environ.get('XDG_DATA_HOME', home / '.local' / 'share'))
+        data_dir = data_base / 'pyVideoTrans'
+    return resource_dir.resolve(), data_dir.resolve(), executable_dir
+
+
+def _prepare_frozen_home(resource_dir, data_dir, legacy_dir):
+    """Copy missing bundled assets and legacy configuration without replacing user data."""
+    data_dir.mkdir(parents=True, exist_ok=True)
+    (data_dir / 'videotrans').mkdir(parents=True, exist_ok=True)
+    for relative in ('videotrans/styles', 'videotrans/language',
+                     'videotrans/voicejson', 'videotrans/prompts'):
+        source_dir = resource_dir / relative
+        if not source_dir.is_dir():
+            continue
+        for source in source_dir.rglob('*'):
+            if source.is_file():
+                destination = data_dir / source.relative_to(resource_dir)
+                if not destination.exists():
+                    destination.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(source, destination)
+    for name in ('cfg.json', 'params.json'):
+        source = legacy_dir / 'videotrans' / name
+        destination = data_dir / 'videotrans' / name
+        if source.is_file() and not destination.exists():
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, destination)
+    for name in ('languages.json',):
+        source = legacy_dir / 'videotrans' / name
+        destination = data_dir / 'videotrans' / name
+        if source.is_file() and not destination.exists():
+            shutil.copy2(source, destination)
+
+
+IS_FROZEN = bool(getattr(sys, 'frozen', False))
 SYS_TMP = Path(tempfile.gettempdir()).as_posix()
-ROOT_DIR = Path(sys.executable).parent.as_posix() if IS_FROZEN else Path(__file__).parent.parent.parent.as_posix()
+if IS_FROZEN:
+    _resource_dir, _data_dir, _legacy_dir = _frozen_roots(sys.executable, getattr(sys, '_MEIPASS', None))
+    RESOURCE_ROOT = _resource_dir.as_posix()
+    ROOT_DIR = _data_dir.as_posix()
+    LEGACY_ROOT_DIR = _legacy_dir.as_posix()
+    _prepare_frozen_home(_resource_dir, _data_dir, _legacy_dir)
+else:
+    ROOT_DIR = Path(__file__).parent.parent.parent.as_posix()
+    RESOURCE_ROOT = ROOT_DIR
+    LEGACY_ROOT_DIR = ROOT_DIR
+
+
+def resource_path(*parts):
+    """Locate a bundled read-only asset independently of the process CWD."""
+    return Path(RESOURCE_ROOT).joinpath(*parts)
 TEMP_ROOT = f'{ROOT_DIR}/tmp'
 LOGS_DIR = f'{ROOT_DIR}/logs'
 
@@ -25,27 +85,23 @@ Path(f"{TRANSLATE_CACHE}").mkdir(parents=True, exist_ok=True)
 Path(f"{DUBBING_CACHE}").mkdir(parents=True, exist_ok=True)
 
 def fix_ssl_cert_env():
-    """
-    修复部分用户电脑上存在错误的全局 SSL 证书环境变量，
-    强制将其指向程序自带的 certifi 证书路径。
-    """
-    try:
+    """Preserve explicit CA bundles and provide a default only when none is set."""
+    keys = ('REQUESTS_CA_BUNDLE', 'CURL_CA_BUNDLE', 'SSL_CERT_FILE')
+    configured = {key: os.environ[key] for key in keys if os.environ.get(key)}
+    for key, value in configured.items():
+        if not Path(value).expanduser().is_file():
+            raise FileNotFoundError(f'{key} points to a missing certificate bundle: {value}')
+
+    if configured:
+        default_bundle = next(iter(configured.values()))
+    else:
         import certifi
-        ca_bundle = certifi.where()
-        
-        # 确保该路径确实存在（兼容 PyInstaller 打包后的临时目录）
-        if os.path.exists(ca_bundle):
-            # 强制覆盖用户的错误环境变量，指引到正确的证书
-            os.environ['CURL_CA_BUNDLE'] = ca_bundle
-            os.environ['REQUESTS_CA_BUNDLE'] = ca_bundle
-            os.environ['SSL_CERT_FILE'] = ca_bundle
-        else:
-            raise FileNotFoundError
-            
-    except Exception:
-        # 如果 certifi 加载失败，至少把错误的干扰变量删掉，让系统回退到默认逻辑
-        for key in ['CURL_CA_BUNDLE', 'REQUESTS_CA_BUNDLE', 'SSL_CERT_FILE']:
-            os.environ.pop(key, None)
+        default_bundle = certifi.where()
+        if not Path(default_bundle).is_file():
+            raise FileNotFoundError(f'certifi certificate bundle is missing: {default_bundle}')
+    for key in keys:
+        if not os.environ.get(key):
+            os.environ[key] = default_bundle
 
 
 
@@ -80,10 +136,10 @@ def _set_env():
     os.environ['GRADIO_ANALYTICS_ENABLED'] = '0'
     # 必须在 import requests, modelscope 等库之前执行！
     fix_ssl_cert_env()
-    if Path(f'{ROOT_DIR}/netoffline.txt').is_file():
+    if Path(f'{ROOT_DIR}/netoffline.txt').is_file() or Path(f'{RESOURCE_ROOT}/netoffline.txt').is_file():
         os.environ['HF_HUB_OFFLINE'] = '1'
 
     if sys.platform == 'win32' and IS_FROZEN:
-        os.environ['PATH'] = f'{ROOT_DIR}/_internal/torch/lib;' + os.environ.get("PATH", "")
-    os.environ['PATH'] = ROOT_DIR + os.pathsep + f'{ROOT_DIR}/ffmpeg' + os.pathsep + f'{ROOT_DIR}/ffmpeg/sox' + os.pathsep + os.environ.get(
+        os.environ['PATH'] = f'{RESOURCE_ROOT}/torch/lib;' + os.environ.get("PATH", "")
+    os.environ['PATH'] = ROOT_DIR + os.pathsep + f'{RESOURCE_ROOT}/ffmpeg' + os.pathsep + f'{RESOURCE_ROOT}/ffmpeg/sox' + os.pathsep + os.environ.get(
         "PATH", "")

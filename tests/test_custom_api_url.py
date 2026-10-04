@@ -12,7 +12,7 @@ for _mod in ("gradio_client",):
     except ImportError:
         sys.modules[_mod] = MagicMock()
 
-from videotrans.recognition._stt import SttAPIRecogn
+from videotrans.recognition._sttapi import SttAPIRecogn
 from videotrans.translator._transapi import TransAPI
 from videotrans.tts._ttsapi import TTSAPI
 

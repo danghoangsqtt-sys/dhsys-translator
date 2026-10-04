@@ -37,7 +37,6 @@ class GradioBase(BaseTTS):
             thread_local.client = Client(
                     self.api_url,
                     httpx_kwargs={"timeout": 3600}, # 连接超时设置短一点因为只是拉取配置
-                    ssl_verify=False
                 )
         return thread_local.client
 

@@ -9,7 +9,7 @@ class TestCJKLang:
         assert "th" in constants.CJK_LANG
         assert "km" in constants.CJK_LANG
         assert "yue" in constants.CJK_LANG
-        assert "yu" in constants.CJK_LANG
+        assert "yue" in constants.CJK_LANG
 
     def test_non_cjk_not_in_list(self):
         assert "en" not in constants.CJK_LANG

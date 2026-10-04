@@ -23,9 +23,8 @@ def _create_file_row(ui, parent):
     ui.clear_cache = QtWidgets.QCheckBox(parent)
     ui.clear_cache.setMinimumSize(QtCore.QSize(50, 20))
     ui.clear_cache.setObjectName("clear_cache")
-    ui.clear_cache.setToolTip(
-        tr("Cleaning up files that have been processed in previous executions, such as recognized or translated subtitle files"))
-    ui.clear_cache.setText(tr("Del Generated"))
+    ui.clear_cache.setToolTip(tr("Clear Cache"))
+    ui.clear_cache.setText(tr("Clear Cache"))
     ui.clear_cache.setSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Minimum)
 
     ui.select_file_type = QtWidgets.QCheckBox()

@@ -38,7 +38,7 @@ class OpenrouterTTS(BaseTTS):
             "Content-Type": "application/json"
         }
 
-        response = requests.post(url, json=payload, headers=headers,verify=False)
+        response = requests.post(url, json=payload, headers=headers)
         response.raise_for_status()
         with open(data_item['filename'] + ".mp3", 'wb') as f:
             f.write(response.content)

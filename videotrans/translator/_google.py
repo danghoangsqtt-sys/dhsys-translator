@@ -45,7 +45,7 @@ class Google(BaseTrans):
             "sec-ch-ua-platform-version": "18.5"
         }
 
-        response = requests.get(url, headers=headers, verify=False)
+        response = requests.get(url, headers=headers)
         response.raise_for_status()
         logger.debug(f'[Google]返回code:{response.status_code=}')
 

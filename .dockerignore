@@ -19,3 +19,19 @@ runtime
 .ruff_cache
 .idea
 .DS_Store
+# User configuration and credentials must never enter a build context.
+.env
+.env.*
+*.env
+*.env.*
+**/params.json
+**/cfg.json
+*.pem
+*.key
+*.p12
+*.pfx
+# Local project state and private media.
+.DHSYSTEM
+*.mp4
+*.mkv
+*.wav

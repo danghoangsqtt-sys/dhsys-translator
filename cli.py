@@ -19,6 +19,7 @@ import asyncio
 import multiprocessing
 import sys
 import re
+import uuid
 import argparse
 from dataclasses import asdict
 from multiprocessing import freeze_support
@@ -79,8 +80,8 @@ TEXT_DB: Dict[str, Dict[str, str]] = {
         "en": "List available options: providers, languages, models"
     },
     "help_output_dir": {
-        "zh": "输出目录 (默认: 与输入文件同级的 _video_out 目录)",
-        "en": "Output directory (default: _video_out alongside input file)"
+        "zh": "输出根目录 (默认: 应用 output 目录；每次运行使用独立子目录)",
+        "en": "Output root (default: application output; each run gets its own subdirectory)"
     },
     "help_log_level": {
         "zh": "日志级别: DEBUG, INFO, WARNING, ERROR (默认: WARNING)",
@@ -327,7 +328,8 @@ def build_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
 
-    parser.add_argument('--version', action='version', version='%(prog)s 4.03')
+    from videotrans import VERSION
+    parser.add_argument('--version', action='version', version=f'%(prog)s {VERSION.removeprefix("v")}')
 
     parser.add_argument('--task', type=str, choices=['stt', 'tts', 'sts', 'vtv'],
                         help=tr("help_task"))
@@ -420,21 +422,32 @@ def build_common_params(args: argparse.Namespace, output_dir: Optional[str] = No
     from videotrans.util.gpus import getset_gpu
 
     _file_obj = tools.format_video(Path(args.name).absolute().as_posix())
-    _nospacebasename = re.sub(r'[\s. #*?!:"]', '-', _file_obj["basename"])
-    _cache_folder = f'{TEMP_DIR}/{_file_obj["uuid"]}'
+    _nospacebasename = re.sub(r'[\s. #*?!:"]', '-', _file_obj["basename"])[:160].rstrip('-') or 'media'
+    source_uuid = _file_obj.uuid
+    while True:
+        _file_obj.uuid = f'{source_uuid}-{uuid.uuid4().hex}'
+        cache_folder = Path(TEMP_DIR) / _file_obj.uuid
+        try:
+            cache_folder.mkdir(parents=True, exist_ok=False)
+            break
+        except FileExistsError:
+            continue
+    output_root = Path(output_dir).absolute() if output_dir else Path(ROOT_DIR) / 'output'
+    run_name = f'{_nospacebasename}-{_file_obj.uuid}'
+    index = 1
+    while True:
+        target_dir = output_root / (run_name if index == 1 else f'{run_name}-{index}')
+        try:
+            target_dir.mkdir(parents=True, exist_ok=False)
+            break
+        except FileExistsError:
+            index += 1
 
-    if output_dir:
-        _target_dir = str(Path(output_dir).absolute())
-    else:
-        _target_dir = f'{ROOT_DIR}/output/{_nospacebasename}'
-
-    _file_obj['target_dir'] = _target_dir
+    _cache_folder = str(cache_folder)
+    _file_obj['target_dir'] = str(target_dir)
 
     common_params = {'name': args.name, "cache_folder": _cache_folder}
     common_params.update(asdict(_file_obj))
-
-    Path(_cache_folder).mkdir(parents=True, exist_ok=True)
-    Path(_target_dir).mkdir(parents=True, exist_ok=True)
 
     return common_params
 

@@ -2,6 +2,7 @@
 *.srt
 *.7z
 *.spec
+!sp.spec
 *.ui
 *.bak
 *.bat

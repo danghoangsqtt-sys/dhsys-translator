@@ -7,18 +7,18 @@ Documents: https://pyvideotrans.com
 Discuss: https://bbs.pyvideotrans.com
 License: GPL-V3 <https://www.gnu.org/licenses/gpl-3.0.html>
 
-码不在雅，能跑则灵。
-型不在秀，兼容就行。
-全是烂码，Bug多多。
-全局变量乱如麻，if分支叠成塔。
-线程队列八九个，传参全靠大字典。
-可以塞硬件，怼系统。
-无单元之测试，无类型之规整。
-启动加载三百秒，界面UI丑到爆。
-前有Whisper卡进程，后有FF猛报错。
-三大平台皆可跑，上万星友亦成行。
-AI嘲: 码之烂平生仅见
-作者云：又不是不能跑。
+Code need not be elegant, as long as it runs.
+Form need not be fancy, compatibility is enough.
+Full of messy code, bugs everywhere.
+Global variables tangled like hemp, if-branches stacked like towers.
+Eight or nine thread queues, all parameters passed via big dicts.
+Can stuff in hardware, wrestle with the system.
+No unit tests, no type discipline.
+Startup takes three hundred seconds, UI ugly as hell.
+Whisper hangs processes before, FFmpeg errors after.
+Runs on all three platforms, ten thousand stars and counting.
+AI mocks: worst code seen in my life.
+Author says: it runs, doesn't it?
 
 """
 
@@ -32,20 +32,26 @@ import tempfile
 from pathlib import Path
 from PySide6.QtCore import QSize, QSettings
 import traceback
+
+# Configuration initializes its locale on import, so read this flag first.
+_language_parser = argparse.ArgumentParser(add_help=False)
+_language_parser.add_argument('--lang', type=str)
+_language_args, _ = _language_parser.parse_known_args()
+if _language_args.lang:
+    os.environ['PYVIDEOTRANS_LANG'] = _language_args.lang
+
 from videotrans import VERSION
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+from videotrans.configure._paths import resource_path, LOGS_DIR
 
 
-# 抑制警告
+# Suppress warnings
 def suppress_qt_warnings(msg_type, context, message):
     if "QThreadStorage" in message:
         return
 
 
 def cleanup():
-    """强制清理函数"""
+    """Force cleanup function"""
     try:
         if 'app' in globals():
             app.quit()
@@ -58,7 +64,7 @@ def show_global_error_dialog(exctype, value, tb):
     QMessageBox.critical(None, 'Error', tb_str)
 
 
-# 启动画面
+# Splash screen
 class StartWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -71,15 +77,15 @@ class StartWindow(QWidget):
 
         self.resize(560, 350)
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
-        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)  # 窗口背景透明
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)  # Window background transparent
 
         self.background_label = QLabel(self)
-        self.pixmap = QPixmap("./videotrans/styles/logo.png")
+        self.pixmap = QPixmap(str(resource_path('videotrans', 'styles', 'logo.png')))
         self.background_label.setPixmap(self.pixmap)
         self.background_label.setScaledContents(True)
         self.background_label.setGeometry(self.rect())
 
-        # 背景上叠加文字
+        # Overlay text on background
         v_layout = QVBoxLayout(self)
         v_layout.addStretch(1)
         self.status_label = QLabel(f"pyVideoTrans {VERSION} Loading...")
@@ -90,11 +96,11 @@ class StartWindow(QWidget):
         v_layout.setContentsMargins(0, 0, 0, 20)
 
     def closeEvent(self, event):
-        # 释放启动画面的资源
+        # Release splash screen resources
         if hasattr(self, 'pixmap') and self.pixmap:
             self.pixmap = None
 
-        # 如果主窗口不存在，则退出应用程序
+        # If main window doesn't exist, quit application
         if self.main_window is None:
             QApplication.instance().quit()
 
@@ -116,11 +122,11 @@ class StartWindow(QWidget):
             self.move(center_point.x() - self.width() // 2, center_point.y() - self.height() // 2)
 
 
-# 启动主窗口
+# Launch main window
 def initialize_full_app(start_window, app_instance):
     if sys.stdout is None or sys.stderr is None:
         try:
-            log_dir = os.path.join(os.getcwd(), "logs")
+            log_dir = LOGS_DIR
             os.makedirs(log_dir, exist_ok=True)
             log_file_path = os.path.join(log_dir, f"{time.strftime('%Y%m%d')}.log")
             log_file = open(log_file_path, 'a', encoding='utf-8', buffering=1)
@@ -132,16 +138,10 @@ def initialize_full_app(start_window, app_instance):
 
     sys.excepthook = show_global_error_dialog
 
-    # 命令行参数
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--lang', type=str, help='Set the application language (e.g., en, zh)')
-    cli_args, unknown = parser.parse_known_args()
-    if cli_args.lang:
-        os.environ['PYVIDEOTRANS_LANG'] = cli_args.lang.lower()
     start_window.update_lable('Loading resources...')
-    # 导入qss image 资源
+    # Import qss image resources
     import videotrans.ui.dark.darkstyle_rc
-    with open('./videotrans/styles/style.qss', 'r', encoding='utf-8') as f:
+    with open(resource_path('videotrans', 'styles', 'style.qss'), 'r', encoding='utf-8') as f:
         app_instance.setStyleSheet(f.read())
     start_window.update_lable('Loading main window...')
 
@@ -180,8 +180,8 @@ def fix_stdio():
 
 def check_and_run_external_script():
     """
-    检查是否作为脚本解释器启动。
-    例如运行：sp.exe xxx.py arg1 arg2
+    Check if launched as script interpreter.
+    Example: sp.exe xxx.py arg1 arg2
     import subprocess
     subprocess.run([sys.executable, r"test.py"])
     import subprocess
@@ -192,15 +192,15 @@ def check_and_run_external_script():
         import runpy
         script_path = os.path.abspath(sys.argv[1])
         if script_path and os.path.isfile(script_path):
-            # 将 script_path 的所在目录加入 sys.path，保证脚本内导入本地模块正常
+            # Add script_path directory to sys.path to ensure local imports work in script
             script_dir = os.path.dirname(script_path)
             if script_dir not in sys.path:
                 sys.path.insert(0, script_dir)
 
-            # 重构 sys.argv，让外部脚本读取到的 sys.argv 是正常的（sys.argv[0] 是脚本自身）
+            # Reconstruct sys.argv so external script sees normal sys.argv (sys.argv[0] is script itself)
             sys.argv = sys.argv[1:]
 
-            # 执行外部脚本
+            # Execute external script
             runpy.run_path(script_path, run_name='__main__')
             sys.exit(0)
 
@@ -208,7 +208,7 @@ def check_and_run_external_script():
 if __name__ == "__main__":
     check_and_run_external_script()
 
-    # Windows 打包需要
+    # Windows packaging required
     import multiprocessing
 
     multiprocessing.freeze_support()
@@ -227,7 +227,7 @@ if __name__ == "__main__":
         signal.signal(signal.SIGINT, handle_exit)
         signal.signal(signal.SIGTERM, handle_exit)
 
-    # 设置 HighDpi
+    # Set HighDpi
     try:
         QApplication.setHighDpiScaleFactorRoundingPolicy(Qt.HighDpiScaleFactorRoundingPolicy.PassThrough)
     except AttributeError:
@@ -240,13 +240,13 @@ if __name__ == "__main__":
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Critical)
         msg_box.setWindowTitle('Error')
-        msg_box.setText('请解压后再双击 sp.exe，不可直接压缩包内使用')
+        msg_box.setText('Please extract first, then double-click sp.exe. Cannot run directly from archive.')
         msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint)
         msg_box.exec()
         app.quit()
     else:
         splash = StartWindow()
-        splash.setWindowIcon(QIcon("./videotrans/styles/icon.ico"))
+        splash.setWindowIcon(QIcon(str(resource_path('videotrans', 'styles', 'icon.ico'))))
         splash.center()
         splash.show()
 

@@ -1,6 +1,6 @@
 # pyVideoTrans 技术架构与实现原理
 
-`pyvideotrans` 是一款功能强大的开源视频翻译配音工具（v4.13），能够将视频自动翻译并配上目标语言的语音。其核心设计理念是模块化、多线程流水线，通过灵活的标志位组合支持多种工作模式。
+`pyvideotrans` 是一款功能强大的开源视频翻译配音工具（v4.14），能够将视频自动翻译并配上目标语言的语音。其核心设计理念是模块化、多线程流水线，通过灵活的标志位组合支持多种工作模式。
 
 ![](https://pvtr2.pyvideotrans.com/1760167240539_image.png)
 
@@ -902,7 +902,7 @@ VideoTransError (基类)
 
 ---
 
-> **版本**: v4.13
+> **版本**: v4.14
 > **主页**: https://github.com/jianchang512/pyvideotrans
 > **文档**: https://pyvideotrans.com
 > **BBS**: https://bbs.pyvideotrans.com

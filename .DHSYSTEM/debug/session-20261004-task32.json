@@ -1,0 +1,19 @@
+{
+  "id": "debug-20261004-task32",
+  "status": "resolved",
+  "created_at": "2026-10-04",
+  "updated_at": "2026-10-04",
+  "problem": {
+    "description": "Local PyInstaller Windows artifact build crashes before COLLECT",
+    "error": "python310.dll exception 0xc00000fd (native stack overflow)",
+    "affected_files": ["sp.spec"]
+  },
+  "investigation": {
+    "findings": [
+      "The crash occurs during PyInstaller's torchaudio hook after module analysis, with 8+ GB free on C and 492+ GB free on E.",
+      "The same crash occurs with only explicit smoke-tested dynamic imports, so bulk hidden imports are not the remaining cause.",
+      "Increasing the Python recursion limit from 5000 to 20000 did not prevent the native stack overflow."
+    ]
+  },
+  "resolution": "Removed the incompatible distutils exclusion and built with tested Python 3.12.13; retain Python 3.10 crash evidence as a runtime-specific limitation. Clean runner verification remains required."
+}

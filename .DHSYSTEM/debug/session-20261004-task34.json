@@ -1,0 +1,29 @@
+{
+  "id": "debug-20261004-task34",
+  "status": "resolved",
+  "created_at": "2026-10-04",
+  "updated_at": "2026-10-04",
+  "problem": {
+    "description": "Task 3.4 regression test failed on an undeclared test-only dependency",
+    "symptoms": ["Docker ignore policy test could not start"],
+    "error_messages": ["ModuleNotFoundError: No module named 'pathspec'"],
+    "affected_files": ["tests/test_app_params.py"]
+  },
+  "investigation": {
+    "hypotheses": [
+      {"id": 1, "description": "pathspec is absent from the locked development environment", "status": "confirmed"}
+    ],
+    "tests_run": [
+      {"command": "uv run --python 3.10 --locked pytest -q tests/test_app_params.py", "output": "4 passed, 1 failed before correction: missing pathspec", "timestamp": "2026-10-04"},
+      {"command": "uv run --python 3.10 --locked pytest -q tests/test_app_params.py -p no:cacheprovider", "output": "5 passed after correction", "timestamp": "2026-10-04"},
+      {"command": "uv run --python 3.10 --locked pytest -q -p no:cacheprovider", "output": "523 passed, 2 warnings", "timestamp": "2026-10-04"}
+    ],
+    "findings": ["The test imported pathspec without declaring it; the application fix was unaffected."]
+  },
+  "resolution": {
+    "root_cause": "Unnecessary third-party import in a new test",
+    "fix_applied": "Use standard-library fnmatch for representative ignore-pattern assertions; verify actual context with Docker scratch image",
+    "files_changed": ["tests/test_app_params.py"],
+    "verification": "Focused and full suite pass; scratch Docker context image excluded the dummy secret and config files"
+  }
+}

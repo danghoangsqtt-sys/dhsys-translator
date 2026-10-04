@@ -1,7 +1,7 @@
 [project]
 name = "pyVideoTrans"
 version = "4.14"
-requires-python = ">=3.10, <3.11"
+requires-python = ">=3.10, <3.13"
 dependencies = [
     "absl-py==2.0.0",
     "accelerate==1.12.0",
@@ -253,8 +253,6 @@ dependencies = [
     "unicode-rbnf>=2.4.0",
     "sentence-stream>=1.3.0",
     "google-cloud-storage>=3.12.0",
-    "pynini",
-    "WeTextProcessing",
     "transformers4576==4.57.6.4",
     "omnivoice",
     "qwen-tts-pvt",
@@ -273,6 +271,10 @@ dependencies = [
 [project.optional-dependencies]
 webui = [
 	"gradio"
+]
+wetext = [
+	"pynini==2.1.6.post1",
+	"WeTextProcessing",
 ]
 
 [dependency-groups]
@@ -329,10 +331,13 @@ torchaudio = [
 #  https://github.com/billwuhao/pynini-windows-wheels/releases/download/v2.1.6.post1/pynini-2.1.6.post1-cp310-cp310-win_amd64.whl
 
 pynini = [
-    { url = "https://github.com/billwuhao/pynini-windows-wheels/releases/download/v2.1.6.post1/pynini-2.1.6.post1-cp310-cp310-win_amd64.whl", marker = "sys_platform == 'win32'" }
+    { url = "https://github.com/billwuhao/pynini-windows-wheels/releases/download/v2.1.6.post1/pynini-2.1.6.post1-cp310-cp310-win_amd64.whl", marker = "sys_platform == 'win32' and extra == 'wetext' and python_version == '3.10'" },
+    { url = "https://github.com/billwuhao/pynini-windows-wheels/releases/download/v2.1.6.post1/pynini-2.1.6.post1-cp311-cp311-win_amd64.whl", marker = "sys_platform == 'win32' and extra == 'wetext' and python_version == '3.11'" },
+    { url = "https://github.com/billwuhao/pynini-windows-wheels/releases/download/v2.1.6.post1/pynini-2.1.6.post1-cp312-cp312-win_amd64.whl", marker = "sys_platform == 'win32' and extra == 'wetext' and python_version == '3.12'" }
 ]
 
 
-chatterbox-tts = { url = "https://github.com/resemble-ai/chatterbox/archive/refs/heads/master.tar.gz" }
+chatterbox-tts = { git = "https://github.com/resemble-ai/chatterbox.git", rev = "5de7a54aa4e5e2baadb0182dde554908b48b85c2" }
+resemble-perth = { git = "https://github.com/resemble-ai/Perth.git", rev = "ce86c49d029f42272c1902eccb675556b9ed2330" }
 
 

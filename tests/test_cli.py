@@ -169,6 +169,12 @@ class TestBuildParser:
             parser.parse_args(['--version'])
         assert exc_info.value.code == 0
 
+    def test_help_formats_percentage_examples(self):
+        set_lang("en")
+        help_text = build_parser().format_help()
+        assert "+20%" in help_text
+        assert "--voice_rate" in help_text
+
     def test_stt_defaults(self):
         parser = build_parser()
         args = parser.parse_args(['--task', 'stt', '--name', 'test.mp4'])
@@ -178,7 +184,7 @@ class TestBuildParser:
         assert args.cuda is False
         assert args.remove_noise is False
         assert args.enable_diariz is False
-        assert args.nums_diariz == -1
+        assert args.nums_diariz == 0
         assert args.rephrase == 0
         assert args.fix_punc is False
 
@@ -388,6 +394,7 @@ class TestBuildSttParams:
     def test_build_stt_params(self):
         args = MagicMock(
             recogn_type=2, detect_language='ja', model_name='large-v3',
+            source_language_code=None,
             cuda=True, remove_noise=True, enable_diariz=True,
             nums_diariz=3, rephrase=1, fix_punc=True,
         )
@@ -481,29 +488,50 @@ class TestBuildVTVParams:
 
 
 class TestBuildCommonParams:
-    def test_build_common_params_returns_dict_keys(self, tmp_path):
-        """Test that build_common_params returns a dict with expected keys."""
+    def test_same_named_inputs_and_reruns_get_distinct_output(self, tmp_path, monkeypatch):
+        """A later run must never replace an earlier run's export."""
         from argparse import Namespace
-        video_file = tmp_path / "test_video.mp4"
-        video_file.write_bytes(b'\x00' * 100)
+        from videotrans.configure import config
 
-        args = Namespace(name=str(video_file))
+        monkeypatch.setattr(config, "TEMP_DIR", str(tmp_path / "temp"))
+        first_video = tmp_path / "first" / "clip.mp4"
+        second_video = tmp_path / "second" / "clip.mp4"
+        first_video.parent.mkdir()
+        second_video.parent.mkdir()
+        first_video.write_bytes(b"first")
+        second_video.write_bytes(b"second")
+        output_root = tmp_path / "exports"
 
-        # We can't easily test this without mocking the full config system,
-        # so we just verify the function signature accepts the right args
-        # and that it calls the right dependencies
-        with patch('cli.Path') as mock_path, \
-             patch('cli.re') as mock_re:
-            mock_path.return_value.return_value.exists.return_value = True
-            mock_path.return_value.return_value.absolute.return_value.as_posix.return_value = str(video_file)
-            mock_path.return_value.return_value.parent.resolve.return_value.as_posix.return_value = str(tmp_path)
-            mock_path.return_value.return_value.suffix.lower.return_value = '.mp4'
-            mock_path.return_value.return_value.name = 'test_video.mp4'
-            mock_path.return_value.return_value.stem = 'test_video'
-            mock_re.sub.return_value = 'test_video-mp4'
+        first = build_common_params(Namespace(name=str(first_video)), str(output_root))
+        old_export = Path(first["target_dir"]) / "en.srt"
+        old_export.write_text("previous export", encoding="utf-8")
+        second = build_common_params(Namespace(name=str(second_video)), str(output_root))
+        rerun = build_common_params(Namespace(name=str(first_video)), str(output_root))
 
-            # Just verify the function is callable and has the right signature
-            assert callable(build_common_params)
+        assert len({first["target_dir"], second["target_dir"], rerun["target_dir"]}) == 3
+        assert len({first["cache_folder"], second["cache_folder"], rerun["cache_folder"]}) == 3
+        assert all(Path(run["target_dir"]).parent == output_root for run in (first, second, rerun))
+        assert old_export.read_text(encoding="utf-8") == "previous export"
+
+    def test_concurrent_reruns_reserve_distinct_directories(self, tmp_path, monkeypatch):
+        from argparse import Namespace
+        from concurrent.futures import ThreadPoolExecutor
+        from videotrans.configure import config
+
+        monkeypatch.setattr(config, "TEMP_DIR", str(tmp_path / "temp"))
+        video = tmp_path / "clip.mp4"
+        video.write_bytes(b"media")
+        output_root = tmp_path / "exports"
+
+        with ThreadPoolExecutor(max_workers=4) as pool:
+            runs = list(pool.map(
+                lambda _: build_common_params(Namespace(name=str(video)), str(output_root)),
+                range(4),
+            ))
+
+        assert len({run["target_dir"] for run in runs}) == 4
+        assert len({run["cache_folder"] for run in runs}) == 4
+        assert all(Path(run["target_dir"]).is_dir() for run in runs)
 
 
 # ===========================================================================
@@ -592,52 +620,35 @@ class TestListModels:
 
 
 # ===========================================================================
-# Tests for task execution functions (with mocks)
+# Tests for task execution functions (with mocked media workers)
 # ===========================================================================
-class TestSttFun:
-    def test_stt_fun_is_callable(self):
-        """Test that stt_fun is a callable function."""
-        assert callable(stt_fun)
+@pytest.mark.parametrize('function,module_name,class_name,stages', [
+    (stt_fun, 'videotrans.task.speech2text', 'SpeechToText',
+     ['prepare', 'recogn', 'diariz', 'task_done']),
+    (tts_fun, 'videotrans.task.dubbing', 'DubbingSrt',
+     ['prepare', 'dubbing', 'align', 'task_done']),
+    (sts_fun, 'videotrans.task.translate_srt', 'TranslateSrt',
+     ['prepare', 'trans', 'task_done']),
+    (vtv_fun, 'videotrans.task.trans_create', 'TransCreate',
+     ['prepare', 'recogn', 'diariz', 'trans', 'dubbing',
+      'align', 'recogn2pass', 'assembling', 'task_done']),
+])
+def test_cli_task_invokes_worker_stages_in_order(monkeypatch, capsys,
+                                                  function, module_name, class_name, stages):
+    import importlib
+    from unittest.mock import call
 
-    def test_stt_fun_imports(self):
-        """Test that stt_fun can be imported and has correct signature."""
-        import inspect
-        sig = inspect.signature(stt_fun)
-        params = list(sig.parameters.keys())
-        assert 'params' in params
+    worker = MagicMock()
+    factory = MagicMock(return_value=worker)
+    monkeypatch.setattr(importlib.import_module(module_name), class_name, factory)
 
+    function({'name': 'sample.mp4'})
 
-class TestTtsFun:
-    def test_tts_fun_is_callable(self):
-        assert callable(tts_fun)
-
-    def test_tts_fun_imports(self):
-        import inspect
-        sig = inspect.signature(tts_fun)
-        params = list(sig.parameters.keys())
-        assert 'params' in params
-
-
-class TestStsFun:
-    def test_sts_fun_is_callable(self):
-        assert callable(sts_fun)
-
-    def test_sts_fun_imports(self):
-        import inspect
-        sig = inspect.signature(sts_fun)
-        params = list(sig.parameters.keys())
-        assert 'params' in params
-
-
-class TestVtvFun:
-    def test_vtv_fun_is_callable(self):
-        assert callable(vtv_fun)
-
-    def test_vtv_fun_imports(self):
-        import inspect
-        sig = inspect.signature(vtv_fun)
-        params = list(sig.parameters.keys())
-        assert 'params' in params
+    assert [entry for entry in worker.mock_calls if entry[0] in stages] == [
+        getattr(call, stage)() for stage in stages
+    ]
+    assert factory.call_args.kwargs['cfg'].name == 'sample.mp4'
+    assert 'sample.mp4' in capsys.readouterr().out
 
 
 # ===========================================================================

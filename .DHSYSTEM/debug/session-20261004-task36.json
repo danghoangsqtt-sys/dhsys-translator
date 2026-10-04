@@ -1,0 +1,29 @@
+{
+  "id": "debug-20261004-task36",
+  "status": "resolved",
+  "created_at": "2026-10-04",
+  "updated_at": "2026-10-04",
+  "problem": {
+    "description": "Post-task audit found frozen startup and FunASR asset-path gaps",
+    "symptoms": ["The user-data videotrans directory could be absent when no static assets were bundled", "FunASR remote_code pointed to the writable data root after frozen path separation"],
+    "error_messages": [],
+    "affected_files": ["videotrans/configure/_paths.py", "videotrans/process/stt_funasr.py", "sp.spec"]
+  },
+  "investigation": {
+    "hypotheses": [
+      {"id": 1, "description": "Configuration bootstrap assumes bundled assets created the user-data videotrans directory", "status": "confirmed"},
+      {"id": 2, "description": "FunASR helper was referenced by ROOT_DIR even though it is a bundle resource", "status": "confirmed"}
+    ],
+    "tests_run": [
+      {"command": "uv run --python 3.10 --locked pytest -q tests/test_frozen_paths.py", "output": "5 passed after repair, including simulated frozen import from another CWD", "timestamp": "2026-10-04"},
+      {"command": "uv run --python 3.10 --locked pytest -q", "output": "534 passed, 2 warnings", "timestamp": "2026-10-04"}
+    ],
+    "findings": ["The frozen code path needs an unconditional writable config directory and a bundled path for filename-loaded scripts."]
+  },
+  "resolution": {
+    "root_cause": "Resource and data roots were previously conflated; the first split missed a required directory and a filename-loaded helper",
+    "fix_applied": "Create the user-data config directory unconditionally, resolve FunASR helper via resource_path, and add its script to PyInstaller data",
+    "files_changed": ["videotrans/configure/_paths.py", "videotrans/process/stt_funasr.py", "sp.spec", "tests/test_frozen_paths.py"],
+    "verification": "Focused frozen-path tests and full 534-test suite pass; real extracted artifact smoke remains open"
+  }
+}

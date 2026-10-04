@@ -65,10 +65,10 @@ class TestActionsClassHierarchy:
 
 class TestActionsMethods:
     EXPECTED_WINACTION_METHODS = {
-        '_reset', 'set_djs_timeout', 'delete_process', 'import_sub_fun',
+        '_reset', 'set_djs_timeout', 'delete_process',
         'set_translate_type', 'set_subtitle_type', 'shound_translate', 'check_tts',
         'check_reccogn', 'check_output', 'check_name_length', 'check_start',
-        'show_xxl_select', 'show_cpp_select', 'recogn_type_change', 'model_type_change',
+        'show_xxl_select', 'recogn_type_change', 'model_type_change',
         'tts_type_change', 'set_voice_role',
         'create_btns', 'retry', 'add_process_btn', 'set_process_btn_text',
         'update_status', 'update_data', '_check_all_done',
@@ -78,10 +78,9 @@ class TestActionsMethods:
         'set_biaozhun', 'set_tiquzimu', 'toggle_adv', 'hide_show_element',
         'set_mode', '_disabled_button', 'disabled_widget',
         'get_mp4', 'get_save_dir', 'get_background', 'change_proxy',
-        '_test_proxy', 'proxy_alert', 'clearcache', '_clean_dir',
-        'about', 'check_cuda', 'check_voice_autorate', 'check_video_autorate',
-        'check_txt', 'cuda_isok', 'listen_voice_fun', 'show_listen_btn',
-        'check_name', 'lawalert', 'open_url',
+        '_test_proxy', 'check_cuda', 'check_voice_autorate', 'check_video_autorate',
+        'cuda_isok', 'listen_voice_fun', 'show_listen_btn',
+        'check_name', 'open_url',
     }
 
     def test_winaction_has_expected_methods(self):
@@ -108,11 +107,7 @@ class TestActionsMethods:
         ]
         assert len(user_methods) >= 23, f"Expected >= 23 user methods, got {len(user_methods)}"
 
-    def test_winactionbase_method_count(self):
+    def test_winactionbase_methods_are_callable(self):
         from videotrans.mainwin._actions_base import WinActionBase
-        user_methods = [
-            m for m in dir(WinActionBase)
-            if not m.startswith('__')
-            and callable(getattr(WinActionBase, m, None))
-        ]
-        assert len(user_methods) >= 24, f"Expected >= 24 user methods, got {len(user_methods)}"
+        for method in self.EXPECTED_WINACTIONBASE_METHODS:
+            assert callable(getattr(WinActionBase, method))

@@ -1,82 +1,64 @@
-"""
-Tests for WinActionBase pure methods and proxy validation logic.
-Since WinActionBase depends on MainWindow (PySide6), we test the
-pure logic in isolation without instantiating the class.
-"""
+"""Exercise the action mixins against Qt controls without starting media jobs."""
 
-import re
+from types import SimpleNamespace
 
+import pytest
+from PySide6.QtWidgets import QApplication, QCheckBox, QComboBox, QWidget
 
-class TestProxyValidation:
-    def test_valid_http_proxy(self):
-        proxy = "http://127.0.0.1:1080"
-        assert re.match(r'^(http|sock)(s|5)?://(\d+\.){3}\d+:\d+', proxy, re.I)
-
-    def test_socks_proxy(self):
-        proxy = "socks5://127.0.0.1:1080"
-        assert re.match(r'^http(s)?://|^socks5?://', proxy, re.I)
-
-    def test_invalid_proxy_no_port(self):
-        proxy = "http://127.0.0.1"
-        # The check_proxy regex requires :port after the IP
-        assert not re.match(r'^(http|sock)(s|5)?://(\d+\.){3}\d+:\d+', proxy, re.I)
-
-    def test_invalid_proxy_wrong_scheme(self):
-        proxy = "ftp://127.0.0.1:1080"
-        assert not re.match(r'^(http|sock)(s|5)?://(\d+\.){3}\d+:\d+', proxy, re.I)
-
-    def test_proxy_http_prefix_added(self):
-        proxy = "127.0.0.1:1080"
-        if not re.match(r'^(http|sock)', proxy, re.I):
-            proxy = f'http://{proxy}'
-        assert proxy == 'http://127.0.0.1:1080'
+from videotrans.mainwin._actions_base_misc import WinActionBaseMiscMixin
+from videotrans.mainwin._actions_base_mode import WinActionBaseModeMixin
+from videotrans.mainwin._actions_check import WinActionCheckMixin
 
 
-class TestVoiceAutorateLogic:
-    def test_voice_autorate_hides_silent_mid(self):
-        voice_autorate = True
-        video_autorate = False
-        show = not voice_autorate and not video_autorate
-        assert show is False
-
-    def test_both_false_shows(self):
-        voice_autorate = False
-        video_autorate = False
-        show = not voice_autorate and not video_autorate
-        assert show is True
-
-    def test_video_autorate_alone_hides(self):
-        voice_autorate = False
-        video_autorate = True
-        show = not voice_autorate and not video_autorate
-        assert show is False
+@pytest.fixture(scope='module')
+def app():
+    return QApplication.instance() or QApplication([])
 
 
-class TestSubtitleTypeLogic:
-    def test_dual_subtitle_shows_output_srt(self):
-        idx = 3  # 双硬字幕
-        show = idx >= 3
-        assert show is True
+@pytest.mark.parametrize('voice,video,expected_hidden', [
+    (True, False, True), (False, True, True), (False, False, False),
+])
+def test_autorate_controls_silent_gap_visibility(app, voice, video, expected_hidden):
+    main = SimpleNamespace(
+        video_autorate=QCheckBox(), voice_autorate=QCheckBox(),
+        remove_silent_mid=QWidget(), align_sub_audio=QWidget(),
+    )
+    main.video_autorate.setChecked(video)
+    main.voice_autorate.setChecked(voice)
+    action = SimpleNamespace(main=main)
+    WinActionBaseMiscMixin.check_voice_autorate(action, voice)
+    WinActionBaseMiscMixin.check_video_autorate(action, video)
+    assert main.remove_silent_mid.isHidden() is expected_hidden
+    assert main.align_sub_audio.isHidden() is expected_hidden
 
-    def test_single_hard_subtitle_hides(self):
-        idx = 1  # 硬字幕
-        show = idx >= 3
-        assert show is False
+
+@pytest.mark.parametrize('subtitle_type,expected_hidden', [(1, True), (3, False)])
+def test_subtitle_type_controls_srt_output(app, subtitle_type, expected_hidden):
+    output_srt = QComboBox()
+    output_srt.addItems(['None', 'Source', 'Target'])
+    action = SimpleNamespace(main=SimpleNamespace(output_srt=output_srt))
+    WinActionCheckMixin.set_subtitle_type(action, subtitle_type)
+    assert output_srt.isHidden() is expected_hidden
+    if not expected_hidden:
+        assert output_srt.currentIndex() == 2
 
 
-class TestSetModeLogic:
-    def test_tiqu_forces_voice_role_no(self):
-        app_mode = 'tiqu'
-        voice_role = 'some-role'
-        subtitle_type = 1
-        if app_mode == 'tiqu':
-            voice_role = 'No'
-        assert voice_role == 'No'
-
-    def test_biaozhun_keeps_voice_role(self):
-        app_mode = 'biaozhun'
-        voice_role = 'some-role'
-        # In biaozhun mode, voice_role is NOT forced to 'No'
-        if app_mode == 'tiqu':
-            voice_role = 'No'
-        assert voice_role == 'some-role'
+@pytest.mark.parametrize('mode,expected_role', [('tiqu', 'No'), ('biaozhun', 'voice')])
+def test_set_mode_updates_real_controls(app, mode, expected_role):
+    subtitle_type = QComboBox()
+    subtitle_type.addItems(['None', 'Hard'])
+    subtitle_type.setCurrentIndex(1)
+    voice_role = QComboBox()
+    voice_role.addItems(['No', 'voice'])
+    voice_role.setCurrentText('voice')
+    main = SimpleNamespace(
+        app_mode=mode, subtitle_type=subtitle_type, voice_role=voice_role,
+        copysrt_rawvideo=QCheckBox(),
+    )
+    main.copysrt_rawvideo.setChecked(True)
+    action = SimpleNamespace(main=main, cfg={'voice_role': 'voice'})
+    WinActionBaseModeMixin.set_mode(action)
+    assert action.cfg['voice_role'] == expected_role
+    if mode == 'tiqu':
+        assert action.cfg['subtitle_type'] == 0
+        assert action.cfg['copysrt_rawvideo'] is True

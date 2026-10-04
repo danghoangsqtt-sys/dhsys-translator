@@ -29,10 +29,6 @@ class TestPrepareAudioImports:
         from videotrans.process.prepare_audio import pyannote_speakers
         assert callable(pyannote_speakers)
 
-    def test_reverb_speakers_importable(self):
-        from videotrans.process.prepare_audio import reverb_speakers
-        assert callable(reverb_speakers)
-
     def test_built_speakers_importable(self):
         from videotrans.process.prepare_audio import built_speakers
         assert callable(built_speakers)
@@ -41,10 +37,10 @@ class TestPrepareAudioImports:
         from videotrans.process.prepare_audio import _write_log
         assert callable(_write_log)
 
-    def test_all_9_names_importable(self):
+    def test_public_audio_helpers_importable(self):
         from videotrans.process import prepare_audio
         for name in ['vocal_bgm', 'vocal_bgm_spleeter', 'remove_noise', 'fix_punc',
-                      'cam_speakers', 'pyannote_speakers', 'reverb_speakers', 'built_speakers',
+                      'cam_speakers', 'pyannote_speakers', 'built_speakers',
                       '_write_log']:
             assert hasattr(prepare_audio, name), f"Missing: {name}"
 
@@ -58,8 +54,8 @@ class TestFunctionSignatures:
         assert 'vocal_file' in params
         assert 'instr_file' in params
         assert 'logs_file' in params
-        assert 'is_cuda' in params
         assert 'uvr_models' in params
+        assert 'kw' in params
 
     def test_remove_noise_signature(self):
         from videotrans.process.prepare_audio import remove_noise
@@ -67,17 +63,14 @@ class TestFunctionSignatures:
         params = list(sig.parameters.keys())
         assert 'input_file' in params
         assert 'output_file' in params
-        assert 'is_cuda' in params
-        assert 'logs_file' in params
-        assert 'device_index' in params
+        assert 'kw' in params
 
     def test_fix_punc_signature(self):
         from videotrans.process.prepare_audio import fix_punc
         sig = inspect.signature(fix_punc)
         params = list(sig.parameters.keys())
         assert 'text_dict_file' in params
-        assert 'is_cuda' in params
-        assert 'logs_file' in params
+        assert 'kw' in params
 
     def test_cam_speakers_signature(self):
         from videotrans.process.prepare_audio import cam_speakers

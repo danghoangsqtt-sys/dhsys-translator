@@ -22,7 +22,7 @@ def _check_gorm(name='google'):
             "sec-ch-ua-platform": "iOS",
             "sec-ch-ua-platform-version": "18.5"
         }
-        res=requests.get(f"https://translate.google.com/m", timeout=5,verify=False,headers=headers)
+        res=requests.get(f"https://translate.google.com/m", timeout=5,headers=headers)
         return res.status_code
     except Exception as e:
         logger.exception(f'检测 {name} 翻译失败:{e}', exc_info=True)

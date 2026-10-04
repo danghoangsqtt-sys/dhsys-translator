@@ -55,7 +55,7 @@ class MinimaxiASR(BaseRecogn):
                 files = {
                     "file": (Path(file).name, audio_file),
                 }
-                response = requests.post(self.api_url, data=payload,headers=headers, files=files, verify=False)
+                response = requests.post(self.api_url, data=payload,headers=headers, files=files)
                 return response.json()
         except Exception as e:
             return {"error":{"message":str(e)}}

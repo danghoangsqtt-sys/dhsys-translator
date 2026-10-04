@@ -1,0 +1,12 @@
+{
+  "project": "pyVideoTrans",
+  "version": "4.14",
+  "current_phase": 3,
+  "current_task": "3.3",
+  "status": "3.4, 3.5, 3.7, 3.8, 3.9, 3.1 and 3.2 verified locally with git persistence pending; 3.6 Docker and 3.3 release gates open",
+  "source_plan": "docs/PLAN.md",
+  "source_spec": "docs/SPEC.md",
+  "repair_plan": "docs/BUGFIX-PLAN.md",
+  "planned_patch_version": "4.14.1",
+  "updated_at": "2026-10-04"
+}

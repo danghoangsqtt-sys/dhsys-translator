@@ -6,9 +6,6 @@ def test_mixin_modules_importable():
     mod = importlib.import_module("videotrans.mainwin._bind_signals")
     assert hasattr(mod, "BindSignalsMixin")
 
-    mod = importlib.import_module("videotrans.mainwin._winform")
-    assert hasattr(mod, "WinformMixin")
-
     mod = importlib.import_module("videotrans.mainwin._lifecycle")
     assert hasattr(mod, "LifecycleMixin")
 
@@ -38,7 +35,6 @@ def test_main_win_has_expected_methods():
         "checkbox_state_changed",
         "changeEvent",
         "_bind_signal",
-        "open_winform",
         "restart_app",
         "closeEvent",
         "cleanup_and_accept",

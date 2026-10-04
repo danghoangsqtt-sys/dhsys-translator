@@ -50,7 +50,7 @@ class SiliconflowASR(BaseRecogn):
             }
             response=None
             try:
-                response = requests.post(url, headers=headers, files=files, verify=False)
+                response = requests.post(url, headers=headers, files=files)
                 return response.json()
             except Exception as e:
                 _err=str(e)

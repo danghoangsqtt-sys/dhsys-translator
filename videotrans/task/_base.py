@@ -12,6 +12,7 @@ from videotrans.task.taskcfg import TaskCfgBase, SrtItem
 from videotrans.translator import get_name_index
 from videotrans.translator._runner import get_model_transobj
 from videotrans.util.help_misc import is_connect_hf
+from videotrans.task._cache import _clear_managed_cache
 
 
 @dataclass
@@ -146,8 +147,8 @@ class BaseTask(BaseCon):
                 send_notification(tr('Succeed'), f"{self.cfg.basename}")
             # 清理临时文件
             try:
-                if self.cfg.cache_folder:
-                    shutil.rmtree(self.cfg.cache_folder, ignore_errors=True)
+                if self.cfg.cache_folder and getattr(self.cfg, 'clear_cache', True):
+                    _clear_managed_cache(self.cfg.cache_folder)
             except Exception as e:
                 logger.exception(f'任务结束后清理临时文件失败，跳过,{e}:{self.cfg.cache_folder=}', exc_info=True)
         app_cfg.stoped_uuid_set.add(self.uuid)

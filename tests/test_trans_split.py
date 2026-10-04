@@ -35,7 +35,6 @@ EXPECTED_METHODS = [
     '_hebing_pro',
     '_get_hard_cfg',
     '_subprocess',
-    '_video_extend',
     # BaseTask / BaseCon
     'set_end',
     '_exit',

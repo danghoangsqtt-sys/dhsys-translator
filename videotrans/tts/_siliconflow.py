@@ -37,7 +37,7 @@ class SiliconflowTTS(BaseTTS):
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
-        response = requests.post(url, json=payload, headers=headers, verify=False)
+        response = requests.post(url, json=payload, headers=headers)
         response.raise_for_status()
         with open(data_item['filename'] + "-44100.wav", 'wb') as f:
             f.write(response.content)

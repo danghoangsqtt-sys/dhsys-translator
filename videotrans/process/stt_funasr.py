@@ -6,6 +6,7 @@ import json, traceback
 from pathlib import Path
 from typing import List, Tuple, Union
 from videotrans.configure.config import logger, ROOT_DIR
+from videotrans.configure._paths import resource_path
 
 
 def funasr_mlt(
@@ -56,7 +57,7 @@ def funasr_mlt(
                 disable_progress_bar=True,
                 disable_log=True,
                 trust_remote_code=True,
-                remote_code=f"{ROOT_DIR}/videotrans/codes/model.py",
+                remote_code=str(resource_path('videotrans', 'codes', 'model.py')),
                 hub='ms',
             )
 

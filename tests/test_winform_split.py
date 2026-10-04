@@ -1,7 +1,7 @@
-import pytest
-from videotrans.winform import _module_map, get_win
+from types import SimpleNamespace
+from unittest.mock import Mock
 
-KNOWN_MISSING = {"qwenasrlocal", "mitts"}
+from videotrans import winform
 
 
 def test_helpers_importable():
@@ -12,31 +12,30 @@ def test_helpers_importable():
     assert callable(make_setallmodels)
 
 
-def test_all_winform_modules_importable():
-    failed = []
-    for name in _module_map:
-        if name in KNOWN_MISSING:
-            continue
-        try:
-            mod = get_win(name)
-            assert hasattr(mod, 'openwin'), f"{name} module has no openwin()"
-        except Exception as e:
-            failed.append((name, str(e)))
-    if failed:
-        msg = "\n".join(f"  {n}: {e}" for n, e in failed)
-        pytest.fail(f"Failed imports:\n{msg}")
+def test_get_win_loads_window_on_demand_and_reuses_it(monkeypatch):
+    window = SimpleNamespace(show=Mock(), activateWindow=Mock())
+    module = SimpleNamespace(openwin=Mock(return_value=window))
+    importer = Mock(return_value=module)
+    monkeypatch.setattr(winform.app_cfg, "child_forms", {})
+    monkeypatch.setattr(winform.importlib, "import_module", importer)
+
+    assert winform.get_win("example") is window
+    assert winform.get_win("example") is None
+    importer.assert_called_once_with(".example", package=winform.__package__)
+    module.openwin.assert_called_once_with()
+    assert window.show.call_count == 2
+    window.activateWindow.assert_called_once_with()
 
 
-def test_each_channel_has_openwin():
-    for name in _module_map:
-        if name in KNOWN_MISSING:
-            continue
-        mod = get_win(name)
-        assert callable(mod.openwin), f"{name}.openwin is not callable"
+def test_get_cls_caches_imported_ui_module(monkeypatch):
+    ui_class = type("Ui_example", (), {})
+    importer = Mock(return_value=SimpleNamespace(Ui_example=ui_class))
+    monkeypatch.setattr(winform, "_loaded_modules", {})
+    monkeypatch.setattr(winform.importlib, "import_module", importer)
 
-
-def test_registered_module_count():
-    assert len(_module_map) >= 60
+    assert winform.get_cls("example") is ui_class
+    assert winform.get_cls("example") is ui_class
+    importer.assert_called_once_with("..ui.example", package=winform.__package__)
 
 
 def test_helpers_factory_returns_callable():

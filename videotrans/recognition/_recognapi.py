@@ -1,4 +1,6 @@
+import ast
 import json
+import math
 import re
 import time
 from dataclasses import dataclass
@@ -32,6 +34,59 @@ from videotrans.util._srt_parse import get_srt_from_list, get_subtitle_from_srt,
 RETRY_NUMS = settings.get('retry_nums')
 RETRY_DELAY = 10
 
+MAX_VIBEVOICE_RESPONSE_CHARS = 1_000_000
+MAX_VIBEVOICE_SEGMENTS = 10_000
+
+
+def _parse_vibevoice_segments(raw_text):
+    """Parse the segment list returned by VibeVoice without executing response text."""
+    if not isinstance(raw_text, str) or len(raw_text) > MAX_VIBEVOICE_RESPONSE_CHARS:
+        raise SpeechToTextError("VibeVoice response is invalid or too large")
+
+    start = re.search(r'\[\s*\{', raw_text)
+    if start is None:
+        if raw_text.strip() in ('', '[]'):
+            return []
+        raise SpeechToTextError("VibeVoice response has no segment list")
+    ends = list(re.finditer(r'\}\s*\]', raw_text[start.start():]))
+    if not ends:
+        raise SpeechToTextError("VibeVoice segment list is incomplete")
+    list_text = raw_text[start.start():start.start() + ends[-1].end()]
+
+    try:
+        segments = json.loads(list_text)
+    except json.JSONDecodeError:
+        try:
+            segments = ast.literal_eval(list_text)
+        except (ValueError, SyntaxError, TypeError, RecursionError) as exc:
+            raise SpeechToTextError("VibeVoice segment list is not valid JSON or a literal") from exc
+
+    if not isinstance(segments, list) or len(segments) > MAX_VIBEVOICE_SEGMENTS:
+        raise SpeechToTextError("VibeVoice segment count is invalid")
+    for index, segment in enumerate(segments):
+        if not isinstance(segment, dict):
+            raise SpeechToTextError(f"VibeVoice segment {index} is not an object")
+        for key in ("Start", "End"):
+            value = segment.get(key)
+            if isinstance(value, bool) or not isinstance(value, (int, float, str)):
+                raise SpeechToTextError(f"VibeVoice segment {index} has invalid {key}")
+            try:
+                seconds = float(value)
+            except ValueError as exc:
+                raise SpeechToTextError(f"VibeVoice segment {index} has invalid {key}") from exc
+            if not math.isfinite(seconds) or seconds < 0:
+                raise SpeechToTextError(f"VibeVoice segment {index} has invalid {key}")
+            segment[key] = seconds
+        if segment["End"] <= segment["Start"]:
+            raise SpeechToTextError(f"VibeVoice segment {index} has invalid time range")
+        content = segment.get("Content")
+        if not isinstance(content, str) or len(content) > 10_000:
+            raise SpeechToTextError(f"VibeVoice segment {index} has invalid Content")
+        speaker = segment.get("Speaker", "-")
+        if not isinstance(speaker, str) or len(speaker) > 128:
+            raise SpeechToTextError(f"VibeVoice segment {index} has invalid Speaker")
+    return segments
+
 
 @dataclass
 class APIRecogn(BaseRecogn):
@@ -63,7 +118,7 @@ class APIRecogn(BaseRecogn):
         self.signal(
             text=tr("Recognition may take a while, please be patient"))
 
-        res = requests.post(f"{self.api_url}", data={"language": self.detect_language}, files=files, timeout=1200,verify=False)
+        res = requests.post(f"{self.api_url}", data={"language": self.detect_language}, files=files, timeout=1200)
         res.raise_for_status()
         content_type = res.headers.get('Content-Type','')
         if 'application/json' not in content_type:
@@ -158,10 +213,7 @@ class APIRecogn(BaseRecogn):
     def _vibevoice_asr(self)->Union[List[SrtItem], None]:
         from gradio_client import Client, handle_file
         from pydub import AudioSegment
-        import re
-        import ast
         import os
-        import json
         from pathlib import Path
 
         # 定义切片时长 (60分钟 = 60 * 60 * 1000 毫秒)
@@ -172,36 +224,9 @@ class APIRecogn(BaseRecogn):
 
         # 内部函数：处理单个片段的返回结果
         def _process_chunk_result(raw_text, time_offset_ms, start_line_index):
-            # 1. 使用正则表达式找到列表部分
-            match = re.search(r'(\[{.*?}])', raw_text, re.DOTALL)
             chunk_raws = []
             chunk_speaker_raw_list = []  # 仅收集当前片段的原始说话人标记
-
-            if not match:
-                # 如果某个片段没识别出内容（可能是静音），返回空而不是报错
-                logger.warning(f"No subtitles found in chunk starting at {time_offset_ms}ms")
-                return [], []
-
-            list_str = match.group(1)
-            list_str = re.sub(r'^.*?\[{', '[{', list_str, flags=re.S)
-            list_str = re.sub(r'}].*$', '}]', list_str, flags=re.S)
-            list_str = re.sub(r"\n?\n", '', list_str)
-            segments = None
-            try:
-                segments = json.loads(list_str)
-            except json.JSONDecodeError:
-                try:
-                    segments = ast.literal_eval(list_str)
-                except (ValueError, SyntaxError):
-                    context = {
-                        "null": None,
-                        "true": True,
-                        "false": False,
-                        "__builtins__": None
-                    }
-                    segments = eval(list_str, context)
-            except Exception as e:
-                logger.error(f"AST eval failed: {e}")
+            segments = _parse_vibevoice_segments(raw_text)
             if not segments:
                 return [], []
 
@@ -212,7 +237,7 @@ class APIRecogn(BaseRecogn):
                 seg_end_ms = int(float(seg['End']) * 1000) + time_offset_ms
 
                 tmp = {
-                    "line": start_line_index + i + 1,  # 累加行号
+                    "line": start_line_index + len(chunk_raws) + 1,
                     "text": seg['Content'],
                     "start_time": seg_start_ms,
                     "end_time": seg_end_ms,
@@ -278,6 +303,8 @@ class APIRecogn(BaseRecogn):
                 all_speaker_raw_list.extend(chunk_spk)
                 current_line += len(chunk_data)
 
+            except SpeechToTextError:
+                raise
             except Exception as e:
                 logger.exception(f"Error processing chunk {i}: {e}")
             finally:

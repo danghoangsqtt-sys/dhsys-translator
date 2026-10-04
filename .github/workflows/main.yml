@@ -1,15 +1,116 @@
-name: Compile Python
-on: [push]
+name: Build Windows Candidate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PYTHON_VERSION: '3.12.13'
+
 jobs:
-  pyinstaller-build:
+  test:
+    name: Run Tests
     runs-on: windows-latest
     steps:
-      - name: Versatile PyInstaller
-        uses: sayyid5416/pyinstaller@v1.6.0    
-        with: 
-         python_ver: '3.10'
-         pyinstaller_ver: '==6.3.0'
-         spec: 'sp.spec'
-         requirements: 'requirements-win-gpu.txt'
-         upload_exe_with_name: 'sp1.5'
-         options: --name "sp"--windowed
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.10.9"
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Sync dependencies
+        run: uv sync --locked --group dev
+
+      - name: Run unit tests
+        run: uv run --locked --group dev pytest -q --tb=short
+
+      - name: Verify lockfile
+        run: uv lock --check
+
+  build:
+    name: Build Windows Executable
+    runs-on: windows-latest
+    needs: test
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "0.10.9"
+
+      - name: Set up Python ${{ env.PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Sync dependencies
+        run: uv sync --locked
+
+      - name: Download verified FFmpeg build
+        run: |
+          $url = "https://github.com/BtbN/FFmpeg-Builds/releases/download/autobuild-2026-10-03-18-14/ffmpeg-N-127142-g12b7b9891b-win64-gpl.zip"
+          $expectedHash = "a885f564dee2b60f69ab866c6c89b96ae531fc2ee1f24ff8b5b1a6d29960a96b"
+          $out = "ffmpeg.zip"
+          Invoke-WebRequest -Uri $url -OutFile $out
+          $actualHash = (Get-FileHash -Algorithm SHA256 $out).Hash.ToLowerInvariant()
+          if ($actualHash -ne $expectedHash) { throw "FFmpeg archive checksum mismatch: $actualHash" }
+          Expand-Archive -Path $out -DestinationPath ffmpeg_full
+          $ffmpegDir = Get-ChildItem -Directory ffmpeg_full | Select-Object -First 1
+          if (-not (Test-Path "$ffmpegDir\bin\ffmpeg.exe") -or -not (Test-Path "$ffmpegDir\bin\ffprobe.exe")) { throw 'FFmpeg binaries missing' }
+          Copy-Item "$ffmpegDir\bin\*" ffmpeg\ -Recurse -Force
+
+      - name: Build with PyInstaller (using tracked spec)
+        run: uv run pyinstaller sp.spec --clean --noconfirm
+
+      - name: Stage application resources beside executable
+        run: |
+          $root = 'dist/sp'
+          $resources = @('styles', 'language', 'voicejson', 'prompts', 'ui/dark')
+          foreach ($relative in $resources) {
+            $source = Join-Path "$root/_internal/videotrans" $relative
+            if (-not (Test-Path $source)) { throw "Missing packaged resource: $relative" }
+            $destination = Join-Path "$root/videotrans" $relative
+            New-Item -ItemType Directory -Force -Path $destination | Out-Null
+            Copy-Item -Path (Join-Path $source '*') -Destination $destination -Recurse -Force
+          }
+          $ffmpegSource = "$root/_internal/ffmpeg"
+          if (-not (Test-Path "$ffmpegSource/ffmpeg.exe") -or -not (Test-Path "$ffmpegSource/ffprobe.exe")) { throw 'FFmpeg was not bundled' }
+          New-Item -ItemType Directory -Force -Path "$root/ffmpeg" | Out-Null
+          Copy-Item -Path (Join-Path $ffmpegSource '*') -Destination "$root/ffmpeg" -Recurse -Force
+
+      - name: Verify candidate layout
+        run: |
+          foreach ($required in @('dist/sp/sp.exe', 'dist/sp/ffmpeg/ffmpeg.exe', 'dist/sp/ffmpeg/ffprobe.exe', 'dist/sp/videotrans/styles/style.qss', 'dist/sp/videotrans/styles/icon.ico')) {
+            if (-not (Test-Path $required)) { throw "Missing candidate file: $required" }
+          }
+
+      - name: Create release archive
+        run: |
+          $version = (Get-Content pyproject.toml | Select-String 'version = "(.*)"' | ForEach-Object { $_.Matches.Groups[1].Value })
+          $zipName = "pyVideoTrans-v$version-windows-x64.zip"
+          Compress-Archive -Path "dist\sp\*" -DestinationPath $zipName -Force
+          $hash = (Get-FileHash -Algorithm SHA256 $zipName).Hash.ToLowerInvariant()
+          "$hash  $zipName" | Set-Content -Path "$zipName.sha256" -Encoding ascii
+          echo "VERSION=$version" >> $env:GITHUB_ENV
+          echo "ZIP_NAME=$zipName" >> $env:GITHUB_ENV
+          echo "SHA256=$hash" >> $env:GITHUB_ENV
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pyVideoTrans-windows
+          path: |
+            ${{ env.ZIP_NAME }}
+            ${{ env.ZIP_NAME }}.sha256
+          retention-days: 30

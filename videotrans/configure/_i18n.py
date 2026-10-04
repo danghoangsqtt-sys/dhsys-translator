@@ -39,11 +39,19 @@ def _get_transobj(lang:str=None):
                 Path(f'{ROOT_DIR}/start_error.txt').write_text(f"{e}")
     return _tobj
 
+def _normalize_ui_locale(value):
+    """Resolve documented short CLI aliases without changing other locale names."""
+    if not isinstance(value, str):
+        return value
+    aliases = {'en': 'en_US', 'zh': 'zh_CN', 'zh-cn': 'zh_CN'}
+    return aliases.get(value.lower(), value)
+
+
 def _init_language(settings):
     global defaulelang, _transobj
     SUPPORT_LANG = _get_langjson_list()
     try:
-        _lang = os.environ.get('PYVIDEOTRANS_LANG', settings.lang)
+        _lang = _normalize_ui_locale(os.environ.get('PYVIDEOTRANS_LANG', settings.lang))
         if not _lang or not SUPPORT_LANG.get(_lang) or not Path(SUPPORT_LANG.get(_lang)).exists():
             _lang = QLocale.system().name()
     except Exception:

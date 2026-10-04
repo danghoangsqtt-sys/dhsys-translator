@@ -46,7 +46,6 @@ class TestBaseRecognPostInit:
         assert rec.is_cuda is False
         assert rec.subtitle_type == 0
         assert rec.max_speakers == -1
-        assert rec.llm_post is False
         assert rec.recogn2pass is False
 
 
@@ -92,51 +91,20 @@ class TestPostFix:
         assert len(result) == 1
 
 
-class TestMergeSubPipeline:
-    """Test merge pipeline with explicit settings to make tests deterministic."""
-
-    def test_single_element_passes_through(self):
+class TestRunPostProcessing:
+    def test_run_removes_invalid_segments(self, monkeypatch):
         rec = BaseRecogn(detect_language="en", recogn_type=0)
-        subs = [_make_srt("Hello world", 0, 3000, 1)]
-        result = rec._merge_sub(subs)
-        # _merge_sub should return at least the input
-        assert len(result) >= 1
-        assert "Hello" in result[0]["text"]
+        subs = [_make_srt("Hello world", 0, 3000, 1), _make_srt("...", 3000, 3500, 2)]
+        monkeypatch.setattr(rec, "_exec", lambda: subs)
 
-    def test_phase1_keeps_long_items(self):
-        rec = BaseRecogn(detect_language="en", recogn_type=0)
-        subs = [
-            _make_srt("This is a long enough sentence", 0, 3000, 1),
-            _make_srt("Another long sentence here", 4000, 7000, 2),
-        ]
-        result = rec._phase1_merge_short(subs, min_speech=500, post_srt_raws=[])
-        assert len(result) == 2
+        result = rec.run()
 
-    def test_phase1_merges_short_to_neighbor(self):
-        rec = BaseRecogn(detect_language="en", recogn_type=0)
-        subs = [
-            _make_srt("Long enough text here.", 0, 3000, 1),
-            _make_srt("Tiny", 3100, 3200, 2),
-            _make_srt("Some more content.", 3400, 6000, 3),
-        ]
-        result = rec._phase1_merge_short(subs, min_speech=1000, post_srt_raws=[])
-        # The tiny segment should be merged (removed from result)
-        assert len(result) <= 2
-
-    def test_phase2_merges_short_first(self):
-        rec = BaseRecogn(detect_language="en", recogn_type=0)
-        post = [
-            _make_srt("Hi", 0, 200, 1),
-            _make_srt("How are you today?", 500, 3000, 2),
-        ]
-        result = rec._phase2_merge_first(post, min_speech=1000)
         assert len(result) == 1
+        assert result[0].text == "Hello world"
 
-    def test_phase3_merges_short_last(self):
-        rec = BaseRecogn(detect_language="en", recogn_type=0)
-        post = [
-            _make_srt("Long sentence here.", 0, 2000, 1),
-            _make_srt("Bye", 2100, 2200, 2),
-        ]
-        result = rec._phase3_merge_last(post, min_speech=1000)
-        assert len(result) == 1
+    def test_second_pass_preserves_raw_segments(self, monkeypatch):
+        rec = BaseRecogn(detect_language="en", recogn_type=0, recogn2pass=True)
+        subs = [_make_srt("...", 0, 500, 1)]
+        monkeypatch.setattr(rec, "_exec", lambda: subs)
+
+        assert rec.run() is subs

@@ -198,7 +198,7 @@ def get_source_target_code(*, show_source=None, show_target=None, translate_type
 # 获取频道 模型无关的语言代码
 # 分别从 EDGET_LANGUAGES_NAME2CODE、判断本身是否是语言代码、从  tr 获取
 def get_code(show_text: str = None):
-    if not show_text or show_text == '-': return None
+    if not show_text or show_text in ('-', 'No'): return None
     if show_text == 'zh': return 'zh-cn'
     # 是语言代码本身，例如 zh-cn,en
     if show_text in LANG_CODE: return show_text

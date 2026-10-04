@@ -13,7 +13,7 @@
 
 [简体中文](docs/README_CN.md) | [**Documentation**](https://pyvideotrans.com) | [**Online Q&A**](https://bbs.pyvideotrans.com)
 
-[![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.10%2B-green.svg)](https://www.python.org/) [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
+[![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.10--3.12-green.svg)](https://www.python.org/) [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
 
 </div>
 
@@ -64,7 +64,7 @@ We recommend using **[`uv`](https://docs.astral.sh/uv/)** for package management
 
 ### 1. Prerequisites
 
-* **Python**: Recommended version 3.10
+* **Python**: Supported source runtimes are 3.10–3.12. The Windows candidate build uses 3.12.13; see [the runtime matrix](docs/runtime-matrix.md) for verification scope.
 * **FFmpeg**: Must be installed and configured in the environment variables.
   * **macOS**: 
   ```
@@ -97,9 +97,7 @@ cd pyvideotrans
 uv sync
 ```
 
-> By default, `whisper.net` and `WebUI` are not installed locally.
-> - To install all optional channels: `uv sync --all-extras`
-> - To install whisper.net: `uv sync --extra dotnet` 
+> WebUI is optional: install it with `uv sync --extra webui`. The `pythonnet` dependency for Whisper.NET on Windows is included in the base installation.
 > - To install WebUI: `uv sync --extra webui` 
 
 ### 4. Launch Software

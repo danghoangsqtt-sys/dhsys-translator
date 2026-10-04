@@ -52,7 +52,7 @@ class OpenRouterASR(BaseRecogn):
             payload["language"]=self.detect_language.split('-')[0]
         headers = {"Authorization": f"Bearer {self.api_key}","Content-Type": "application/json"}
         try:
-            response = requests.post(url, json=payload, headers=headers,verify=False)
+            response = requests.post(url, json=payload, headers=headers)
             return response.json()
         except Exception as e:
             return {"error":{"message":str(e)}}

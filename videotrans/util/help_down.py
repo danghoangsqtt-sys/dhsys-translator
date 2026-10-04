@@ -1,3 +1,5 @@
+import hashlib
+import re
 import time
 from pathlib import Path
 import shutil, os
@@ -7,14 +9,13 @@ from videotrans.configure.constants import FASTER_MODELS_DICT
 from urllib.parse import urlparse
 import threading
 import tqdm
-import urllib3
-
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # 全局锁对象防止同时下载模型，避免文件冲突或限流
 download_lock = threading.Lock()
 max_retries = 10  # 最大重试次数
 retry_delay = 5  # 失败后等待几秒重试
+_MODEL_EXTENSIONS = {'.bin', '.onnx', '.pt', '.pth', '.safetensors'}
+_MIN_MODEL_BYTES = 1024
 
 """解析URL获取纯净文件名 (去除 ?query)"""
 
@@ -22,6 +23,64 @@ retry_delay = 5  # 失败后等待几秒重试
 def get_filename_from_url(url) -> str:
     parsed = urlparse(url)
     return os.path.basename(parsed.path)
+
+
+def _sha256_file(path):
+    digest = hashlib.sha256()
+    with open(path, 'rb') as source:
+        for chunk in iter(lambda: source.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _expected_hash(url, filename, expected_hashes):
+    explicit = (expected_hashes or {}).get(url) or (expected_hashes or {}).get(filename)
+    if explicit:
+        if not re.fullmatch(r'[0-9a-fA-F]{64}', explicit):
+            raise ValueError(f'Invalid SHA-256 for {filename}')
+        return explicit.lower()
+    for component in urlparse(url).path.split('/'):
+        if re.fullmatch(r'[0-9a-fA-F]{64}', component):
+            return component.lower()
+    return None
+
+
+def _save_hash_sidecar(path, digest):
+    sidecar = path.with_name(path.name + '.sha256')
+    temporary = sidecar.with_name(sidecar.name + '.downloading')
+    temporary.write_text(digest + '\n', encoding='ascii')
+    temporary.replace(sidecar)
+
+
+def _cached_file_is_valid(path, url, session, proxy, expected_hash=None, expected_size=None):
+    if not path.is_file() or path.stat().st_size == 0:
+        return False
+    size = path.stat().st_size
+    if path.suffix.lower() in _MODEL_EXTENSIONS and size < _MIN_MODEL_BYTES:
+        return False
+    if expected_size is not None and size != expected_size:
+        return False
+    if expected_hash:
+        return _sha256_file(path) == expected_hash
+    sidecar = path.with_name(path.name + '.sha256')
+    if sidecar.is_file():
+        saved_hash = sidecar.read_text(encoding='ascii').strip().lower()
+        if re.fullmatch(r'[0-9a-f]{64}', saved_hash):
+            return _sha256_file(path) == saved_hash
+    if expected_size is not None:
+        if size == expected_size:
+            _save_hash_sidecar(path, _sha256_file(path))
+            return True
+        return False
+    try:
+        response = session.head(url, allow_redirects=True, timeout=(15, 30), proxies=proxy)
+        length = response.headers.get('content-length') if response.status_code == 200 else None
+        if length and length.isdigit() and int(length) == size:
+            _save_hash_sidecar(path, _sha256_file(path))
+            return True
+    except Exception as exc:
+        logger.warning(f'Could not validate cached model {path.name}: {exc}')
+    return False
 
 
 # 用于判断某个目录内是否存在指定类型的文件，存在则视为已存在
@@ -39,12 +98,10 @@ def file_exists(dirname, glob_patter='*.bin') -> bool:
     针对 faster-whisper 系列模型， 使用 modelscope.cn 下载[https://modelscope.cn/collections/himyworld/faster-whisper]，速度更快，其他模型使用国内镜像 https://hf-mirror.com 下载(慢易报错429)
 若可连接 huggingface.co ，则始终使用
 """
-_original_http_get = None
 
 
 def check_and_down_hf(model_id, repo_id, local_dir, callback=None, allow_list=None, token=None) -> bool:
     Path(local_dir).mkdir(exist_ok=True, parents=True)
-    global _original_http_get
     from .help_misc import is_connect_hf
     ishf = is_connect_hf()
     if model_id and model_id in FASTER_MODELS_DICT and not ishf:
@@ -53,10 +110,6 @@ def check_and_down_hf(model_id, repo_id, local_dir, callback=None, allow_list=No
                                      model_id] if model_id != 'distil-large-v3.5' else 'iBoostAI/distil-whisper-distil-large-v3.5-ct2',
                                  callback=callback, local_dir=local_dir)
 
-    import huggingface_hub.file_download as hf_fd
-    if not _original_http_get:
-        # ── 补丁 http_get: 注入 _ChunkTracker 绕过 tqdm ──
-        _original_http_get = hf_fd.http_get
     import huggingface_hub
     from huggingface_hub.errors import LocalEntryNotFoundError
 
@@ -72,50 +125,6 @@ def check_and_down_hf(model_id, repo_id, local_dir, callback=None, allow_list=No
             if _state["total_files"] == 0:
                 _state["total_files"] = int(self.total)
             callback({"type": "batch", "current": int(self.n), "total": int(self.total)})
-
-    def _patched_http_get(url, temp_file, *,
-                          proxies=None, resume_size=0, headers=None,
-                          expected_size=None, displayed_filename=None,
-                          _nb_retries=5, _tqdm_bar=None, **kwargs):
-        if expected_size is None:
-            return _original_http_get(url, temp_file, proxies=proxies,
-                                      resume_size=resume_size, headers=headers,
-                                      expected_size=expected_size,
-                                      displayed_filename=displayed_filename,
-                                      _nb_retries=_nb_retries, _tqdm_bar=_tqdm_bar, **kwargs)
-
-        class _ChunkTracker:
-            def __init__(self):
-                self.downloaded = resume_size
-
-            def update(self, n):
-                self.downloaded += n
-                if callback:
-                    pct = min(self.downloaded / expected_size * 100, 99.9)
-                    name = displayed_filename or url.rsplit('/', 1)[-1].split('?')[0]
-                    # 综合进度
-                    completed = _state.get("completed", 0)
-                    total = _state.get("total_files", 0)
-                    # 单文件进度
-                    callback({"type": "file", "percent": pct,
-                              "filename": f'{model_id} [{completed + 1}/{total}](hf) {name}' if total > 0 else name})
-                    if total > 0:
-                        smooth = (completed + pct / 100) / total * 100
-                        callback({
-                            "type": "batch",
-                            "current": completed + 1,
-                            "total": total,
-                            "percent": min(smooth, 99.9),
-                        })
-
-        return _original_http_get(url, temp_file, proxies=proxies,
-                                  resume_size=resume_size, headers=headers,
-                                  expected_size=expected_size,
-                                  displayed_filename=displayed_filename,
-                                  _nb_retries=_nb_retries,
-                                  _tqdm_bar=_ChunkTracker())
-
-    hf_fd.http_get = _patched_http_get
 
     try:
 
@@ -179,14 +188,12 @@ def check_and_down_hf(model_id, repo_id, local_dir, callback=None, allow_list=No
     except Exception as e:
         from videotrans.configure.excepts import DownloadModelsError
         raise DownloadModelsError(tr("hf_model error", local_dir, f'https://huggingface.co/{repo_id}/tree/main')) from e
-    finally:
-        hf_fd.http_get = _original_http_get
     return True
 
 
 # 非 https开头的，则必须以 / 开头，根据是否可访问自动添加 huggingface.co或 hf-mirror.com
 # 如果是 http开头，则直接使用
-def down_file_from_hf(local_dir, urls=None, callback=None) -> bool:
+def down_file_from_hf(local_dir, urls=None, callback=None, expected_hashes=None, expected_sizes=None) -> bool:
     Path(local_dir).mkdir(parents=True, exist_ok=True)
     from .help_misc import is_connect_hf
     from videotrans.configure.excepts import DownloadModelsError
@@ -207,17 +214,24 @@ def down_file_from_hf(local_dir, urls=None, callback=None) -> bool:
         final_file_path = Path(f'{local_dir}/{filename}')
         temp_file_path = Path(f'{local_dir}/{filename}.downloading')
 
-        # 如果正式文件存在且有大小，说明之前已经 100% 成功下载过
-        if final_file_path.exists() and final_file_path.stat().st_size > 0:
-            if callback:
-                callback(f'{filename}:100.00%')
-            continue
-
-        if not url.startswith('https://'):
+        original_url = url
+        if not url.startswith(('https://', 'http://')):
             if not endpoint:
                 is_connect_hf()
                 endpoint = os.environ.get('HF_ENDPOINT')
             url = f'{endpoint}{url}'
+
+        if 'modelscope.cn' in url:
+            proxy = None
+        expected_hash = _expected_hash(url, filename, expected_hashes)
+        expected_hash = expected_hash or _expected_hash(original_url, filename, expected_hashes)
+        expected_size = (expected_sizes or {}).get(original_url, (expected_sizes or {}).get(filename))
+        if _cached_file_is_valid(final_file_path, url, session, proxy, expected_hash, expected_size):
+            if callback:
+                callback(f'{filename}:100.00%')
+            continue
+        if final_file_path.exists():
+            temp_file_path.unlink(missing_ok=True)
 
         logger.debug(f'开始下载[{filename}]: {url}')
 
@@ -233,9 +247,7 @@ def down_file_from_hf(local_dir, urls=None, callback=None) -> bool:
                     if downloaded_size > 0:
                         headers['Range'] = f'bytes={downloaded_size}-'
 
-                if 'modelscope.cn' in url:
-                    proxy = None
-                with session.get(url, headers=headers, stream=True, timeout=(15, 30), verify=False,
+                with session.get(url, headers=headers, stream=True, timeout=(15, 30),
                                  proxies=proxy) as response:
                     # 如果不是 200 (OK) 也不是 206 则抛出异常触发重试
                     if response.status_code not in (200, 206):
@@ -243,6 +255,10 @@ def down_file_from_hf(local_dir, urls=None, callback=None) -> bool:
 
                     # 根据状态码自适应判断源站是否支持断点续传
                     if response.status_code == 206:
+                        content_range = response.headers.get('content-range', '')
+                        if not content_range.startswith(f'bytes {downloaded_size}-'):
+                            temp_file_path.unlink(missing_ok=True)
+                            raise ValueError(f'Unexpected resume range for {filename}: {content_range}')
                         mode = 'ab'  # 追加
                         remaining_length = response.headers.get('content-length')
                         total_length = (downloaded_size + int(remaining_length)) if remaining_length else None
@@ -267,11 +283,21 @@ def down_file_from_hf(local_dir, urls=None, callback=None) -> bool:
                                         callback(f'{filename}:{mb_size:.1f}MB')
 
                     # 确保下载没有中途悄悄结束
-                    if total_length is not None and downloaded_size < total_length:
-                        raise ConnectionError(f"文件截断：预期 {total_length} 字节，仅收到 {downloaded_size} 字节")
+                    if total_length is None and expected_size is None and expected_hash is None:
+                        raise ValueError(f'Missing size/hash metadata for {filename}')
+                    verified_size = expected_size if expected_size is not None else total_length
+                    if verified_size is not None and downloaded_size != verified_size:
+                        raise ConnectionError(f"文件大小不符：预期 {verified_size} 字节，实际 {downloaded_size} 字节")
+                    if final_file_path.suffix.lower() in _MODEL_EXTENSIONS and downloaded_size < _MIN_MODEL_BYTES:
+                        raise ValueError(f'Model file is too small: {filename} ({downloaded_size} bytes)')
+                    digest = _sha256_file(temp_file_path)
+                    if expected_hash and digest != expected_hash:
+                        temp_file_path.unlink(missing_ok=True)
+                        raise ValueError(f'SHA-256 mismatch for {filename}')
 
                     # 使用 replace 跨平台覆盖
                     temp_file_path.replace(final_file_path)
+                    _save_hash_sidecar(final_file_path, digest)
                     logger.debug(f'下载完成 {filename}')
                     break
             except Exception as e:
@@ -318,7 +344,7 @@ def down_zip(local_dir, zip_url, callback=None) -> bool:
                     headers['Range'] = f'bytes={downloaded_size}-'
 
             with session.get(zip_url, headers=headers, stream=True, timeout=(15, 30), proxies=proxy,
-                             verify=False) as response:
+                             ) as response:
                 if response.status_code not in (200, 206):
                     response.raise_for_status()
 

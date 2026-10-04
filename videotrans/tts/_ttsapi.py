@@ -70,9 +70,9 @@ class TTSAPI(BaseTTS):
         if ref_wav:
             with open(ref_wav, 'rb') as f:
                 files = {'file': f}
-                resraw = requests.post(f"{self.api_url}", data=data,  verify=False, headers=headers,files=files)
+                resraw = requests.post(f"{self.api_url}", data=data, headers=headers,files=files)
         else:
-            resraw = requests.post(f"{self.api_url}", data=data, verify=False, headers=headers)
+            resraw = requests.post(f"{self.api_url}", data=data, headers=headers)
         if resraw.status_code in [401,403,404,405,415,422]:
             raise StopTask(resraw.text)
         resraw.raise_for_status()
@@ -109,7 +109,6 @@ class TTSAPI(BaseTTS):
             thread_local.client = Client(
                     self.api_url,
                     httpx_kwargs={"timeout": 3600}, # 连接超时设置短一点因为只是拉取配置
-                    ssl_verify=False
                 )
         return thread_local.client
 
