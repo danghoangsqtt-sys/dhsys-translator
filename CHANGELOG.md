@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Planned responsive completion: the home page and the four primary quick tools will fit narrow desktop windows, Multiple speakers will follow the light table style, and the compact navigation will include its Vietnamese label. Existing routes and processing behavior remain unchanged.
+- The home page and four primary quick tools now fit narrow desktop windows; Multiple speakers follows the light table style, and compact Vietnamese navigation reads “Danh mục”. Existing routes and processing behavior remain unchanged.
 
 - The workspace now has one visible Home route: the sidebar on wide desktops and its compact Menu equivalent on narrow desktops.
 

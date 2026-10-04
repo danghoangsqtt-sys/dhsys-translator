@@ -23,10 +23,10 @@
       "4.7",
       "4.8"
     ],
-    "status": "task 4.8 responsive home and core utility surfaces in progress; tasks 4.1-4.7 verified locally; persistence pending",
+    "status": "task 4.8 responsive home and core utility surfaces deployed and verified locally; tasks 4.1-4.8 verified locally; persistence pending",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
     "candidate_path": "dist/sp/sp.exe",
-    "candidate_sha256": "3F6C8B89DB50D1C91F0E8BC73E1E1E9CFE483BE820596B0A082656F87582CD12",
-    "candidate_checkpoint_commit": "9e535cdf"
+    "candidate_sha256": "2C52AF073F2A148E60C82340DFAE5A198EAF6E01F5AEC7AE0303D7684061F094",
+    "candidate_checkpoint_commit": "f7e49c64"
   }
 }

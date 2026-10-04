@@ -2,7 +2,7 @@
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
-- Parallel UI task: 4.8 responsive home and core utility surfaces in progress; tasks 4.1–4.7 verified locally; persistence pending
+- Parallel UI task: 4.8 responsive home and core utility surfaces deployed and verified locally; tasks 4.1–4.8 verified locally; persistence pending
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress with the frozen startup contention repair verified locally; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
@@ -10,6 +10,8 @@
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 
 ## Evidence
+
+- Task 4.8 responsive completion 2026-10-04: home cards reflow to one column below 760 px; four core quick tools fit 480 px; Multiple speakers follows the shared light table style; compact Vietnamese navigation reads “Danh mục”. Focused tests: 11 passed; full Python 3.12 suite: 563 passed with one external `pydub` warning. Candidate and deployed `dist/sp/sp.exe` SHA-256 `2C52AF073F2A148E60C82340DFAE5A198EAF6E01F5AEC7AE0303D7684061F094` passed frozen UI and resource/provider/dialog/CLI/SRT/MP4 smoke from fresh user data.
 
 - Navigation de-duplication 2026-10-04: the legacy menu-bar and status-bar Home controls are hidden; sidebar Home remains the desktop route and its compact-menu equivalent remains at narrow width. Focused navigation: 27 passed; full Python 3.12: 560 passed with one existing external `pydub` warning. Candidate and deployed `dist/sp/sp.exe` SHA-256 `3F6C8B89DB50D1C91F0E8BC73E1E1E9CFE483BE820596B0A082656F87582CD12` passed frozen UI and resource/provider/dialog/CLI/SRT/MP4 smoke.
 

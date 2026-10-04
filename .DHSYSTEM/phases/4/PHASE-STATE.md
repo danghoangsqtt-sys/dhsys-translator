@@ -9,9 +9,14 @@
 | 4.5 Navigation parity and workspace hierarchy | verified locally; persistence pending | Sidebar shortcuts and tool catalog reuse original QAction instances; focused Qt tests pass |
 | 4.6 Regression evidence and handoff | verified locally; persistence pending | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved |
 | 4.7 Rebuild and smoke-test light Windows candidate | verified locally; persistence pending | Python 3.12 candidate has light QSS; frozen/UI/sidebar/menu smoke pass |
-| 4.8 Responsive home and core utility surfaces | in_progress | Home cards, core quick tools, light-table parity and compact Vietnamese navigation at 480/720/900/1280 px |
+| 4.8 Responsive home and core utility surfaces | verified locally; persistence pending | Home cards, core quick tools, light-table parity and compact Vietnamese navigation at 480/720/900/1280 px |
 
-Phase state: in_progress. Task 4.8 is active. Tasks 4.1–4.7 are verified locally. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+Phase state: in_progress. Tasks 4.1–4.8 are verified locally. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+
+## Task 4.8 evidence — 2026-10-04
+
+- Focused responsive Qt tests: 11 passed. Full Python 3.12 suite: 563 passed with one external `pydub` warning.
+- Candidate and deployed `dist/sp/sp.exe` SHA-256 `2C52AF073F2A148E60C82340DFAE5A198EAF6E01F5AEC7AE0303D7684061F094` passed frozen UI smoke with the four core routes and 480/720/900/1280 px probes. Candidate frozen resource/provider/dialog/CLI/SRT/MP4 smoke also passed from fresh user data.
 
 ## Evidence ? 2026-10-04
 
