@@ -6,6 +6,8 @@ Planned for 4.15.0 (ENH-003, after the pending 4.14.1 repair release): offer Vie
 
 - Subtitle correction dialogs now allow normal mouse and keyboard editing, use a readable light-table palette, show unsaved changes, and wait for an explicit save, discard or cancel action instead of auto-closing on a countdown.
 
+- Fresh desktop video-translation tasks now default to subtitles that are always visible on the video while preserving every legacy `subtitle_type` value. Soft/no-subtitle choices are explicit, no-subtitle export warns before starting, and successful jobs show a receipt with subtitle mode, video/SRT paths, bilingual order and the soft-track player instruction.
+
 - Desktop UI now loads and packages only Vietnamese and English locales; saved Chinese UI settings migrate to English, while Chinese media languages and voices remain available.
 
 - Application-authored desktop status, errors, settings and provider dialogs now use Vietnamese or English. CLI output exposes only Vietnamese and English, and WebUI follows the shared locale allowlist without removing Chinese media language codes or voices.

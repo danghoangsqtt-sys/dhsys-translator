@@ -36,39 +36,34 @@ Trước khi sửa code:
    - `.DHSYSTEM/TRACKER.md`
    - `.DHSYSTEM/phases/4/SPEC.md`
    - `.DHSYSTEM/phases/4/PHASE-STATE.md`
-   - `.DHSYSTEM/phases/4/tasks/4.14.md`
-3. Kiểm tra commit/tag mới nhất trên `main`. Task 4.13 đã sửa màn hình hiệu chỉnh phụ đề: bảng có tương phản tốt, ô phụ đề có thể double-click để sửa, thời gian có thể chỉnh, và không còn tự đóng do đếm ngược. Bằng chứng local: 9 focused tests, 20 related UI tests và 585 full Python 3.12 tests đều pass (chỉ có một cảnh báo ngoài dự án từ pydub).
+   - `.DHSYSTEM/phases/4/tasks/4.15.md`
+3. Kiểm tra commit/tag mới nhất trên `main`. Tasks 4.13–4.14 đã hoàn tất. Task 4.14 giữ nguyên enum `subtitle_type`, đổi mặc định fresh desktop sang phụ đề cứng, thêm cảnh báo không phụ đề và biên nhận đầu ra. Bằng chứng local: 38 focused tests, 104 related UI tests, 2 real product-pipeline media tests và 613 full Python 3.12 tests đều pass (chỉ có một cảnh báo ngoài dự án từ pydub).
 
-Hãy dùng quy trình tự động có checkpoint của `$dh-auto` nếu skill này có sẵn. Bắt đầu từ Task 4.14 — “Make subtitle output explicit and verifiable”; không nhảy thẳng sang TTS hoặc xóa provider.
+Hãy dùng quy trình tự động có checkpoint của `$dh-auto` nếu skill này có sẵn. Bắt đầu từ Task 4.15 — “Simplify navigation and add provider profiles”; chưa pilot TTS hoặc xóa provider trước khi 4.15 đạt gate.
 
-Yêu cầu Task 4.14:
-- Đổi nhãn lựa chọn `subtitle_type` tiếng Việt/Anh để mô tả kết quả người dùng nhìn thấy, không dùng thuật ngữ kỹ thuật mơ hồ.
-- Với cài đặt mới trong luồng chính “Tạo video dịch”, mặc định là phụ đề cứng; giữ nguyên mapping enum/giá trị đã lưu của người dùng cũ.
-- Phụ đề mềm và không phụ đề vẫn là lựa chọn chủ động.
-- Không cho phép chuyển mode âm thầm chọn “không phụ đề”. Cảnh báo rõ trước khi tạo video không có phụ đề.
-- Sau khi tạo xong, hiển thị biên nhận đầu ra: chế độ phụ đề, đường dẫn file, và nếu là phụ đề mềm thì player cần bật subtitle track.
-- Giữ đúng thứ tự nguồn/đích của các chế độ song ngữ.
+Yêu cầu Task 4.15:
+- Giữ sidebar cơ bản ở năm tác vụ media và một lối vào công cụ nâng cao; mọi QAction cũ vẫn phải truy cập được.
+- Không trộn cấu hình provider vào “Tất cả công cụ”; provider được chọn qua profile/cài đặt.
+- Thêm ba preset có thể đảo ngược: `Miễn phí trên máy`, `Gemini API (quota miễn phí)` và `Tùy chỉnh nâng cao`.
+- Profile chỉ áp cấu hình qua provider ID/index hiện có, không đổi enum/index đã lưu và không xóa provider/model.
+- Khi chọn profile remote, hiển thị rõ quyền riêng tư, quota không phải SLA và fallback; luồng cơ bản vẫn dùng được khi chưa có cloud credential.
+- Có snapshot/restore để người dùng quay lại cấu hình tùy chỉnh trước đó.
 
 Acceptance bắt buộc:
-1. Fresh main-workflow task mặc định phụ đề cứng mà không đổi legacy persisted enum mapping.
-2. Fixture phụ đề cứng phải nhìn thấy chữ trong decoded frames.
-3. Fixture phụ đề mềm có đúng subtitle stream và metadata ngôn ngữ, xác minh bằng `ffprobe`.
-4. “Không phụ đề” không bao giờ được chọn âm thầm khi đổi mode.
-5. Chế độ song ngữ giữ đúng thứ tự source/target.
+1. Mọi QAction cũ vẫn truy cập được, nhưng bề mặt cơ bản chỉ hiện tác vụ media.
+2. Chuyển profile không làm đổi nghĩa hoặc hỏng provider ID trong cấu hình cũ.
+3. Người dùng khôi phục được cấu hình tùy chỉnh sau khi thử profile.
+4. Giao diện cơ bản hoạt động khi không cấu hình cloud credential.
 
 Cách thực hiện:
-- Trước tiên đánh dấu Task 4.14 `in_progress` trong state/tracker theo quy ước hiện có.
-- Tìm toàn bộ nơi đọc/ghi `subtitle_type`, migration/default, các mode transition, pipeline FFmpeg và màn hình kết quả trước khi thay đổi.
-- Viết test regression trước hoặc cùng lúc với code. Tách kiểm tra UI/state khỏi kiểm tra media thực.
-- Dùng Python 3.12; khi chạy test Qt headless, đặt `QT_QPA_PLATFORM=offscreen` nếu cần.
-- Chạy focused tests, related UI tests, rồi full suite. Chạy `git diff --check`.
-- Không tuyên bố PASS nếu chưa có bằng chứng media cho hard subtitle và soft subtitle theo contract.
-- Cập nhật task contract, phase state, tracker, handoff và tài liệu người dùng tương ứng.
-- Commit theo từng checkpoint nhỏ, không dùng `git reset --hard`, không force-push, không ghi đè thay đổi ngoài phạm vi.
-- Push lên `main` của remote `https://github.com/danghoangsqtt-sys/dhsys-translator` khi Task 4.14 đạt gate; nếu không đạt, ghi rõ blocker và bằng chứng còn thiếu.
+- Trước tiên đánh dấu Task 4.15 `in_progress` trong state/tracker theo quy ước hiện có.
+- Khảo sát sidebar/menu/catalog, provider index persistence và các dialog cài đặt trước khi sửa.
+- Viết regression cho navigation parity, profile snapshot/restore, legacy ID và zero-cloud-credential path.
+- Dùng Python 3.12, `QT_QPA_PLATFORM=offscreen` cho Qt headless; chạy focused, related UI, full suite và `git diff --check`.
+- Cập nhật task contract, phase state, tracker, handoff và tài liệu người dùng; commit theo checkpoint nhỏ.
+- Push lên `main` khi Task 4.15 đạt gate; nếu không đạt, ghi rõ blocker và bằng chứng thiếu.
 
-Sau 4.14, thực hiện đúng thứ tự kế hoạch:
-- 4.15: đơn giản hóa sidebar và provider profiles nhưng vẫn giữ tương thích legacy.
+Sau 4.15, thực hiện đúng thứ tự kế hoạch:
 - 4.16: pilot VieNeu local opt-in và lớp kiểm soát phát âm Việt–Anh; benchmark trước khi chọn mặc định, không sửa displayed SRT.
 - 4.17: chỉ giảm provider có kiểm soát sau migration/privacy/local-only evidence; ưu tiên Gemini/OpenRouter miễn phí nhưng phải có fallback và thông báo quota.
 - 4.18: end-to-end, frozen Windows, tài liệu và bàn giao.
@@ -78,7 +73,7 @@ Kết thúc mỗi task, báo ngắn gọn: thay đổi gì, file chính, test/ga
 
 ## Trạng thái tại thời điểm bàn giao
 
-- Task đang tiếp tục: **4.14 — đầu ra phụ đề rõ ràng và kiểm chứng được**.
-- Task 4.13 đã hoàn tất về code và kiểm thử local; trạng thái persistence được chốt sau khi commit bàn giao này xuất hiện trên GitHub.
+- Task tiếp theo: **4.15 — sidebar theo tác vụ và provider profiles có thể đảo ngược**.
+- Tasks 4.13–4.14 đã hoàn tất code và kiểm thử local; trạng thái persistence của 4.14 được chốt sau khi commit/tag bàn giao xuất hiện trên GitHub.
 - Phase 3 clean-runner/full-media/release gates vẫn độc lập và chưa được phép đánh dấu hoàn tất chỉ vì Phase 4 tiếp tục.
 - Không có API key hoặc tệp cấu hình bí mật được chủ động đưa vào commit bàn giao.

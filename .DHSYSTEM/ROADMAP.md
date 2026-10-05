@@ -7,7 +7,7 @@ Phase 4 continues with tasks 4.13–4.18. The order is deliberate: repair subtit
 | Task | Outcome | State |
 | --- | --- | --- |
 | 4.13 | Subtitle editor is readable and editable by mouse/keyboard; no default auto-close | PASS |
-| 4.14 | Hard/soft/no-subtitle output is explicit and independently verified | planned |
+| 4.14 | Hard/soft/no-subtitle output is explicit and independently verified | PASS |
 | 4.15 | Task-first sidebar and three reversible provider profiles | planned |
 | 4.16 | Local VieNeu pilot plus non-destructive En–Vi pronunciation glossary | planned |
 | 4.17 | Provider migration/deprecation policy based on access, privacy and evidence | planned |

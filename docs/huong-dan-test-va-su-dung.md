@@ -53,7 +53,7 @@ uv run --python 3.12.13 --locked --group dev pytest -q tests/test_cli.py tests/t
 uv run --python 3.12.13 --locked --group dev pytest -q tests/test_light_workspace.py tests/test_responsive_surfaces.py
 ```
 
-Kết quả mong đợi là pytest thoát với mã `0` và dòng `... passed`. Trên môi trường Python 3.12.13 của checkout này, ngày **05/10/2026**, lệnh tương đương chạy trực tiếp qua `.venv312\Scripts\python.exe -m pytest` cho **576 passed, 1 warning** (cảnh báo `audioop` của `pydub`). Số lượng test có thể thay đổi khi mã được sửa. Các test này dùng mock ở một số nơi; chúng **chưa chứng minh** API thật, tải mô hình, GPU hoặc bản đóng gói hoạt động hoàn chỉnh.
+Kết quả mong đợi là pytest thoát với mã `0` và dòng `... passed`. Trên môi trường Python 3.12.14 của checkout này, ngày **05/10/2026**, lệnh tương đương chạy trực tiếp qua `.venv\Scripts\python.exe -m pytest` cho **613 passed, 1 warning** (cảnh báo `audioop` của `pydub`). Run này đặt `PYVIDEOTRANS_LANG=en_US` vì một số test WebUI cũ khẳng định nhãn tiếng Anh; regression phụ đề kiểm tra riêng cả `vi_VN` và `en_US`. Số lượng test có thể thay đổi khi mã được sửa. Các test này dùng mock ở một số nơi; chúng **chưa chứng minh** API thật, tải mô hình, GPU hoặc bản đóng gói hoạt động hoàn chỉnh.
 
 ## 4. Kiểm tra nhanh công cụ media và CLI
 
@@ -151,8 +151,8 @@ Cài đặt cũ lưu `zh`, `zh_CN`, `zh-cn` hoặc `zh-tw` cho **giao diện** �
 1. Ở **Chuẩn bị**, chọn file media; có thể chọn nhiều file hoặc chọn cả thư mục. Dùng file nói ngắn cho lần thử đầu.
 2. Ở **Chép lời**, chọn ngôn ngữ nói, kênh nhận dạng và mô hình. Bắt đầu với faster-whisper `tiny` trên CPU. Các kênh API cần cấu hình khóa ở menu cài đặt tương ứng.
 3. Ở **Dịch**, chọn ngôn ngữ đích và kênh dịch. Nếu chỉ thử chép lời, dùng công cụ **Chép lời** trên trang chủ sẽ ngắn hơn.
-4. Ở **Giọng đọc và phụ đề**, chọn kênh TTS, giọng đọc hoặc `No` nếu không lồng tiếng; chọn kiểu phụ đề mong muốn.
-5. Ở **Căn thời gian và đầu ra**, giữ tùy chọn mặc định cho lần đầu, chọn **Lưu vào...** nếu muốn thư mục kết quả cụ thể, rồi nhấn **Bắt đầu**. Đợi trạng thái hoàn tất và mở thư mục đầu ra để xem SRT/audio/MP4.
+4. Ở **Giọng đọc và phụ đề**, chọn kênh TTS, giọng đọc hoặc `No` nếu không lồng tiếng. Tác vụ mới mặc định **Luôn hiện chữ trên video**. **Bật/tắt phụ đề trong trình phát** tạo track phụ đề mềm nên cần bật phụ đề trong player; **Video không có phụ đề** sẽ hỏi xác nhận trước khi chạy. Hai lựa chọn song ngữ giữ thứ tự dòng theo mục **Ngôn ngữ đích ở trên/dưới**.
+5. Ở **Căn thời gian và đầu ra**, giữ tùy chọn mặc định cho lần đầu, chọn **Lưu vào...** nếu muốn thư mục kết quả cụ thể, rồi nhấn **Bắt đầu**. Khi hoàn tất, đọc biên nhận để biết chế độ phụ đề, đường dẫn MP4/SRT và yêu cầu bật subtitle track nếu đã chọn phụ đề mềm.
 
 Nếu không chọn nơi lưu, GUI dùng `_video_out` cạnh thư mục video nguồn; một số chế độ đặt kết quả trong thư mục con theo tên và phần mở rộng file. Trước khi chạy lại, đọc kỹ hộp thoại nếu ứng dụng hỏi **dọn kết quả cũ**: chấp nhận có thể xóa nội dung trong thư mục đầu ra của tác vụ. Với bản đóng gói, cấu hình, cache, log và đầu ra mặc định được ghi vào `%LOCALAPPDATA%\pyVideoTrans`, không phải thư mục chứa `sp.exe`.
 
