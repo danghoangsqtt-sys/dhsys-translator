@@ -1,10 +1,12 @@
 # Tracker
 
+- Active implementation: ENH-004 task 4.15 — task-first navigation and reversible provider profiles (`in_progress`; compatibility contract recorded, code survey pending).
+
 - Complete: ENH-004 task 4.14 — fresh translated-video tasks default to always-visible hard subtitles without changing legacy enum values; no-subtitle output is explicit, completion receipts report paths/mode, and hard/soft media contracts are verified. Tests: 38 focused, 104 related UI, 2 real pipeline media and 613 full Python 3.12 with one external warning. Commit `93497188` and both 4.14 tags are persisted to GitHub; Task 4.15 is next.
 
 - Complete: ENH-004 task 4.13 — both subtitle correction dialogs are focusable, selectable and editable; countdown auto-close is removed; light contrast and explicit unsaved state are applied. Tests: 9 focused, 20 related UI, 585 full Python 3.12 with one external warning. Commits are persisted to `dhsys/main`.
 
-- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.14 are complete and 4.15 is next; this work does not supersede the active Phase 3 release gate.
+- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.14 are complete and 4.15 is in progress; this work does not supersede the active Phase 3 release gate.
 
 - Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.12 verified locally; persistence pending).
 
