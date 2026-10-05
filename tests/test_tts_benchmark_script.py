@@ -1,4 +1,7 @@
+import subprocess
+import sys
 import wave
+from pathlib import Path
 from types import SimpleNamespace
 
 from scripts import benchmark_tts_pronunciation as benchmark
@@ -86,3 +89,20 @@ def test_benchmark_exit_code_requires_every_requested_provider_to_pass():
     assert benchmark._exit_code([{"status": "pass"}, {"status": "skipped"}]) == 2
     assert benchmark._exit_code([{"status": "failed"}]) == 2
     assert benchmark._exit_code([]) == 2
+
+
+def test_benchmark_script_runs_directly_from_repository_root():
+    repo_root = Path(__file__).resolve().parents[1]
+    script = repo_root / "scripts" / "benchmark_tts_pronunciation.py"
+
+    completed = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        timeout=30,
+        check=False,
+    )
+
+    assert completed.returncode == 0, completed.stderr
+    assert "Task 4.16 TTS pronunciation benchmark" in completed.stdout
