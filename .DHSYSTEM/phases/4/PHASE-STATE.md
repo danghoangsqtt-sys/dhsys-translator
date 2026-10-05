@@ -7,7 +7,7 @@
 | 4.13 Subtitle correction operability and contrast | PASS | 9 focused, 20 related UI and 585 full Python 3.12 tests pass; implementation and handoff persisted to `dhsys/main` |
 | 4.14 Explicit subtitle output | PASS | 38 focused, 104 related UI, 2 real pipeline media and 613 full Python 3.12 tests pass |
 | 4.15 Basic navigation and provider profiles | PASS | 11 focused, 35 related UI/config and 621 full Python 3.12 tests pass; reversible legacy-ID profiles verified |
-| 4.16 VieNeu pilot and En–Vi pronunciation control | in_progress | Non-destructive pronunciation layer plus Edge/VieNeu 12-fixture live benchmarks verified; human listening gate remains open |
+| 4.16 VieNeu pilot and En–Vi pronunciation control | in_progress | Non-destructive pronunciation layer, local voice discovery, 25-voice audition set and Edge/VieNeu 12-fixture live benchmarks verified; human listening gate remains open |
 | 4.17 Controlled provider reduction | planned | Migration, privacy and local-only behavior are proven before any removal |
 | 4.18 End-to-end handoff | planned | Source/frozen Windows evidence and documentation cover 4.13–4.17 |
 
@@ -31,11 +31,14 @@ Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 i
 ## Task 4.16 evidence — 2026-10-05
 
 - Vietnamese-only transient `tts_text` keeps displayed/persisted SRT unchanged while provider-facing text and TTS cache keys use the prepared pronunciation form. Project glossary precedence is deterministic and legacy provider/model IDs are untouched.
-- Focused pronunciation/BaseTTS/benchmark tests: 37 passed. Related TTS/config/UI tests: 145 passed. Full Python 3.12 suite: 635 passed; the full run has one external `pydub` deprecation warning.
+- Local VieNeu voice discovery is restricted to loopback plus a VieNeu model name, keeps any saved roles first, falls back safely when discovery fails, and does not change the persisted OpenAI TTS provider ID/index. The main voice selector preserves a selected discovered voice across refreshes.
+- The existing Multiple speakers dialog can assign different VieNeu voices to different speakers/lines; dubbing consumes those per-line roles without changing subtitle text. This provides the male/female dubbing foundation without adding a new provider ID.
+- A 25/25 audition set was generated from the same 10-word sentence, `Xin chào, đây là giọng thử cho nội dung dịch.` Compact non-sensitive metadata is stored in `.DHSYSTEM/phases/4/evidence/4.16-vieneu-voice-audition.json`; local WAVs remain ignored under `tmp/` and are not committed.
+- Focused pronunciation/BaseTTS/benchmark/voice-selection tests: 53 passed. Related TTS/config/UI tests: 185 passed. Full Python 3.12 suite: 642 passed; the full run has one external `pydub` deprecation warning.
 - Edge live benchmark generated all 12 required fixtures. Compact hashes/metrics are stored in `.DHSYSTEM/phases/4/evidence/4.16-edge-benchmark.json`; listening metrics remain pending human review.
 - VieNeu v3 Turbo ONNX/CPU ran successfully on loopback through the existing OpenAI-compatible adapter and generated all 12 required fixtures. Compact hashes/metrics are stored in `.DHSYSTEM/phases/4/evidence/4.16-vieneu-benchmark.json`; the 12 WAV hashes were rechecked with zero mismatches.
 - The benchmark script now runs directly from the repository root without a manual `PYTHONPATH`, matching the documented command. OmniVoice's local model remains absent and is a supported-hardware skip.
-- Pronunciation accuracy, naturalness and voice continuity are still pending human listening review for the live outputs, so Task 4.16 is not PASS and Task 4.17 must not start.
+- Pronunciation accuracy, naturalness, voice continuity and the user's preferred main VieNeu voice are still pending human listening review for the live outputs, so Task 4.16 is not PASS and Task 4.17 must not start.
 
 ## Task 4.15 evidence — 2026-10-05
 

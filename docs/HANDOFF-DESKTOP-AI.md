@@ -47,6 +47,9 @@ Yêu cầu Task 4.16:
 - Tạo lớp `tts_text` nội bộ và glossary theo project để xử lý phát âm Việt–Anh mà không thay đổi nội dung SRT hiển thị.
 - Có fixture benchmark cho AI, API, ChatGPT, GitHub, Docker, Python, OpenRouter, Gemini, NVIDIA, URL, e-mail và số phiên bản.
 - Chỉ so sánh Edge TTS, VieNeu Turbo và OmniVoice trên phần cứng được hỗ trợ và phải lưu bằng chứng audio/metric trước khi cân nhắc mặc định.
+- Khi VieNeu local đang chạy, cho phép người dùng chọn các giọng server expose bằng selector hiện có; giữ nguyên provider ID/index và cài đặt role đã lưu nếu discovery lỗi.
+- Dùng cùng danh sách role cho công cụ Nhiều người nói để có thể gán giọng khác nhau theo speaker (làm nền cho lồng tiếng Nam/Nữ) mà không sửa displayed SRT.
+- Tạo một mẫu thử cùng câu 10 từ cho mọi preset VieNeu được phát hiện trước khi chốt giọng chính; không suy đoán tuổi giọng nếu metadata không có tuổi.
 
 Acceptance bắt buộc:
 1. SRT gốc không thay đổi sau bước chuẩn bị phát âm.
@@ -73,9 +76,10 @@ Kết thúc mỗi task, báo ngắn gọn: thay đổi gì, file chính, test/ga
 
 ## Trạng thái tại thời điểm bàn giao
 
-- Task đang tiếp tục: **4.16 — VieNeu localhost opt-in và lớp phát âm Việt–Anh không phá SRT**. `tts_text`/project glossary và benchmark harness đã được triển khai; 37 focused, 145 related TTS/config/UI và 635 full Python 3.12 tests pass (full suite có một cảnh báo ngoài dự án từ `pydub`). Edge đã tạo 12/12 WAV; VieNeu v3 Turbo ONNX/CPU cũng đã chạy thành công trên loopback qua adapter OpenAI-compatible hiện có và tạo 12/12 WAV. Evidence gọn nằm ở `.DHSYSTEM/phases/4/evidence/4.16-edge-benchmark.json` và `.DHSYSTEM/phases/4/evidence/4.16-vieneu-benchmark.json`.
+- Task đang tiếp tục: **4.16 — VieNeu localhost opt-in và lớp phát âm Việt–Anh không phá SRT**. `tts_text`/project glossary, benchmark harness và local voice discovery đã được triển khai; 53 focused, 185 related TTS/config/UI và 642 full Python 3.12 tests pass (full suite có một cảnh báo ngoài dự án từ `pydub`). Edge đã tạo 12/12 WAV; VieNeu v3 Turbo ONNX/CPU cũng đã chạy thành công trên loopback qua adapter OpenAI-compatible hiện có và tạo 12/12 WAV. Evidence gọn nằm ở `.DHSYSTEM/phases/4/evidence/4.16-edge-benchmark.json`, `.DHSYSTEM/phases/4/evidence/4.16-vieneu-benchmark.json` và `.DHSYSTEM/phases/4/evidence/4.16-vieneu-voice-audition.json`.
+- Selector giọng hiện tại tự lấy danh sách `/voices` khi endpoint OpenAI-compatible là VieNeu local, giữ role đã lưu và fallback an toàn khi server không truy cập được. Công cụ **Nhiều người nói** dùng lại các role này để gán giọng khác nhau theo speaker/line mà không sửa SRT. Bộ thử nghe đã tạo đủ 25/25 preset bằng cùng câu 10 từ; WAV để local trong `tmp/`, không commit.
 - Script benchmark đã được sửa để lệnh chạy trực tiếp từ repo root hoạt động mà không cần tự đặt `PYTHONPATH`; có regression test subprocess tương ứng. VieNeu vẫn chỉ là pilot local opt-in, không thêm provider ID/dependency mặc định và không sửa SRT hiển thị/lưu trữ.
-- Gate 4.16 vẫn mở: OmniVoice model chưa cài và ba tiêu chí nghe (phát âm, tự nhiên, continuity) của output live chưa được chấm. Không bắt đầu 4.17 và không chọn VieNeu làm mặc định khi blocker nghe còn tồn tại.
+- Gate 4.16 vẫn mở: OmniVoice model chưa cài; ba tiêu chí nghe (phát âm, tự nhiên, continuity) và lựa chọn giọng chính của người dùng chưa được chốt. Không bắt đầu 4.17 và không chọn VieNeu/giọng nào làm mặc định khi blocker nghe còn tồn tại.
 - Tasks 4.13–4.15 đã hoàn tất và được lưu trên GitHub; Task 4.15 kết thúc ở commit `a9aee380` với tags `pyVideoTrans-DH-p4-t4.15` và `pyVideoTrans-DH-p4-t4.15-done`. Bằng chứng: 11 focused, 35 related UI/config và 621 full Python 3.12 tests pass.
 - Phase 3 clean-runner/full-media/release gates vẫn độc lập và chưa được phép đánh dấu hoàn tất chỉ vì Phase 4 tiếp tục.
 - Không có API key hoặc tệp cấu hình bí mật được chủ động đưa vào commit bàn giao.
