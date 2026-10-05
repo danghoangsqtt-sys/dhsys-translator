@@ -1,5 +1,7 @@
 # Tracker
 
+- In progress: ENH-004 task 4.17 — provider/data-plane inventory and migration policy. Current decision is compatibility-first: do not delete, renumber or hide legacy providers yet; preserve Advanced/Custom access and exact saved IDs. Local-only status must be proven from a loopback Local LLM endpoint, while Gemini/OpenRouter are disclosed as remote/off-device with quota/rate-limit and non-destructive fallback guidance. Chinese media-language support and local China-origin open models remain independent from China-hosted cloud API policy.
+
 - Complete and persisted: ENH-004 task 4.16 — non-destructive Vietnamese–English pronunciation control is implemented; local VieNeu voice discovery fills the existing selector without changing the OpenAI TTS provider ID or saved role mapping, and Multiple speakers can assign distinct voices per line/speaker. The 25/25 audition is complete, `Hải Đăng` is the preferred pilot voice, and its 12/12 benchmark has 12/12 hashes rechecked, mean duration ratio `0.502` and `1/12` within ±20%. On 2026-10-06 the user accepted pronunciation accuracy, naturalness and voice continuity for that pilot fixture set. Closeout revalidation passed 44 core focused, 94 related TTS/config/UI and 642 full Python 3.12 tests (one external `pydub` warning). Closeout commit `0b4f270b` is persisted to `origin/main`; VieNeu remains opt-in and OmniVoice absence remains a supported-hardware skip.
 
 - Complete: ENH-004 task 4.15 — the basic workspace has five media jobs plus advanced tools; provider settings are separate from “All tools”; reversible local/Gemini/custom profiles keep legacy provider IDs and credentials intact and restore prior custom selections. Tests: 11 focused, 35 related UI/config and 621 full Python 3.12 with one external warning. Completion commit `a9aee380` and both 4.15 tags are persisted to GitHub.
@@ -8,7 +10,7 @@
 
 - Complete: ENH-004 task 4.13 — both subtitle correction dialogs are focusable, selectable and editable; countdown auto-close is removed; light contrast and explicit unsaved state are applied. Tests: 9 focused, 20 related UI, 585 full Python 3.12 with one external warning. Commits are persisted to `dhsys/main`.
 
-- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.16 are PASS and persisted; 4.17 is next. This work does not supersede the active Phase 3 release gate.
+- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.16 are PASS and persisted; 4.17 is in progress. This work does not supersede the active Phase 3 release gate.
 
 - Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.12 verified locally; persistence pending).
 

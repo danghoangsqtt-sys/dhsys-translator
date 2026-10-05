@@ -8,7 +8,7 @@
 | 4.14 Explicit subtitle output | PASS | 38 focused, 104 related UI, 2 real pipeline media and 613 full Python 3.12 tests pass |
 | 4.15 Basic navigation and provider profiles | PASS | 11 focused, 35 related UI/config and 621 full Python 3.12 tests pass; reversible legacy-ID profiles verified |
 | 4.16 VieNeu pilot and En–Vi pronunciation control | PASS | Product/test/media/listening gate met; user accepted the Hải Đăng pilot listening gate on 2026-10-06; closeout commit persisted to `origin/main` |
-| 4.17 Controlled provider reduction | planned | Migration, privacy and local-only behavior are proven before any removal |
+| 4.17 Controlled provider reduction | in_progress | Policy/inventory work started; no provider removal until migration, privacy and local-only behavior are proven |
 | 4.18 End-to-end handoff | planned | Source/frozen Windows evidence and documentation cover 4.13–4.17 |
 
 | Task | State | Gate |
@@ -26,7 +26,7 @@
 | 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
 | 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
 
-Phase state: in_progress. Tasks 4.1–4.16 and ENH-003 are verified; Task 4.16 is persisted to `origin/main` at `0b4f270b` and is PASS. Task 4.17 is next. The separate Phase 3 clean-runner/release gates remain open.
+Phase state: in_progress. Tasks 4.1–4.16 and ENH-003 are verified; Task 4.16 is persisted to `origin/main` and is PASS. Task 4.17 is in progress with a compatibility-first provider/privacy policy; no provider deletion is authorized. The separate Phase 3 clean-runner/release gates remain open.
 
 ## Task 4.16 evidence — 2026-10-05
 

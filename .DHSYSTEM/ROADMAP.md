@@ -10,7 +10,7 @@ Phase 4 continues with tasks 4.13–4.18. The order is deliberate: repair subtit
 | 4.14 | Hard/soft/no-subtitle output is explicit and independently verified | PASS |
 | 4.15 | Task-first sidebar and three reversible provider profiles | PASS |
 | 4.16 | Local VieNeu pilot plus non-destructive En–Vi pronunciation glossary | PASS |
-| 4.17 | Provider migration/deprecation policy based on access, privacy and evidence | planned |
+| 4.17 | Provider migration/deprecation policy based on access, privacy and evidence | in_progress |
 | 4.18 | Source and frozen Windows end-to-end acceptance plus user documentation | planned |
 
 Source: `docs/brainstorm/session-2026-10-05-vietnamese-first-video-workflow.md`. Contracts: `.DHSYSTEM/phases/4/tasks/4.13.md` through `4.18.md`. This extension does not close the independent Phase 3 release gates and does not authorize provider deletion.
