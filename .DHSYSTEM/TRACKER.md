@@ -1,8 +1,10 @@
 # Tracker
 
-- Complete: ENH-004 task 4.13 — both subtitle correction dialogs are focusable, selectable and editable; countdown auto-close is removed; light contrast and explicit unsaved state are applied. Tests: 9 focused, 20 related UI, 585 full Python 3.12 with one external warning. Commits are persisted to `dhsys/main`; task 4.14 is next.
+- Active implementation: ENH-004 task 4.14 — explicit and verifiable subtitle output (`in_progress`; contract and media-evidence plan recorded, application edits pending).
 
-- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Task 4.13 is complete and 4.14 is next; this work does not supersede the active Phase 3 release gate.
+- Complete: ENH-004 task 4.13 — both subtitle correction dialogs are focusable, selectable and editable; countdown auto-close is removed; light contrast and explicit unsaved state are applied. Tests: 9 focused, 20 related UI, 585 full Python 3.12 with one external warning. Commits are persisted to `dhsys/main`; task 4.14 is now in progress.
+
+- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Task 4.13 is complete and 4.14 is in progress; this work does not supersede the active Phase 3 release gate.
 
 - Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.12 verified locally; persistence pending).
 

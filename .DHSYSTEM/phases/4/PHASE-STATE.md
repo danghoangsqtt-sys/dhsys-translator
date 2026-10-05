@@ -5,7 +5,7 @@
 | Task | State | Gate |
 | --- | --- | --- |
 | 4.13 Subtitle correction operability and contrast | PASS | 9 focused, 20 related UI and 585 full Python 3.12 tests pass; implementation and handoff persisted to `dhsys/main` |
-| 4.14 Explicit subtitle output | planned | Hard/soft/no-subtitle output is clear; hard pixels and soft stream are separately verified |
+| 4.14 Explicit subtitle output | in_progress | Hard/soft/no-subtitle output is clear; hard pixels and soft stream are separately verified |
 | 4.15 Basic navigation and provider profiles | planned | Basic tasks are compact; legacy actions/configuration remain compatible |
 | 4.16 VieNeu pilot and En–Vi pronunciation control | planned | Local opt-in pilot and benchmark pass without modifying displayed SRT |
 | 4.17 Controlled provider reduction | planned | Migration, privacy and local-only behavior are proven before any removal |
