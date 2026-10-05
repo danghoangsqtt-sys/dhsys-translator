@@ -70,8 +70,9 @@ class AssembleMixin:
         except OSError as e:
             logger.exception(f'Failed to move temporary files and adjust video position when outputting mp4 only, skipping {e}', exc_info=True)
 
-        if app_cfg.exec_mode != 'cli' and vail_file(self.cfg.targetdir_mp4):
-            self.signal(
+        signal = getattr(self, 'signal', None)
+        if app_cfg.exec_mode != 'cli' and callable(signal) and vail_file(self.cfg.targetdir_mp4):
+            signal(
                 text=json.dumps(build_output_receipt(self.cfg), ensure_ascii=False),
                 type='output_receipt',
             )
