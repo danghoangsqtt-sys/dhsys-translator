@@ -1,5 +1,16 @@
 # Phase 4 ? Light workspace layout
 
+## Planned extension — ENH-004
+
+| Task | State | Gate |
+| --- | --- | --- |
+| 4.13 Subtitle correction operability and contrast | planned | Focus, selection, keyboard edit, no auto-close and SRT save semantics are verified in both editors |
+| 4.14 Explicit subtitle output | planned | Hard/soft/no-subtitle output is clear; hard pixels and soft stream are separately verified |
+| 4.15 Basic navigation and provider profiles | planned | Basic tasks are compact; legacy actions/configuration remain compatible |
+| 4.16 VieNeu pilot and En–Vi pronunciation control | planned | Local opt-in pilot and benchmark pass without modifying displayed SRT |
+| 4.17 Controlled provider reduction | planned | Migration, privacy and local-only behavior are proven before any removal |
+| 4.18 End-to-end handoff | planned | Source/frozen Windows evidence and documentation cover 4.13–4.17 |
+
 | Task | State | Gate |
 | --- | --- | --- |
 | 4.1 Existing workflow section cards | verified locally; persistence pending | 5 section cards preserve original widgets; source and packaged UI probes pass |

@@ -1,5 +1,7 @@
 # Tracker
 
+- Planned: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). This work is not started and does not supersede the active Phase 3 release gate.
+
 - Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.12 verified locally; persistence pending).
 
 - Current phase: 3 — supported runtime and Windows packaging

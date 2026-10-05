@@ -1,5 +1,11 @@
 # PLAN — Ổn định phát hành và nâng cấp pyVideoTrans
 
+## Bổ sung đã kết tinh ngày 2026-10-05 — Luồng Việt-first
+
+Sau các task Phase 4 hiện có, thực hiện ENH-004 theo thứ tự 4.13 → 4.18: sửa editor phụ đề; làm rõ phụ đề cứng/mềm; đơn giản hóa sidebar và provider profile; pilot VieNeu cùng glossary phát âm Việt–Anh; chỉ sau đó mới xét ẩn/gỡ provider; cuối cùng kiểm thử source và gói Windows. Chi tiết và điều kiện nghiệm thu nằm trong `.DHSYSTEM/ROADMAP.md` và `.DHSYSTEM/phases/4/tasks/4.13.md`–`4.18.md`.
+
+Ràng buộc: giữ provider ID và cấu hình cũ; giữ khả năng xử lý nội dung tiếng Trung; không sửa SRT hiển thị để ép phát âm; không xem quota miễn phí là SLA; không dùng kết quả UI để tuyên bố cổng phát hành Phase 3 đã hoàn tất.
+
 Ngày lập: 2026-10-03
 
 Mốc mã được khảo sát: `8cf344fe` (`pyVideoTrans` 4.14)

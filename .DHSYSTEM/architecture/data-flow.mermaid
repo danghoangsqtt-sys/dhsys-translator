@@ -1,0 +1,17 @@
+flowchart TD
+    Media[Input media] --> Recognize[STT]
+    Recognize --> SourceSRT[Source SRT]
+    SourceSRT --> Correct[User correction]
+    Correct --> Translate[Translation]
+    Translate --> TargetSRT[Target SRT: display source of truth]
+    TargetSRT --> Pronounce[Language spans + project glossary]
+    Pronounce --> TTSText[Transient tts_text]
+    TTSText --> Synthesize[TTS]
+    TargetSRT --> SubtitleMode{Subtitle mode}
+    SubtitleMode -->|Hard| Burn[Burn into video pixels]
+    SubtitleMode -->|Soft| Mux[Mux subtitle stream]
+    SubtitleMode -->|None| NoSub[Explicit no-subtitle output]
+    Synthesize --> Assemble[FFmpeg assembly]
+    Burn --> Assemble
+    Mux --> Assemble
+    NoSub --> Assemble

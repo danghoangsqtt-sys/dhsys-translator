@@ -1,5 +1,20 @@
 # Roadmap
 
+## Planned extension — ENH-004 Vietnamese-first video workflow
+
+Phase 4 continues with tasks 4.13–4.18. The order is deliberate: repair subtitle correction first, prove hard/soft subtitle output second, simplify navigation/provider choice third, then pilot Vietnamese–English TTS before any provider removal.
+
+| Task | Outcome | State |
+| --- | --- | --- |
+| 4.13 | Subtitle editor is readable and editable by mouse/keyboard; no default auto-close | planned |
+| 4.14 | Hard/soft/no-subtitle output is explicit and independently verified | planned |
+| 4.15 | Task-first sidebar and three reversible provider profiles | planned |
+| 4.16 | Local VieNeu pilot plus non-destructive En–Vi pronunciation glossary | planned |
+| 4.17 | Provider migration/deprecation policy based on access, privacy and evidence | planned |
+| 4.18 | Source and frozen Windows end-to-end acceptance plus user documentation | planned |
+
+Source: `docs/brainstorm/session-2026-10-05-vietnamese-first-video-workflow.md`. Contracts: `.DHSYSTEM/phases/4/tasks/4.13.md` through `4.18.md`. This extension does not close the independent Phase 3 release gates and does not authorize provider deletion.
+
 Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each phase.
 
 | Phase | Scope | Status |

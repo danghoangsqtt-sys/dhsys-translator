@@ -2,6 +2,32 @@
 
 Status: planned on 2026-10-05. Source request: [ENH-003](../../requests/ENH-003.md), committed as `feaf5fe7`. This supplements [docs/SPEC.md](../../../docs/SPEC.md) UI-10 and does not mark Phase 4 or the Phase 3 release gate complete.
 
+## Vietnamese-first workflow contract — ENH-004 (tasks 4.13–4.18)
+
+### Product boundary
+
+- Preserve the PySide6 desktop, CLI/WebUI contracts, provider numeric IDs and Chinese media-language processing.
+- Make the desktop basic path task-first and free-first: local processing is functional without cloud credentials; remote profiles are explicit opt-ins.
+- Hard subtitles are the default visual outcome for the main video-translation workflow. Soft subtitles and no subtitles remain supported choices with plain-language explanations.
+- Edit dialogs must be accessible by mouse and keyboard, use the active light palette, and never auto-save/auto-close by default.
+- VieNeu is an optional loopback pilot through the existing OpenAI-compatible TTS interface. It is not a bundled dependency or default until benchmark evidence is accepted.
+
+### Compatibility and safety rules
+
+- Never rewrite visible SRT merely to influence pronunciation. Pronunciation preparation is separate transient `tts_text` plus project glossary data.
+- Hide/deprecate providers before deletion; saved settings need an explicit compatible path. Provider policy distinguishes local execution from remote data transfer.
+- A completed ENH-004 does not close the independent Phase 3 clean-runner, provider-media or release gates.
+
+### Acceptance matrix
+
+| Surface | Required evidence |
+| --- | --- |
+| Subtitle editor | Both dialogs allow focus, selection and mouse/keyboard editing; contrast and save/skip behavior are tested. |
+| Subtitle output | Hard subtitle pixels and soft subtitle stream/metadata are independently asserted; no-subtitle choice is deliberate. |
+| Navigation/profile | Basic routes are task-oriented, all legacy actions remain reachable and profile changes preserve saved configuration. |
+| TTS | VieNeu loopback pilot, Edge fallback, SRT preservation and pronunciation benchmark have reproducible evidence. |
+| Delivery | Source and frozen Windows smoke cover the complete single-video workflow; no misleading release claim is made. |
+
 ## Product boundary
 
 - **Interface locale:** exactly `vi_VN` and `en_US` for application-authored desktop, CLI and WebUI text. New installations retain the Vietnamese default. A deliberate old `zh_CN`/`zh` UI setting falls back to English and is migrated without changing unrelated settings.

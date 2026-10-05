@@ -1,0 +1,12 @@
+flowchart LR
+    User[Desktop user] --> Shell[WorkspaceShell / basic task UI]
+    Shell --> Profiles[Provider profile resolver]
+    Profiles --> Params[Existing params and provider registries]
+    Params --> Pipeline[Existing single-video task pipeline]
+    Pipeline --> STT[Recognition providers]
+    Pipeline --> TR[Translation providers]
+    Pipeline --> Prep[TTS text preparation + glossary]
+    Prep --> TTS[Existing TTS adapters]
+    Pipeline --> Edit[Subtitle correction dialogs]
+    Pipeline --> FFmpeg[Subtitle and media assembly]
+    FFmpeg --> Output[Video + SRT + output receipt]
