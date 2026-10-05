@@ -186,11 +186,18 @@ class DubbingSrt(BaseTask):
                 spec_role = None
             voice_role = spec_role if spec_role else self.cfg.voice_role
             from videotrans.util.help_misc import get_md5
+            from videotrans.tts.pronunciation import prepare_tts_text
+            tts_text = prepare_tts_text(
+                it['text'],
+                language=self.cfg.target_language_code,
+                project_dir=self.cfg.target_dir,
+            )
             _key = get_md5(
-                f"{self.cfg.target_language_code}-{it['text']}-{voice_role}-{rate}-{self.cfg.volume}-{self.cfg.pitch}-{self.cfg.tts_type}")
+                f"{self.cfg.target_language_code}-{tts_text}-{voice_role}-{rate}-{self.cfg.volume}-{self.cfg.pitch}-{self.cfg.tts_type}")
             tmp_dict = {
                 "line": it['line'],
                 "text": it['text'],
+                "tts_text": tts_text,
                 "role": voice_role,
                 "start_time": it['start_time'],
                 "end_time": it['end_time'],

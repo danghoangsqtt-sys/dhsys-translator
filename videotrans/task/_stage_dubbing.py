@@ -8,6 +8,7 @@ from videotrans.configure._paths import DUBBING_CACHE
 from videotrans.configure.config import tr, app_cfg, settings, logger
 from videotrans.configure.excepts import DubbingSrtError
 from videotrans.tts import run as run_tts, SUPPORT_CLONE
+from videotrans.tts.pronunciation import prepare_tts_text
 from videotrans.util.help_misc import get_md5, vail_file
 from videotrans.util.help_srt import get_subtitle_from_srt, delete_punc
 
@@ -60,10 +61,17 @@ class DubbingMixin:
                 continue
             voice = line_roles.get(f'{it["line"]}', voice_role) if line_roles else voice_role
 
-            _key = get_md5(f"{self.cfg.target_language_code}-{it['text']}-{voice}-{rate}-{self.cfg.volume}-{self.cfg.pitch}-{self.cfg.tts_type}")
+            tts_text = prepare_tts_text(
+                it['text'],
+                language=self.cfg.target_language_code,
+                project_dir=self.cfg.target_dir,
+            )
+
+            _key = get_md5(f"{self.cfg.target_language_code}-{tts_text}-{voice}-{rate}-{self.cfg.volume}-{self.cfg.pitch}-{self.cfg.tts_type}")
 
             tmp_dict = {
                 "text": it['text'],
+                "tts_text": tts_text,
                 "line": it['line'],
                 "start_time": it['start_time'],
                 "end_time": it['end_time'],
@@ -110,14 +118,14 @@ class DubbingMixin:
             outname = self.cfg.target_dir + f'/segment_audio_{self.cfg.noextname}'
             Path(outname).mkdir(parents=True, exist_ok=True)
         for it in self.queue_tts:
-            it['text']=it['text'].strip('...').strip('…').strip()
+            segment_text = it['text'].strip('...').strip('…').strip()
             if self.cfg.fix_punc==2:
-                it['text']=delete_punc(it['text'])
+                segment_text = delete_punc(segment_text)
             if Path(it['filename']).exists():
                 # 保存缓存
                 shutil.copy2(it['filename'],f'{DUBBING_CACHE}/'+Path(it['filename']).name.split('-')[-1])
                 if outname:
-                    text = re.sub(r'["\'*?\\/|:<>\r\n\t]+', '', it['text'], flags=re.I | re.S)
+                    text = re.sub(r'["\'*?\\/|:<>\r\n\t]+', '', segment_text, flags=re.I | re.S)
                     name = f'{outname}/{it["line"]}-{text[:60]}.wav'
                     shutil.copy2(it['filename'], name)
         

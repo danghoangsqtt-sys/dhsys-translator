@@ -236,11 +236,16 @@ class BaseTTS(BaseCon):
                 normalizer = EnglishNormalizer()
 
         for i, it in enumerate(self.queue_tts):
-            if it['text'].strip() and normalizer:
+            # Providers continue consuming the long-standing ``text`` key, but
+            # only on this deep-copied queue.  The task/SRT keeps the original
+            # display text while an optional transient ``tts_text`` controls
+            # pronunciation.
+            self.queue_tts[i]['text'] = it.get('tts_text', it.get('text', ''))
+            if self.queue_tts[i]['text'].strip() and normalizer:
                 try:
-                    self.queue_tts[i]['text'] = normalizer(it['text'])
+                    self.queue_tts[i]['text'] = normalizer(self.queue_tts[i]['text'])
                 except Exception as e:
-                    logger.exception(f'Text Normalization Failed, Ignored:{it["text"]=},{e}', exc_info=True)
+                    logger.exception(f'Text Normalization Failed, Ignored:{self.queue_tts[i]["text"]=},{e}', exc_info=True)
 
         volume = self.queue_tts[0].get('volume', '+0%')
         volume = f'+{volume}' if re.match(r'^\d+(\.\d+)?%$', volume) else volume
