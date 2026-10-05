@@ -295,7 +295,7 @@ class AppParams:
         try:
             _write_with_retry(self._json_path, json.dumps(self.to_dict(), ensure_ascii=False))
         except Exception as e:
-            logging.getLogger('VideoTrans').exception(f'保存 params 到本地失败：{e}', exc_info=True)
+            logging.getLogger('VideoTrans').exception(f'Failed to save params locally: {e}', exc_info=True)
 
     def __getitem__(self, item):
         return getattr(self, item)

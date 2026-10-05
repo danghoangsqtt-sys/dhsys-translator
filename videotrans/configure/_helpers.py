@@ -23,4 +23,4 @@ def push_queue(uuid: str, msg: SignMsg):
     try:
         SignalHub.instance().post(uuid, msg)
     except Exception as e:
-        _logger_ref.exception(f'push_queue 信号发送错误：{e}', exc_info=True)
+        _logger_ref.exception(f'Failed to emit push_queue signal: {e}', exc_info=True)

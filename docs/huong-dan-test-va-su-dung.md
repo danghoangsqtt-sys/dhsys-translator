@@ -53,7 +53,7 @@ uv run --python 3.12.13 --locked --group dev pytest -q tests/test_cli.py tests/t
 uv run --python 3.12.13 --locked --group dev pytest -q tests/test_light_workspace.py tests/test_responsive_surfaces.py
 ```
 
-Kết quả mong đợi là pytest thoát với mã `0` và dòng `... passed`. Trên môi trường Python 3.12.13 của checkout này, ngày **05/10/2026**, lệnh tương đương chạy trực tiếp qua `.venv312\Scripts\python.exe -m pytest` cho **563 passed, 1 warning** (cảnh báo `audioop` của `pydub`). Số lượng test có thể thay đổi khi mã được sửa. Các test này dùng mock ở một số nơi; chúng **chưa chứng minh** API thật, tải mô hình, GPU hoặc bản đóng gói hoạt động hoàn chỉnh.
+Kết quả mong đợi là pytest thoát với mã `0` và dòng `... passed`. Trên môi trường Python 3.12.13 của checkout này, ngày **05/10/2026**, lệnh tương đương chạy trực tiếp qua `.venv312\Scripts\python.exe -m pytest` cho **576 passed, 1 warning** (cảnh báo `audioop` của `pydub`). Số lượng test có thể thay đổi khi mã được sửa. Các test này dùng mock ở một số nơi; chúng **chưa chứng minh** API thật, tải mô hình, GPU hoặc bản đóng gói hoạt động hoàn chỉnh.
 
 ## 4. Kiểm tra nhanh công cụ media và CLI
 
@@ -124,6 +124,16 @@ uv run --python 3.12.13 --locked cli.py --task vtv --name "C:\media\speech.mp4" 
 
 Mở MP4 kết quả, nghe tiếng, xem phụ đề, kiểm tra mốc đầu/cuối và so thời lượng với video nguồn. `--subtitle_type 1` là phụ đề cứng; các giá trị khác xem `--help` hoặc [hướng dẫn CLI đầy đủ](cli.md). Mỗi lần CLI chạy tạo thư mục kết quả riêng, kể cả khi trùng tên file nguồn. Khi cần chẩn đoán trung gian, dùng `--no-clear-cache` và dọn thủ công sau khi xong.
 
+### 5.5. Kiểm tra video tiếng Trung sang tiếng Việt
+
+Tiếng Trung vẫn là ngôn ngữ **nội dung** được hỗ trợ dù giao diện chỉ có tiếng Việt và tiếng Anh. Dùng clip ngắn có giọng Quan thoại rõ và chạy:
+
+```powershell
+uv run --python 3.12.13 --locked cli.py --task vtv --name "C:\media\chinese.mp4" --source_language_code zh-cn --target_language_code vi --recogn_type 0 --model_name tiny --translate_type 0 --tts_type 0 --voice_role "vi-VN-HoaiMyNeural" --subtitle_type 4 --output-dir "C:\media\results" --no-clear-cache
+```
+
+Kết quả cần có MP4 với luồng hình/tiếng, SRT nguồn tiếng Trung và SRT tiếng Việt. `zh-cn`, `zh-tw` và tiếng Quảng Đông vẫn xuất hiện trong danh sách ngôn ngữ nội dung của CLI, desktop và WebUI. Các câu tiếng Trung trong SRT hoặc nội dung do provider trả về là dữ liệu video hợp lệ; nhãn trạng thái, tóm tắt tác vụ và lỗi do ứng dụng tạo phải là tiếng Việt hoặc tiếng Anh.
+
 ## 6. Dùng giao diện desktop
 
 Chạy từ mã nguồn bằng PowerShell:
@@ -132,7 +142,9 @@ Chạy từ mã nguồn bằng PowerShell:
 uv run --python 3.12.13 --locked sp.py
 ```
 
-Hoặc giải nén toàn bộ bản Windows ứng viên rồi mở `sp.exe`; không chạy ngay trong file ZIP. Trên **trang chủ Xưởng Video**, chọn ngôn ngữ giao diện (Tiếng Việt/English/中文; đổi ngôn ngữ sẽ hỏi khởi động lại). `Mở không gian video` dẫn đến màn hình chính. Bốn công cụ nhanh là **Chép lời**, **Dịch SRT**, **Nhiều người nói** và **Ghép video/âm thanh/SRT**. Menu và danh mục công cụ trong không gian làm việc vẫn có các mục nâng cao.
+Hoặc giải nén toàn bộ bản Windows ứng viên rồi mở `sp.exe`; không chạy ngay trong file ZIP. Trên **trang chủ Xưởng Video**, ngôn ngữ giao diện chỉ có **Tiếng Việt** và **English**; đổi ngôn ngữ sẽ hỏi khởi động lại. `Mở không gian video` dẫn đến màn hình chính. Bốn công cụ nhanh là **Chép lời**, **Dịch SRT**, **Nhiều người nói** và **Ghép video/âm thanh/SRT**. Menu và danh mục công cụ trong không gian làm việc vẫn có các mục nâng cao.
+
+Cài đặt cũ lưu `zh`, `zh_CN`, `zh-cn` hoặc `zh-tw` cho **giao diện** được tự động chuyển sang `en_US` ở lần khởi động tiếp theo; proxy và các cài đặt khác được giữ lại. File giao diện `zh_CN.json` cũ trong dữ liệu người dùng bị bỏ qua. Việc chuyển đổi này không đổi ngôn ngữ nguồn/đích của tác vụ media.
 
 Để thử một video trong màn hình chính:
 
@@ -177,7 +189,7 @@ $process.ExitCode
 Get-Content $report
 ```
 
-Mã thoát cần là `0` và report cần `"status": "pass"`. `sp.exe` là chương trình GUI nên PowerShell có thể không đợi nếu gọi trực tiếp bằng `&`; dùng `Start-Process -Wait` như trên. Script này kiểm tra tài nguyên, FFmpeg, CLI chạy trong interpreter đóng gói và MP4 tổng hợp; **không gọi provider thật**. Bản `dist\sp` hiện có đã qua smoke này ngày **05/10/2026**. Có thể dùng `scripts\smoke_frozen_ui.py`, `scripts\smoke_sidebar.py` và `scripts\smoke_dynamic_menus.py` theo cú pháp `sp.exe <script> <report.json>` để kiểm tra giao diện/menu. Bản đóng gói vẫn cần thử thủ công với video lời nói, provider thực và máy Windows sạch trước khi coi là đủ điều kiện phát hành.
+Mã thoát cần là `0` và report cần `"status": "pass"`. `sp.exe` là chương trình GUI nên PowerShell có thể không đợi nếu gọi trực tiếp bằng `&`; dùng `Start-Process -Wait` như trên. Script này kiểm tra tài nguyên, FFmpeg, CLI chạy trong interpreter đóng gói, model Silero VAD, dữ liệu chuyển đổi chữ Trung `zhconv`, hai catalog giao diện và MP4 tổng hợp; **không gọi provider thật**. Có thể dùng `scripts\smoke_frozen_ui.py`, `scripts\smoke_sidebar.py` và `scripts\smoke_dynamic_menus.py` theo cú pháp `sp.exe <script> <report.json>` để kiểm tra giao diện/menu. Với `smoke_frozen_ui.py`, chạy lần lượt locale `vi`, `en_US` và cấu hình cũ `zh_CN`; report phải chỉ có hai lựa chọn `vi_VN`/`en_US`, còn `zh_CN` chuyển sang `en_US`. Bản đóng gói vẫn cần thử với video lời nói và provider thực trên máy Windows sạch trước khi phát hành.
 
 ## 9. Khi có lỗi
 
@@ -187,6 +199,7 @@ Mã thoát cần là `0` và report cần `"status": "pass"`. `sp.exe` là chư�
 | `ModuleNotFoundError: gradio` | Chạy `uv sync --python 3.12.13 --locked --extra webui`. |
 | CLI báo thiếu `--name`, ngôn ngữ đích hoặc giọng TTS | Xem `cli.py --help`; `sts` cần ngôn ngữ đích, `tts` cần `--voice_role`, `vtv` cần cả ngôn ngữ nguồn và đích. |
 | Lần đầu STT rất lâu | Kiểm tra kết nối tải mô hình, dung lượng ổ đĩa; thử mô hình `tiny` trước. |
+| Bản đóng gói báo thiếu `silero_vad_v6.onnx` | Dùng bản được build lại từ `sp.spec`; chạy `scripts\smoke_frozen.py` để xác nhận model VAD đã nằm trong `_internal\faster_whisper\assets`. |
 | CUDA không hoạt động | Bỏ `--cuda`/bỏ chọn GPU để xác nhận CPU trước; sau đó kiểm tra driver và thư viện CUDA theo môi trường thực. |
 | WebUI từ máy khác không vào được | Kiểm tra `--host`, thông tin đăng nhập, firewall và port 7860. Mặc định chỉ nghe `127.0.0.1`. |
 | Kết quả không ở chỗ dự kiến | Đọc `[Output Dir]` của CLI; GUI kiểm tra nhãn thư mục lưu và `_video_out`; bản đóng gói kiểm tra `%LOCALAPPDATA%\pyVideoTrans`. |

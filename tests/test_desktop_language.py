@@ -86,7 +86,10 @@ def test_legal_terms_are_readable_in_both_ui_locales():
     import re
 
     from PySide6.QtGui import QTextDocument
+    from PySide6.QtWidgets import QApplication
     from videotrans.ui._legal_terms import legal_terms_html
+
+    app = QApplication.instance() or QApplication([])
 
     for locale, heading in (
         ('en_US', 'Software License and Service Agreement'),
@@ -101,3 +104,4 @@ def test_legal_terms_are_readable_in_both_ui_locales():
         assert 'https://github.com/jianchang512/pyvideotrans' in html
         assert len(text) > 3000
         assert not re.search(r'[\u4e00-\u9fff]', text)
+    app.processEvents()

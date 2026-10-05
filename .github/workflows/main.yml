@@ -134,7 +134,7 @@ jobs:
 
       - name: Verify candidate layout
         run: |
-          foreach ($required in @('dist/sp/sp.exe', 'dist/sp/ffmpeg/ffmpeg.exe', 'dist/sp/ffmpeg/ffprobe.exe', 'dist/sp/videotrans/styles/style.qss', 'dist/sp/videotrans/styles/light.qss', 'dist/sp/videotrans/styles/icon.ico', 'dist/sp/_internal/faster_whisper/assets/silero_vad_v6.onnx')) {
+          foreach ($required in @('dist/sp/sp.exe', 'dist/sp/ffmpeg/ffmpeg.exe', 'dist/sp/ffmpeg/ffprobe.exe', 'dist/sp/videotrans/styles/style.qss', 'dist/sp/videotrans/styles/light.qss', 'dist/sp/videotrans/styles/icon.ico', 'dist/sp/_internal/faster_whisper/assets/silero_vad_v6.onnx', 'dist/sp/_internal/zhconv/zhcdict.json')) {
             if (-not (Test-Path $required)) { throw "Missing candidate file: $required" }
           }
 
@@ -172,6 +172,8 @@ jobs:
           $sidebarReport = Join-Path $env:RUNNER_TEMP 'candidate-sidebar.json'
           $menusReport = Join-Path $env:RUNNER_TEMP 'candidate-menus.json'
           $uiReport = Join-Path $env:RUNNER_TEMP 'candidate-ui.json'
+          $englishUiReport = Join-Path $env:RUNNER_TEMP 'candidate-ui-en.json'
+          $legacyUiReport = Join-Path $env:RUNNER_TEMP 'candidate-ui-legacy-zh.json'
           Copy-Item 'scripts/smoke_frozen.py' $smokeScript
           Copy-Item 'scripts/smoke_sidebar.py' $sidebarScript
           Copy-Item 'scripts/smoke_dynamic_menus.py' $menusScript
@@ -218,7 +220,7 @@ jobs:
           if ($sidebarResult.status -ne 'pass') { throw "Packaged sidebar smoke failed: $(Get-Content $sidebarReport -Raw)" }
 
           $uiError = Join-Path $env:RUNNER_TEMP 'candidate-ui-stderr.txt'
-          $ui = Start-Process -FilePath $exe -ArgumentList @($uiScript, $uiReport) -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $uiError
+          $ui = Start-Process -FilePath $exe -ArgumentList @($uiScript, $uiReport, 'vi', '--lang', 'vi') -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $uiError
           if (-not $ui.WaitForExit(120000)) {
             Stop-Process -Id $ui.Id -Force
             throw 'Packaged Vietnamese UI smoke timed out'
@@ -229,6 +231,38 @@ jobs:
           }
           $uiResult = Get-Content $uiReport -Raw | ConvertFrom-Json
           if ($uiResult.status -ne 'pass') { throw "Packaged Vietnamese UI smoke failed: $(Get-Content $uiReport -Raw)" }
+
+          $englishUiError = Join-Path $env:RUNNER_TEMP 'candidate-ui-en-stderr.txt'
+          $englishUi = Start-Process -FilePath $exe -ArgumentList @($uiScript, $englishUiReport, 'en_US', '--lang', 'en_US') -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $englishUiError
+          if (-not $englishUi.WaitForExit(120000)) {
+            Stop-Process -Id $englishUi.Id -Force
+            throw 'Packaged English UI smoke timed out'
+          }
+          if (-not (Test-Path $englishUiReport)) {
+            if (Test-Path $englishUiError) { Get-Content $englishUiError -Tail 40 }
+            throw 'Packaged English UI smoke did not write a report'
+          }
+          $englishUiResult = Get-Content $englishUiReport -Raw | ConvertFrom-Json
+          if ($englishUiResult.status -ne 'pass') { throw "Packaged English UI smoke failed: $(Get-Content $englishUiReport -Raw)" }
+
+          $legacyUiError = Join-Path $env:RUNNER_TEMP 'candidate-ui-legacy-zh-stderr.txt'
+          $legacyData = Join-Path $env:LOCALAPPDATA 'pyVideoTrans\videotrans'
+          $legacyLanguage = Join-Path $legacyData 'language'
+          New-Item -ItemType Directory -Force -Path $legacyLanguage | Out-Null
+          $utf8NoBom = [Text.UTF8Encoding]::new($false)
+          [IO.File]::WriteAllText((Join-Path $legacyData 'cfg.json'), '{"lang":"zh_CN"}', $utf8NoBom)
+          [IO.File]::WriteAllText((Join-Path $legacyLanguage 'zh_CN.json'), '{}', $utf8NoBom)
+          $legacyUi = Start-Process -FilePath $exe -ArgumentList @($uiScript, $legacyUiReport, 'zh_CN') -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $legacyUiError
+          if (-not $legacyUi.WaitForExit(120000)) {
+            Stop-Process -Id $legacyUi.Id -Force
+            throw 'Packaged legacy-Chinese locale migration smoke timed out'
+          }
+          if (-not (Test-Path $legacyUiReport)) {
+            if (Test-Path $legacyUiError) { Get-Content $legacyUiError -Tail 40 }
+            throw 'Packaged legacy-Chinese locale migration smoke did not write a report'
+          }
+          $legacyUiResult = Get-Content $legacyUiReport -Raw | ConvertFrom-Json
+          if ($legacyUiResult.status -ne 'pass') { throw "Packaged legacy-Chinese locale migration smoke failed: $(Get-Content $legacyUiReport -Raw)" }
 
           $menusError = Join-Path $env:RUNNER_TEMP 'candidate-menus-stderr.txt'
           $menus = Start-Process -FilePath $exe -ArgumentList @($menusScript, $menusReport, '--open') -WorkingDirectory $env:RUNNER_TEMP -WindowStyle Hidden -PassThru -RedirectStandardError $menusError

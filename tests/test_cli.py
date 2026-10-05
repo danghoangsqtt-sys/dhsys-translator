@@ -18,6 +18,7 @@ import pytest
 # ---------------------------------------------------------------------------
 from cli import (
     TEXT_DB,
+    _configure_stdio_encoding,
     tr,
     set_lang,
     build_parser,
@@ -139,6 +140,18 @@ class TestSetLang:
         import cli
         assert cli._lang == "en"
         set_lang("en")  # restore
+
+
+def test_cli_reconfigures_redirected_streams_for_utf8(monkeypatch):
+    stdout = MagicMock()
+    stderr = MagicMock()
+    monkeypatch.setattr(sys, "stdout", stdout)
+    monkeypatch.setattr(sys, "stderr", stderr)
+
+    _configure_stdio_encoding()
+
+    stdout.reconfigure.assert_called_once_with(encoding="utf-8", errors="replace")
+    stderr.reconfigure.assert_called_once_with(encoding="utf-8", errors="replace")
 
 
 # ===========================================================================
@@ -489,6 +502,8 @@ class TestBuildVTVParams:
         result = build_vtv_params(args)
         assert result["source_language_code"] == "zh-cn"
         assert result["target_language_code"] == "en"
+        assert result["source_language"] == "zh-cn"
+        assert result["target_language"] == "en"
         assert result["is_separate"] is True
         assert result["recogn2pass"] is True
         assert result["subtitle_type"] == 1

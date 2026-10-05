@@ -13,9 +13,16 @@
 | 4.9 Two UI locales and legacy migration | verified locally; persistence pending | `vi_VN`/`en_US` allowlist; old Chinese UI settings migrate; Chinese media codes preserved; 567 source tests pass |
 | 4.10 Application-authored runtime messages | verified locally; persistence pending | Task summary, progress, errors, settings and provider dialogs use Vietnamese/English; Chinese media text untouched |
 | 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
-| 4.12 Packaged and Chinese-media regression | planned | Full suite, frozen UI smoke, legacy-data migration and short Chinese-media flow evidenced |
+| 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
 
-Phase state: in_progress. Tasks 4.1–4.11 are verified locally; ENH-003 task 4.12 is planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+Phase state: in_progress. Tasks 4.1–4.12 and ENH-003 are verified locally; Git upstream persistence and the separate Phase 3 clean-runner/release gates remain open.
+
+## Task 4.12 evidence — 2026-10-05
+
+- Full Python 3.12.13 source suite: 576 passed with one external `pydub` warning. `git diff --check` and the application-authored runtime Han scan passed.
+- Isolated Windows candidate SHA-256 `9EFE5C00A69E182D896F0B91A5F8B28FF0A7F2EE49B284DAC6962939821ECB6` passed frozen resource smoke, including Silero VAD, `zhconv`, Google/Microsoft dynamic providers, only `vi_VN`/`en_US` catalogs, and retained `zh-cn`/`zh-tw`/`yue` media codes.
+- Frozen UI passed in Vietnamese and English. A legacy `zh_CN` setting plus user catalog migrated to `en_US`, preserved the two-choice allowlist, and ignored the old catalog.
+- Packaged 7.296-second Mandarin `zh-cn` → Vietnamese flow passed with faster-whisper `tiny`, Microsoft translation fallback after Google returned 429, Edge TTS 2/2, source/target SRT, and an H.264/AAC/`mov_text` MP4. No forbidden Chinese application labels appeared in the logs.
 
 ## Task 4.11 evidence — 2026-10-05
 

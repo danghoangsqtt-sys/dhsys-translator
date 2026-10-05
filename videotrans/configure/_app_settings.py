@@ -237,7 +237,7 @@ class AppSettings:
         try:
             _write_with_retry(self._json_path, json.dumps(self.to_dict(), ensure_ascii=False))
         except Exception as e:
-            logging.getLogger('VideoTrans').exception(f'保存settings到本地失败：{e}', exc_info=True)
+            logging.getLogger('VideoTrans').exception(f'Failed to save settings locally: {e}', exc_info=True)
 
     def _handle_hf_token(self):
         p = Path(ROOT_DIR + "/models/hf_token.txt")

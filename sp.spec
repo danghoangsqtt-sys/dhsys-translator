@@ -62,6 +62,13 @@ def collect_data_files():
         raise RuntimeError("Missing faster-whisper Silero VAD asset in build environment")
     data_files.extend(vad_assets)
 
+    # zhconv loads this dictionary through pkg_resources when Chinese speech
+    # recognition normalizes simplified/traditional text.
+    zhconv_assets = collect_package_data("zhconv", includes=["zhcdict.json"])
+    if len(zhconv_assets) != 1:
+        raise RuntimeError("Missing zhconv dictionary in build environment")
+    data_files.extend(zhconv_assets)
+
     license_file = PROJECT_ROOT / "LICENSE"
     if license_file.is_file():
         data_files.append((str(license_file), "."))
@@ -165,6 +172,7 @@ hidden_imports = [
 hidden_imports += [
     "videotrans.recognition._whisper",
     "videotrans.translator._google",
+    "videotrans.translator._microsoft",
     "videotrans.tts._edgetts",
     "videotrans.winform.chatgpt",
     "videotrans.ui.chatgpt",

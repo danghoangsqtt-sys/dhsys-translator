@@ -35,7 +35,7 @@ def openwin():
         file=ROOT_DIR+f'/f5-tts/{rolename}'
         if not Path(file).exists():
             return show_error(tr("No reference audio {} exists",file))
-        winobj.test.setText('\u6d4b\u8bd5\u4e2d\u8bf7\u7a0d\u7b49...')
+        winobj.test.setText('Testing, please wait...')
         from videotrans import tts
         import time
         wk = ListenVoice(parent=winobj, queue_tts=[{

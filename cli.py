@@ -204,6 +204,18 @@ del _LEGACY_TEXT_DB
 _lang: str = "en"
 
 
+def _configure_stdio_encoding() -> None:
+    """Keep Vietnamese CLI output writable in redirected Windows consoles."""
+    for stream_name in ("stdout", "stderr"):
+        stream = getattr(sys, stream_name, None)
+        reconfigure = getattr(stream, "reconfigure", None)
+        if callable(reconfigure):
+            try:
+                reconfigure(encoding="utf-8", errors="replace")
+            except (OSError, ValueError):
+                pass
+
+
 def set_lang(lang: str) -> None:
     """Set the global language for CLI output."""
     global _lang
@@ -520,7 +532,9 @@ def build_sts_params(args: argparse.Namespace) -> dict:
 def build_vtv_params(args: argparse.Namespace) -> dict:
     """Build VTV-specific parameters."""
     return {
+        "source_language": args.source_language_code,
         "source_language_code": args.source_language_code,
+        "target_language": args.target_language_code,
         "target_language_code": args.target_language_code,
         **build_stt_params(args),
         **{k: v for k, v in build_tts_params(args).items()
@@ -561,6 +575,7 @@ def setup_logging(log_level: str, verbose: bool = False, quiet: bool = False) ->
 # ---------------------------------------------------------------------------
 def main() -> int:
     """Main CLI entry point. Returns exit code (0=success, 1=error)."""
+    _configure_stdio_encoding()
     # Parse language from system before anything else
     from videotrans.configure import config
     config.init_run()

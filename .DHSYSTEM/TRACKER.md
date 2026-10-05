@@ -1,10 +1,10 @@
 # Tracker
 
-- Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.11 verified locally, 4.12 pending).
+- Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.12 verified locally; persistence pending).
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
-- Parallel UI task: 4.11 CLI/WebUI locale parity verified locally (575 Python 3.12 tests); tasks 4.1–4.11 verified locally; persistence pending
+- Parallel UI task: 4.12 packaged locale and Chinese-media regression verified locally (576 Python 3.12 tests); tasks 4.1–4.12 verified locally; persistence pending
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress with the frozen startup contention repair verified locally; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
@@ -13,6 +13,8 @@
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 
 ## Evidence
+
+- ENH-003 completion evidence 2026-10-05: 576 Python 3.12.13 tests pass with one external warning. Candidate `tmp/enh003-localized-dist/sp/sp.exe` SHA-256 `9EFE5C00A69E182D896F0B91A5F8B28FF0A7F2EE49B284DAC6962939821ECB6` passes frozen VAD/`zhconv`/provider/resource smoke and vi/en/legacy-zh UI probes. A 7.296-second Mandarin clip completed packaged faster-whisper `tiny` recognition, Microsoft translation fallback after Google 429, Vietnamese Edge TTS 2/2, and H.264/AAC/subtitle MP4 output; forbidden Chinese application labels were absent. Branch upstream persistence and Phase 3 release gates remain open.
 
 - Packaged faster-whisper VAD repair 2026-10-05: the shipped `dist/sp` lacked `_internal/faster_whisper/assets/silero_vad_v6.onnx` although the Python environment had it. The new frozen smoke reproduced the failure before the repair, then loaded the ONNX model after a local asset copy. `sp.spec` now collects that exact package asset and the candidate workflow checks its presence. A fresh isolated PyInstaller build at `tmp/vad-fixed-dist/sp` passed frozen smoke. A 12-second excerpt of the reported FreeRTOS video passed packaged CPU `tiny` transcription with `vad_filter=True` and produced 3 segments in both the fresh build and the patched `dist/sp`. Python 3.12 source suite: 563 passed, 1 external deprecation warning. Full translation/TTS/media output, clean runner and upstream release gates remain open.
 

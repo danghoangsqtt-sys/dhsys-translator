@@ -53,7 +53,7 @@ def get_video_codec(compat=None,force=False) -> str:
         test_input_file = Path(ROOT_DIR) / "videotrans/styles/no-remove.mp4"
         temp_dir = Path(config.TEMP_DIR)
     except Exception as e:
-        logger.warning(f"Error preparing hardware encoder for testing: {e}. Software encoding will be used. {default_codec}。")
+        logger.warning(f"Error preparing hardware encoder for testing: {e}. Software encoding will be used. {default_codec}.")
         _codec_cache[cache_key] = default_codec
         return default_codec
 
@@ -104,7 +104,7 @@ def get_video_codec(compat=None,force=False) -> str:
 
     encoders_to_test = ENCODER_PRIORITY.get(plat, [])
     if not encoders_to_test:
-        logger.debug(f"Unsupported platform: {plat}. Software encoder will be used. {default_codec}。")
+        logger.debug(f"Unsupported platform: {plat}. Software encoder will be used. {default_codec}.")
     else:
         logger.debug(f"Platform: {plat}. Best priority codec for is being detected as \'{h_prefix}\' encoder: {encoders_to_test}")
         try:

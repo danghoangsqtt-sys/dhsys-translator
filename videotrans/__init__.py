@@ -32,5 +32,5 @@ def get_class(channel_id: int = 0, provider_type=None, _ID_NAME_DICT=None):
                 _loaded_modules[_key] = obj
                 return obj
     except Exception as e:
-        logger.exception(f'懒加载渠道{provider_type}:{channel_id=}失败:{e}', exc_info=True)
+        logger.exception(f'Failed to load {provider_type} provider {channel_id=}: {e}', exc_info=True)
         raise

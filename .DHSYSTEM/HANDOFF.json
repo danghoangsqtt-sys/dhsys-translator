@@ -24,15 +24,20 @@
       "4.8",
       "4.9",
       "4.10",
-      "4.11"
+      "4.11",
+      "4.12"
     ],
-    "status": "tasks 4.1-4.11 verified locally; ENH-003 packaged regression task 4.12 planned; persistence pending",
+    "status": "tasks 4.1-4.12 and ENH-003 verified locally; upstream persistence pending; Phase 3 release gates remain open",
     "planned_request": "ENH-003",
     "planned_tasks": ["4.9", "4.10", "4.11", "4.12"],
     "planned_target_version": "4.15.0 after pending 4.14.1 repair release",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
     "candidate_path": "dist/sp/sp.exe",
     "candidate_sha256": "2C52AF073F2A148E60C82340DFAE5A198EAF6E01F5AEC7AE0303D7684061F094",
-    "candidate_checkpoint_commit": "f7e49c64"
+    "candidate_checkpoint_commit": "f7e49c64",
+    "localization_candidate_path": "tmp/enh003-localized-dist/sp/sp.exe",
+    "localization_candidate_sha256": "9EFE5C00A69E182D896F0B91A5F8B28FF0A7F2EE49B284DAC6962939821ECB6",
+    "localization_source_tests": "576 passed, 1 external warning",
+    "localization_media_flow": "packaged zh-cn to vi STT, Microsoft fallback translation, Edge TTS 2/2, H.264/AAC/subtitle MP4 passed"
   }
 }

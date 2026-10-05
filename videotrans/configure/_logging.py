@@ -42,11 +42,11 @@ def _write_with_retry(file_path, content, max_retries=2):
             return True
         except PermissionError as e:
             if attempt == max_retries - 1:
-                _logger.exception(f'写入文件失败:{file_path}\n{e}', exc_info=True)
+                _logger.exception(f'Failed to write file: {file_path}\n{e}', exc_info=True)
                 return
             time.sleep(random.uniform(0.05, 0.2))
         except Exception:
-            _logger.exception(f'写入文件失败:{file_path}', exc_info=True)
+            _logger.exception(f'Failed to write file: {file_path}', exc_info=True)
             return
 
 

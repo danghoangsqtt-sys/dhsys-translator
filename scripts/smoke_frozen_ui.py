@@ -10,12 +10,13 @@ import traceback
 def run_check():
     if not getattr(sys, 'frozen', False):
         raise AssertionError('run this probe through the packaged sp.exe')
+    requested_locale = sys.argv[2] if len(sys.argv) > 2 else 'vi'
     os.environ['QT_QPA_PLATFORM'] = 'offscreen'
-    os.environ['PYVIDEOTRANS_LANG'] = 'vi'
+    os.environ['PYVIDEOTRANS_LANG'] = requested_locale
 
     from PySide6.QtCore import QPoint
     from PySide6.QtWidgets import QApplication, QFrame, QMainWindow, QPushButton
-    from videotrans.configure.config import defaulelang, tr
+    from videotrans.configure.config import ROOT_DIR, defaulelang, settings, tr
     from videotrans.configure._paths import resource_path
     from videotrans.ui.home import HomePage
     from videotrans.ui.info import Ui_info
@@ -23,12 +24,26 @@ def run_check():
     from videotrans.ui.workspace_shell import WorkspaceShell
 
     app = QApplication.instance() or QApplication([])
-    if defaulelang != 'vi_VN' or tr('Video Workshop') != 'Xưởng Video':
-        raise AssertionError(f'Vietnamese locale failed: {defaulelang}')
+    normalized_locale = requested_locale.lower().replace('_', '-')
+    expected_locale = 'en_US' if normalized_locale in {'en', 'en-us', 'zh', 'zh-cn', 'zh-tw'} else 'vi_VN'
+    expected_brand = 'Video Workshop' if expected_locale == 'en_US' else 'Xưởng Video'
+    if defaulelang != expected_locale or tr('Video Workshop') != expected_brand:
+        raise AssertionError(f'locale resolution failed: requested={requested_locale}, selected={defaulelang}')
     if not resource_path('videotrans', 'language', 'vi_VN.json').is_file():
         raise AssertionError('Vietnamese catalog missing from package')
+    if not resource_path('videotrans', 'language', 'en_US.json').is_file():
+        raise AssertionError('English catalog missing from package')
+    if resource_path('videotrans', 'language', 'zh_CN.json').exists():
+        raise AssertionError('Chinese UI catalog must not be bundled')
+    legacy_request = normalized_locale in {'zh', 'zh-cn', 'zh-tw'}
+    legacy_catalog = Path(ROOT_DIR) / 'videotrans' / 'language' / 'zh_CN.json'
+    if legacy_request and (not legacy_catalog.is_file() or settings.lang != 'en_US'):
+        raise AssertionError('legacy Chinese user data was not ignored and migrated to English')
 
     page = HomePage(defaulelang)
+    locale_choices = [page.language.itemData(index) for index in range(page.language.count())]
+    if locale_choices != ['vi_VN', 'en_US']:
+        raise AssertionError(f'unexpected interface locale choices: {locale_choices}')
     for width in (480, 720, 900, 1280):
         page.resize(width, 720)
         page.show()
@@ -73,8 +88,9 @@ def run_check():
             if control.mapTo(tool, QPoint()).x() + control.width() > tool.width():
                 raise AssertionError(f'{type(tool).__name__}.{name} exceeds its window')
         tool.close()
-    if tr('Menu') != 'Danh mục':
-        raise AssertionError('Vietnamese compact-menu label is missing')
+    expected_menu = 'Menu' if expected_locale == 'en_US' else 'Danh mục'
+    if tr('Menu') != expected_menu:
+        raise AssertionError(f'compact-menu label is incorrect for {expected_locale}')
 
     class GeneratedWindow(QMainWindow, Ui_MainWindow):
         def show_home(self):
@@ -123,7 +139,10 @@ def run_check():
         raise AssertionError('packaged workflow view state did not reach every section')
     window.close()
     return {
+        'requested_locale': requested_locale,
         'locale': defaulelang,
+        'locale_choices': locale_choices,
+        'legacy_catalog_ignored': bool(legacy_request and legacy_catalog.is_file()),
         'brand': tr('Video Workshop'),
         'routes': routes,
         'workspace_shell': True,

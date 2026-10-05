@@ -67,7 +67,10 @@ def run(*, translate_type=0,
         #     from videotrans.translator._googlepy import GoogleTrans
         #     return GoogleTrans(**kwargs).run()
 
-        logger.warning(f'Detection of Google translation failed:status_code={_rs}Change to use Microsoft translation')
+        logger.warning(
+            f'Google translation availability check returned status {_rs}; '
+            'switching to Microsoft translation.'
+        )
         translate_type = MICROSOFT_INDEX
         kwargs['translate_type']=translate_type
     _cls: Union[Type[BaseTrans], None] = get_class(translate_type,"translator",ID_NAME_DICT)

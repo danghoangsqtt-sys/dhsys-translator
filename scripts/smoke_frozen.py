@@ -9,6 +9,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import runpy
 import subprocess
 import sys
@@ -41,6 +42,22 @@ def run_check(cli_script):
     require(resource_path("videotrans", "styles", "light.qss").is_file(),
             "bundled light.qss could not be resolved")
 
+    bundled_language_dir = install_root / "videotrans" / "language"
+    bundled_catalogs = {path.name for path in bundled_language_dir.glob("*.json")}
+    require(bundled_catalogs == {"en_US.json", "vi_VN.json"},
+            f"unexpected bundled UI catalogs: {sorted(bundled_catalogs)}")
+
+    from videotrans.configure._i18n import UI_LOCALES
+    from videotrans.configure._languages_dict import EDGE_LANGUANGES_CODE
+    from videotrans.translator import LANGNAME_DICT
+
+    require(UI_LOCALES == ("vi_VN", "en_US"),
+            f"unexpected UI locale allowlist: {UI_LOCALES}")
+    require({"zh-cn", "zh-tw"}.issubset(LANGNAME_DICT),
+            "Chinese source/target media languages are missing")
+    require({"zh-cn", "zh-tw", "yue"}.issubset(EDGE_LANGUANGES_CODE),
+            "Chinese or Cantonese TTS media languages are missing")
+
     from faster_whisper.utils import get_assets_path
     from faster_whisper.vad import get_vad_model
 
@@ -48,6 +65,10 @@ def run_check(cli_script):
     require(vad_asset.is_file(), "bundled faster-whisper Silero VAD model is missing")
     vad_model = get_vad_model()
     require(vad_model.session is not None, "bundled Silero VAD model did not load")
+
+    import zhconv
+    require(zhconv.convert("繁體中文", "zh-cn") == "繁体中文",
+            "bundled zhconv dictionary did not load")
 
     from videotrans import get_class
     from videotrans import recognition
@@ -59,6 +80,9 @@ def run_check(cli_script):
     provider = get_class(translator.GOOGLE_INDEX, "translator", translator.ID_NAME_DICT)
     require(provider.__module__ == "videotrans.translator._google",
             "dynamic translator provider resolved to the wrong module")
+    fallback_provider = get_class(translator.MICROSOFT_INDEX, "translator", translator.ID_NAME_DICT)
+    require(fallback_provider.__module__ == "videotrans.translator._microsoft",
+            "dynamic Microsoft fallback provider resolved to the wrong module")
 
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     from PySide6.QtWidgets import QApplication
@@ -86,6 +110,23 @@ def run_check(cli_script):
         sys.argv = prior_argv
     require(VERSION.removeprefix("v") in cli_output.getvalue(),
             f"packaged CLI did not report version {VERSION}")
+
+    cli_languages = io.StringIO()
+    try:
+        sys.argv = [str(cli_script), "--list", "languages"]
+        with contextlib.redirect_stdout(cli_languages):
+            try:
+                runpy.run_path(str(cli_script), run_name="__main__")
+            except SystemExit as cli_exit:
+                require(cli_exit.code in (None, 0),
+                        f"packaged CLI language list exited with {cli_exit.code}")
+    finally:
+        sys.argv = prior_argv
+    language_output = cli_languages.getvalue()
+    require("zh-cn" in language_output and "zh-tw" in language_output,
+            "packaged CLI removed Chinese media language codes")
+    require(not re.search(r"[\u3400-\u9fff]", language_output),
+            "packaged CLI emitted Chinese interface text")
 
     from videotrans.util.help_srt import get_subtitle_from_srt
 
@@ -116,12 +157,17 @@ def run_check(cli_script):
         "bundle": str(bundle),
         "user_data": str(user_data),
         "provider": provider.__module__,
+        "fallback_provider": fallback_provider.__module__,
         "recognizer": recognizer.__module__,
         "dialog": "videotrans.winform.chatgpt",
         "cli_version": cli_output.getvalue().strip(),
+        "ui_catalogs": sorted(bundled_catalogs),
+        "ui_locales": list(UI_LOCALES),
+        "chinese_media_codes": ["zh-cn", "zh-tw", "yue"],
         "srt_items": len(parsed),
         "media_streams": sorted(streams),
         "silero_vad": str(vad_asset),
+        "zhconv": "繁體中文 -> 繁体中文",
     }
 
 

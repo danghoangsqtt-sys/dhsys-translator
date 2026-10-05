@@ -118,7 +118,7 @@ class BaseCon:
             if settings.get('remove_dubb_silence', True):
                 remove_silence_wav(output_wav_file_path)
         except Exception as e:
-            logger.exception(f'转为 48k wav时失败，跳过{e}',exc_info=True)
+            logger.exception(f'Failed to convert audio to 48 kHz WAV; skipping: {e}', exc_info=True)
             return False
         return True
 
@@ -177,7 +177,7 @@ class BaseCon:
                 return
             timeout += 1
             if timeout > 7200:
-                logger.warning(f'新进程已执行 {timeout}s 仍未终止，可能已出错: {logs_file}')
+                logger.warning(f'Worker process is still running after {timeout}s and may have failed: {logs_file}')
 
             _p = Path(logs_file)
             # 已删掉
@@ -205,7 +205,7 @@ class BaseCon:
                 self.signal(text=_tmp.get('text', ''), type=_tmp.get('type', 'logs'))
             except Exception:
                 # 可能日志文件读取出错，可忽略
-                logger.warning(f'读取进程间临时文件出错，可能已清理，可忽略:{logs_file}')
+                logger.warning(f'Could not read the worker temporary file; it may already be cleaned up: {logs_file}')
             time.sleep(1)
 
     # 使用新进程执行任务
@@ -216,7 +216,7 @@ class BaseCon:
         from videotrans.process.signelobj import GlobalProcessManager
         kwargs = kwargs or {}
         self.signal(text=f'[{title}] starting...')
-        logger.debug(f'[新进程任务 开始:{title=}]')
+        logger.debug(f'[Worker task started: {title=}]')
 
         # 提交任务，并显式传入参数，确保子进程拿到正确的参数
         logs_file = kwargs.get('logs_file',f'{TEMP_ROOT}/{_st}.log')
@@ -234,7 +234,7 @@ class BaseCon:
             # gpu， device_index 固定使用第0号
             kwargs['device_index'] = 0
             kwargs['device_name']=settings.get('device_name','auto')
-            logger.debug(f'新进程任务 参数:{kwargs=}')
+            logger.debug(f'Worker task arguments: {kwargs=}')
             future = GlobalProcessManager.submit_task_cpu(
                 callback,
                 **kwargs
@@ -253,12 +253,12 @@ class BaseCon:
                     # 已返回10s仍在循环，子进程可能已崩溃
                     if _timeout>20:
                         status_dict['is_end']=True
-                        logger.warning(f'faster-whisper 已生成字幕超过 {_timeout}s, 仍在循环，子进程可能已崩溃，强制抛出 SttTimeoutError')
+                        logger.warning(f'faster-whisper produced subtitles {_timeout}s ago but the worker is still waiting; raising SttTimeoutError')
                         raise SttTimeoutError("STT timeout")
                     _timeout+=1
                 time.sleep(1)
             data,err = future.result(timeout=10)
-            logger.debug(f'[新进程任务 {title=}] 已返回')
+            logger.debug(f'[Worker task returned: {title=}]')
             status_dict['is_end']=True
             if err or not data:
                 raise VideoTransError(err)
@@ -281,7 +281,7 @@ class BaseCon:
         finally:
             status_dict['is_end']=True
             try:
-                logger.debug(f'[新进程任务 结束:{title=}]，耗时{time.time()-_st}s')
+                logger.debug(f'[Worker task ended: {title=}], elapsed {time.time()-_st}s')
                 if logs_file:
                     Path(logs_file).unlink(missing_ok=True)
             except OSError:

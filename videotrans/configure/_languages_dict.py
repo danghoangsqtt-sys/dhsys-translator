@@ -1110,7 +1110,7 @@ def _merge_newlang():
             if _newlang:
                 LANG_CODE.update(_newlang)
         except Exception as e:
-            logging.getLogger('VideoTrans').exception(f'加载自定义语言数据失败：{e}', exc_info=True)
+            logging.getLogger('VideoTrans').exception(f'Failed to load custom language data: {e}', exc_info=True)
     else:
         Path(_f).write_text('{}', encoding='utf-8')
 
