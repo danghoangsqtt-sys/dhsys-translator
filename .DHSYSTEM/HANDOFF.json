@@ -17,7 +17,7 @@
     "request": "ENH-004",
     "phase": 4,
     "tasks": ["4.13", "4.14", "4.15", "4.16", "4.17", "4.18"],
-    "status": "task 4.13 in progress; doc-first implementation plan recorded",
+    "status": "task 4.13 verified locally; strict Git persistence pending before PASS",
     "source": "docs/brainstorm/session-2026-10-05-vietnamese-first-video-workflow.md",
     "constraints": [
       "Preserve provider IDs and Chinese media-language support",

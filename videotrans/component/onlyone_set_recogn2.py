@@ -37,24 +37,18 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
             Qt.WindowMaximizeButtonHint
         )
 
-        self.count_down = int(float(settings.get('countdown_sec', 1)))
         self._target_end_ms = -1
+        self.timer = None
+        self.stop_button = None
+        self.has_unsaved_changes = False
 
         main_layout = QVBoxLayout(self)
         main_layout.setContentsMargins(4, 4, 4, 4)
 
-        # Top Bar
-        hstop = QHBoxLayout()
-        self.prompt_label = QLabel(tr("jimiaohoufanyi"))
-        self.prompt_label.setStyleSheet('color:#aaaaaa')
-        hstop.addWidget(self.prompt_label)
-        self.stop_button = QPushButton(f"{tr('Click here to stop the countdown')}({self.count_down})")
-        self.stop_button.setStyleSheet("color:#ffff00")
-        self.stop_button.setCursor(Qt.PointingHandCursor)
-        self.stop_button.clicked.connect(self.stop_countdown)
-        self.stop_button.setMinimumSize(QSize(300, 35))
-        hstop.addWidget(self.stop_button)
-        main_layout.addLayout(hstop)
+        self.prompt_label = QLabel(tr("Review subtitles and save when ready"))
+        self.prompt_label.setWordWrap(True)
+        self.prompt_label.setObjectName("subtitleEditorPrompt")
+        main_layout.addWidget(self.prompt_label)
 
         prompt_label2 = QLabel(tr("If you need to delete a line of subtitles, just clear the text in that line"))
         prompt_label2.setAlignment(Qt.AlignCenter)
@@ -144,6 +138,8 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
 
         self.table = QTableWidget()
         self.table.setVisible(False)
+        self.configure_editable_subtitle_table()
+        self.table.itemChanged.connect(self.set_subtitle_dirty)
         sets = QSettings("pyvideotrans", "settings")
         fontsize = int(sets.value("danshipin_table_fontsize", 0))
         if fontsize>0:
@@ -154,12 +150,22 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
             self.table.verticalHeader().setFont(default_font)
         bottom_layout.addWidget(self.table, 1)
 
+        self._clean_text = tr("No unsaved subtitle changes")
+        self._dirty_text = tr("Unsaved subtitle changes")
+        self._save_error_text = tr("Could not save subtitle file")
+        self.dirty_label = QLabel()
+        self.dirty_label.setObjectName("subtitleDirtyState")
+        bottom_layout.addWidget(self.dirty_label)
+        self.set_subtitle_dirty(False)
+
         # Bottom Bar
         self.save_button = QPushButton(tr("nextstep"))
+        self.save_button.setObjectName("subtitleSaveButton")
         self.save_button.clicked.connect(self.save_and_close)
         self.save_button.setCursor(Qt.PointingHandCursor)
         self.save_button.setMinimumSize(QSize(300, 35))
         self.save_button2 = QPushButton(tr("nosaveandstep"))
+        self.save_button2.setObjectName("subtitleDiscardButton")
         self.save_button2.clicked.connect(self.save_and_close2)
         self.save_button2.setCursor(Qt.PointingHandCursor)
         self.save_button2.setMinimumSize(QSize(200, 35))
@@ -167,18 +173,18 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
         self.opendir_button.setCursor(Qt.PointingHandCursor)
         self.opendir_button.clicked.connect(self.opendir_sub)
         self.opendir_button.setMaximumSize(QSize(150, 30))
-        cancel_button = QPushButton(tr("Terminate this mission"))
-        cancel_button.clicked.connect(self.cancel_and_close)
-        cancel_button.setCursor(Qt.PointingHandCursor)
-        cancel_button.setMaximumSize(QSize(150, 30))
-        cancel_button.setStyleSheet("background-color:transparent;color:#ff0")
+        self.cancel_button = QPushButton(tr("Terminate this mission"))
+        self.cancel_button.setObjectName("subtitleCancelButton")
+        self.cancel_button.clicked.connect(self.cancel_and_close)
+        self.cancel_button.setCursor(Qt.PointingHandCursor)
+        self.cancel_button.setMaximumSize(QSize(150, 30))
 
         bottom_layout_row = QHBoxLayout()
         bottom_layout_row.addStretch()
         bottom_layout_row.addWidget(self.save_button)
         bottom_layout_row.addWidget(self.save_button2)
         bottom_layout_row.addWidget(self.opendir_button)
-        bottom_layout_row.addWidget(cancel_button)
+        bottom_layout_row.addWidget(self.cancel_button)
         bottom_layout_row.addStretch()
         bottom_layout.addLayout(bottom_layout_row)
 
@@ -309,9 +315,6 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
             self.table.setAlternatingRowColors(False)
             self.table.setWordWrap(True)
             self.table.setMouseTracking(False)
-            self.table.setFocusPolicy(Qt.NoFocus)
-            self.table.setSelectionMode(QAbstractItemView.NoSelection)
-
             v_header = self.table.verticalHeader()
             v_header.setVisible(False)
             v_header.setSectionResizeMode(QHeaderView.ResizeToContents)
@@ -352,9 +355,6 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
 
             QTimer.singleShot(0, lambda: self._load_remaining(0))
 
-            self.timer = QTimer(self)
-            self.timer.timeout.connect(self.update_countdown)
-            self.timer.start(1000)
             if self.parent:
                 self.raise_()
                 self.activateWindow()
@@ -366,44 +366,50 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
             self.loading_label.setText(f"Error: {e}")
 
     def _batch_fill(self, start_row, end_row):
-        for row in range(start_row, end_row):
-            data = self.display_data[row]
+        signals_were_blocked = self.table.blockSignals(True)
+        try:
+            for row in range(start_row, end_row):
+                self._fill_row(row, self.display_data[row])
+        finally:
+            self.table.blockSignals(signals_were_blocked)
 
-            item0 = QTableWidgetItem(str(data['line']))
-            item0.setFlags(Qt.ItemIsEnabled)
-            item0.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.table.setItem(row, 0, item0)
+    def _fill_row(self, row, data):
 
-            item0 = QTableWidgetItem(f'{data["startraw"]}->{data["endraw"]} ({(data["end_time"]-data["start_time"])/1000.0}s)'  )
-            item0.setFlags(Qt.ItemIsEnabled)
-            item0.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.table.setItem(row, 1, item0)
+        item0 = QTableWidgetItem(str(data['line']))
+        item0.setFlags(Qt.ItemIsEnabled)
+        item0.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.table.setItem(row, 0, item0)
 
-            item1 = QTableWidgetItem(f'{data["start_time"]/1000.0}')
-            item1.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable)
-            item1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.table.setItem(row, 2, item1)
+        item0 = QTableWidgetItem(f'{data["startraw"]}->{data["endraw"]} ({(data["end_time"]-data["start_time"])/1000.0}s)'  )
+        item0.setFlags(Qt.ItemIsEnabled)
+        item0.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.table.setItem(row, 1, item0)
+
+        item1 = QTableWidgetItem(f'{data["start_time"]/1000.0}')
+        item1.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable)
+        item1.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.table.setItem(row, 2, item1)
 
 
 
 
-            item2 = QTableWidgetItem(f'{data["end_time"]/1000.0}')
-            item2.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable)
-            item2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            self.table.setItem(row, 3, item2)
+        item2 = QTableWidgetItem(f'{data["end_time"]/1000.0}')
+        item2.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable)
+        item2.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.table.setItem(row, 3, item2)
 
-            btn = QPushButton("\u23F5")
-            btn.setObjectName("playBtn")
-            btn.setCursor(Qt.PointingHandCursor)
-            s = data['start_time']
-            e = data['end_time']
-            btn.clicked.connect(lambda checked=False, _s=s, _e=e: self._play_segment(_s, _e))
-            self.table.setCellWidget(row, 4, btn)
+        btn = QPushButton("\u23F5")
+        btn.setObjectName("playBtn")
+        btn.setCursor(Qt.PointingHandCursor)
+        s = data['start_time']
+        e = data['end_time']
+        btn.clicked.connect(lambda checked=False, _s=s, _e=e: self._play_segment(_s, _e))
+        self.table.setCellWidget(row, 4, btn)
 
-            text_item = QTableWidgetItem(data['text'])
-            text_item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable)
-            text_item.setTextAlignment(Qt.AlignmentFlag.AlignVCenter)
-            self.table.setItem(row, 5, text_item)
+        text_item = QTableWidgetItem(data['text'])
+        text_item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable | Qt.ItemIsSelectable)
+        text_item.setTextAlignment(Qt.AlignmentFlag.AlignVCenter)
+        self.table.setItem(row, 5, text_item)
 
 
     def _load_remaining(self, start_row):
@@ -422,28 +428,13 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
         self.reject()
 
     def update_countdown(self):
-        self.count_down -= 1
-        if self.stop_button:
-            self.stop_button.setText(f"{tr('Click here to stop the countdown')}({self.count_down})")
-        if self.count_down <= 0:
-            self.timer.stop()
-            self.save_and_close()
+        """Retained for compatibility; subtitle review no longer auto-closes."""
+        return
 
     def stop_countdown(self):
         if hasattr(self, 'timer') and self.timer:
             self.timer.stop()
-        if hasattr(self, 'stop_button') and self.stop_button:
-            try:
-                self.stop_button.deleteLater()
-            except RuntimeError:
-                pass
-            self.stop_button = None
-        if hasattr(self, 'prompt_label') and self.prompt_label:
-            try:
-                self.prompt_label.deleteLater()
-            except RuntimeError:
-                pass
-            self.prompt_label = None
+        self.timer = None
 
     def replace_text(self):
         search_text = self.search_input.text()
@@ -486,7 +477,14 @@ class EditRecognResultDialog2(QDialog,DanspMixin):
             if text:
                 srt_str_list.append(f'{len(srt_str_list)+1}\n{start_raw} --> {end_raw}\n{text}')
 
-        Path(self.source_sub).write_text("\n\n".join(srt_str_list), encoding="utf-8")
+        try:
+            Path(self.source_sub).write_text("\n\n".join(srt_str_list), encoding="utf-8")
+        except Exception as e:
+            logger.exception(f"Save error: {e}", exc_info=True)
+            self.save_button.setDisabled(False)
+            self.show_subtitle_save_error()
+            return
 
+        self.set_subtitle_dirty(False)
         self._release_media()
         self.accept()

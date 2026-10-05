@@ -31,6 +31,13 @@ QPushButton#startbtn, QPushButton#btn_get_video, QPushButton#openWorkspace {
     font-weight: 700; min-height: 36px; padding: 6px 16px;
 }
 QPushButton#startbtn:hover, QPushButton#btn_get_video:hover, QPushButton#openWorkspace:hover { background: #1C5B3E; }
+QPushButton#subtitleSaveButton {
+    background: #14452F; color: #FFFFFF; border-color: #14452F; font-weight: 700;
+}
+QPushButton#subtitleSaveButton:hover { background: #1C5B3E; }
+QPushButton#subtitleDiscardButton { background: #FFFFFF; color: #4B5D53; }
+QPushButton#subtitleCancelButton { background: transparent; color: #A83232; border-color: #D7A4A4; }
+QPushButton#subtitleCancelButton:hover { background: #FCEEEE; border-color: #C76161; }
 QLineEdit, QPlainTextEdit, QTextEdit, QComboBox, QSpinBox {
     background: #FFFFFF; color: #17211C; border: 1px solid #C9D5CE; border-radius: 7px;
     min-height: 28px; padding: 3px 8px; selection-background-color: #BBD7C5;
@@ -68,6 +75,10 @@ QWidget#layoutWidget, QWidget#verticalLayoutWidget { background: #FFFFFF; border
 QWidget#advContainer { background: #F8FAF8; border: 1px solid #DDE4DF; border-radius: 8px; }
 QFrame#workflowActionArea, QFrame#workflowActivityArea { background: #FFFFFF; border: 1px solid #DDE4DF; border-radius: 10px; }
 QLabel#show_tips, QLabel#output_dir { color: #65736B; }
+QLabel#subtitleEditorPrompt { color: #405047; padding: 4px 2px; }
+QLabel#subtitleDirtyState { color: #65736B; font-weight: 600; padding: 3px 6px; }
+QLabel#subtitleDirtyState[dirty="true"] { color: #8A5A00; background: #FFF6D8; border-radius: 5px; }
+QLabel#subtitleDirtyState[saveError="true"] { color: #A83232; background: #FCEEEE; border-radius: 5px; }
 QLabel#workflowStatus { color: #668074; font-size: 11px; font-weight: 700; padding: 2px 0; }
 QLabel#workflowStatus[workflowState="running"] { color: #14452F; }
 QLabel#workflowStatus[workflowState="error"] { color: #A83232; }

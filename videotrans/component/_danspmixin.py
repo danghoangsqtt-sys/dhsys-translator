@@ -1,29 +1,34 @@
-from PySide6.QtCore import QSettings
+from PySide6.QtCore import QSettings, Qt
+from PySide6.QtWidgets import QAbstractItemView
 
 
 class DanspMixin:
     table_style_css="""
                 QTableWidget {
-                    color: #cccccc;
-                    border: 1px solid #333;
-                    gridline-color: #333;
+                    background-color: #ffffff;
+                    color: #17211c;
+                    border: 1px solid #c9d5ce;
+                    gridline-color: #e7ece9;
                 }
                 QTableWidget::item {
-                    padding: 1px 3px;
+                    padding: 4px 6px;
+                    border-bottom: 1px solid #e7ece9;
                 }
                 QTableWidget::item:selected {
-                    background-color: #0066cc;
+                    background-color: #dcede4;
+                    color: #0e3524;
                 }
                 QHeaderView::section {
-                    background-color: #252525;
-                    color: #aaa;
-                    border: none;
-                    border-right: 1px solid #3e3e3e;
-                    padding: 2px;
+                    background-color: #f1f5f2;
+                    color: #244032;
+                    border: 0;
+                    border-bottom: 1px solid #c9d5ce;
+                    padding: 5px;
+                    font-weight: 700;
                 }
                 QPushButton#playBtn {
                     background-color: transparent;
-                    color: white;
+                    color: #14452f;
                     border: none;
                     border-radius: 2px;
                     padding: 1px 4px;
@@ -31,6 +36,42 @@ class DanspMixin:
                     max-width: 24px;
                 }
             """
+
+    def configure_editable_subtitle_table(self):
+        """Apply the shared, keyboard-accessible subtitle editor behavior."""
+        self.table.setFocusPolicy(Qt.StrongFocus)
+        self.table.setSelectionMode(QAbstractItemView.SingleSelection)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectItems)
+        self.table.setEditTriggers(
+            QAbstractItemView.DoubleClicked
+            | QAbstractItemView.SelectedClicked
+            | QAbstractItemView.EditKeyPressed
+            | QAbstractItemView.AnyKeyPressed
+        )
+
+    def set_subtitle_dirty(self, dirty=True):
+        """Update the editor's dirty flag and its visible status label."""
+        self.has_unsaved_changes = bool(dirty)
+        label = getattr(self, "dirty_label", None)
+        if label is None:
+            return
+        label.setProperty("dirty", self.has_unsaved_changes)
+        label.setProperty("saveError", False)
+        label.setText(self._dirty_text if self.has_unsaved_changes else self._clean_text)
+        label.style().unpolish(label)
+        label.style().polish(label)
+
+    def show_subtitle_save_error(self):
+        """Keep the dialog open and surface a failed SRT write."""
+        label = getattr(self, "dirty_label", None)
+        if label is None:
+            return
+        self.has_unsaved_changes = True
+        label.setProperty("dirty", False)
+        label.setProperty("saveError", True)
+        label.setText(self._save_error_text)
+        label.style().unpolish(label)
+        label.style().polish(label)
 
         # --- 字号调整函数 ---
     def change_table_font_size(self, delta: int):
