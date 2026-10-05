@@ -152,11 +152,8 @@ class WinActionBaseModeMixin:
         hide_recursive(wrap_layout, show_status)
 
     def set_mode(self):
-        subtitle_type = self.main.subtitle_type.currentIndex()
-        voice_role = self.main.voice_role.currentText()
         self.cfg['copysrt_rawvideo'] = False
-        if self.main.app_mode == 'tiqu' or (subtitle_type < 1 and voice_role in ('No', '', " ")):
-            self.main.app_mode = 'tiqu'
+        if self.main.app_mode == 'tiqu':
             self.cfg['subtitle_type'] = 0
             self.cfg['voice_role'] = 'No'
             self.cfg['voice_rate'] = '+0%'

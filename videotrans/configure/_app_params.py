@@ -58,6 +58,8 @@ class AppParams:
                         ))
                     for key, value in loaded.items():
                         expected = default.get(key)
+                        if key == "subtitle_type" and (type(value) is not int or value not in range(5)):
+                            continue
                         if key not in default or type(value) is type(expected):
                             default[key] = value
                         elif isinstance(expected, float) and type(value) is int:
@@ -90,7 +92,8 @@ class AppParams:
             "source_language": "en",
             "target_language": "zh-cn",
             "translate_type": 0,
-            "subtitle_type": 2,
+            # Persisted values stay frozen: 1 is the existing hard-subtitle mode.
+            "subtitle_type": 1,
             "tts_type": 0,
             "model_name": "large-v3-turbo",
             "recogn_type": 0,

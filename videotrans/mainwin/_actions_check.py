@@ -12,6 +12,19 @@ from videotrans.util.help_misc import ensure_safe_media_file, is_dir_not_empty, 
 
 class WinActionCheckMixin:
 
+    def confirm_no_subtitle_output(self):
+        if self.main.app_mode != 'biaozhun' or self.main.subtitle_type.currentIndex() != 0:
+            return True
+        from PySide6.QtWidgets import QMessageBox
+        reply = QMessageBox.warning(
+            self.main,
+            tr("no_subtitle_warning_title"),
+            tr("no_subtitle_warning_body"),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        return reply == QMessageBox.StandardButton.Yes
+
     def set_translate_type(self, idx):
         try:
             t = self.main.target_language.currentText()
@@ -200,6 +213,10 @@ class WinActionCheckMixin:
                 tr("Target language must be selected to embed subtitles"))
 
         if self.check_name() is not True:
+            self.main.startbtn.setDisabled(False)
+            return
+
+        if not self.confirm_no_subtitle_output():
             self.main.startbtn.setDisabled(False)
             return
 

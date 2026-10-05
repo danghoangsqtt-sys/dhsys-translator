@@ -95,7 +95,7 @@ def test_no_subtitle_video_requires_explicit_confirmation(app, monkeypatch):
         QMessageBox.StandardButton.No,
         QMessageBox.StandardButton.Yes,
     ])
-    monkeypatch.setattr(QMessageBox, 'question', lambda *args, **kwargs: next(answers))
+    monkeypatch.setattr(QMessageBox, 'warning', lambda *args, **kwargs: next(answers))
 
     assert WinActionCheckMixin.confirm_no_subtitle_output(action) is False
     assert WinActionCheckMixin.confirm_no_subtitle_output(action) is True

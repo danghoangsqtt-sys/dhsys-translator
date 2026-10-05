@@ -23,6 +23,16 @@ def test_legacy_subtitle_enum_values_are_preserved(tmp_path, saved_value):
     assert params.subtitle_type == saved_value
 
 
+@pytest.mark.parametrize("invalid_value", [-1, 5, "2", None])
+def test_invalid_legacy_subtitle_value_uses_fresh_hard_default(tmp_path, invalid_value):
+    config_path = tmp_path / "params.json"
+    config_path.write_text(json.dumps({"subtitle_type": invalid_value}), encoding="utf-8")
+
+    params = AppParams(_json_path=str(config_path))
+
+    assert params.subtitle_type == 1
+
+
 @pytest.mark.parametrize("saved", [{}, {"f5tts_role": None, "is_cuda": "yes"}, []])
 def test_legacy_params_use_defaults_for_missing_or_invalid_fields(tmp_path, saved):
     config_path = tmp_path / "params.json"

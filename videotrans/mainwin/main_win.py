@@ -20,6 +20,7 @@ from videotrans.ui.home import HomePage
 from videotrans.ui.workspace_shell import WorkspaceShell
 from videotrans.ui.workflow_state import WorkflowStatePresenter
 from videotrans.task.simple_runnable_qt import run_in_threadpool
+from videotrans.task.subtitle_output import SUBTITLE_TYPE_KEYS
 
 from videotrans.mainwin._bind_signals import BindSignalsMixin
 from videotrans.mainwin._lifecycle import LifecycleMixin
@@ -130,21 +131,14 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.tts_type.addItems(tts.TTS_NAME_LIST)
         self.recogn_type.addItems(recognition.RECOGN_NAME_LIST)
 
-        self.subtitle_type.addItems(
-            [
-                tr('nosubtitle'),
-                tr('embedsubtitle'),
-                tr('softsubtitle'),
-                tr('embedsubtitle2'),
-                tr('softsubtitle2')
-            ])
+        self.subtitle_type.addItems([tr(key) for key in SUBTITLE_TYPE_KEYS])
 
         _translate_type = int(params.get('translate_type', 0))
         _tts_type = int(params.get('tts_type', 0))
         _recogn_type = int(params.get('recogn_type', 0))
         _target_language = params.get('target_language')
         _source_language = params.get('source_language')
-        _subtitle_type = int(params.get('subtitle_type', 0))
+        _subtitle_type = int(params.get('subtitle_type', 1))
         _output_srt = int(params.get('output_srt', 0))
         _role = params.get('voice_role') or 'No'
         _model_name = params.get('model_name')

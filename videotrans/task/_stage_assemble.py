@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 import platform
 import shutil
@@ -13,6 +14,7 @@ from videotrans.configure.config import tr, app_cfg, settings, logger
 from videotrans.configure.excepts import VideoTransError, FFmpegError
 from videotrans.util.help_ffmpeg import get_video_codec, get_audio_time, runffmpeg, get_video_duration
 from videotrans.util.help_misc import vail_file, read_last_n_lines, is_novoice_mp4
+from videotrans.task.subtitle_output import build_output_receipt
 
 
 def _unused_video_path(path):
@@ -64,9 +66,15 @@ class AssembleMixin:
             if self.cfg.only_out_mp4:
                 destination = _unused_video_path(Path(self.cfg.target_dir).parent / Path(self.cfg.targetdir_mp4).name)
                 shutil.move(self.cfg.targetdir_mp4, destination)
+                self.cfg.targetdir_mp4 = str(destination)
         except OSError as e:
             logger.exception(f'Failed to move temporary files and adjust video position when outputting mp4 only, skipping {e}', exc_info=True)
 
+        if app_cfg.exec_mode != 'cli' and vail_file(self.cfg.targetdir_mp4):
+            self.signal(
+                text=json.dumps(build_output_receipt(self.cfg), ensure_ascii=False),
+                type='output_receipt',
+            )
         self.set_end(True)
         logger.debug(f'[{self.cfg.name}[Video translation total elapsed time]: {time.time()-self.cost_duration}s')
 

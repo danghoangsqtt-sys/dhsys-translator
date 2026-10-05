@@ -9,7 +9,10 @@ from videotrans.task._stage_subtitle import SubtitleMixin
 from videotrans.task.subtitle_output import (
     SUBTITLE_TYPE_KEYS,
     build_output_receipt,
+    subtitle_type_key,
 )
+from videotrans.task.taskcfg import TaskCfgVTT
+from videotrans.task.trans_create import TransCreate
 
 
 def _write_srt(path: Path, text: str) -> None:
@@ -27,6 +30,11 @@ def test_persisted_enum_mapping_is_frozen():
         "embedsubtitle2",
         "softsubtitle2",
     )
+
+
+@pytest.mark.parametrize("invalid_value", [-1, 5, "invalid", None])
+def test_invalid_subtitle_enum_falls_back_to_existing_hard_mode(invalid_value):
+    assert subtitle_type_key(invalid_value) == "embedsubtitle"
 
 
 @pytest.mark.parametrize(
@@ -149,3 +157,68 @@ def test_output_receipt_reports_mode_paths_and_soft_player_requirement(tmp_path,
     assert str(video) in text
     assert str(source) in text and str(target) in text
     assert "Enable the subtitle track in your player." in text
+
+
+def test_confirmed_no_subtitle_standard_task_still_builds_a_video(tmp_path, monkeypatch):
+    from videotrans.configure.config import app_cfg
+
+    monkeypatch.setattr(app_cfg, "exec_mode", "cli")
+    cfg = TaskCfgVTT(
+        uuid="no-subtitle-fixture",
+        name=str(tmp_path / "input.mp4"),
+        basename="input.mp4",
+        noextname="input",
+        ext="mp4",
+        target_dir=str(tmp_path / "output"),
+        cache_folder=str(tmp_path / "cache"),
+        app_mode="biaozhun",
+        source_language="English",
+        source_language_code="en",
+        target_language="Vietnamese",
+        target_language_code="vi",
+        subtitle_type=0,
+        voice_role="No",
+        clear_cache=False,
+    )
+
+    task = TransCreate(cfg=cfg)
+
+    assert task.should_dubbing is False
+    assert task.should_hebing is True
+
+
+def test_successful_video_task_emits_receipt_before_success(tmp_path, monkeypatch):
+    from videotrans.configure.config import app_cfg
+    from videotrans.task._stage_assemble import AssembleMixin
+
+    video = tmp_path / "done.mp4"
+    video.write_bytes(b"video")
+    cfg = SimpleNamespace(
+        app_mode="biaozhun",
+        only_out_mp4=False,
+        targetdir_mp4=str(video),
+        subtitle_type=1,
+        output_srt=0,
+        source_sub=str(tmp_path / "en.srt"),
+        target_sub=str(tmp_path / "vi.srt"),
+        target_dir=str(tmp_path),
+        name="input.mp4",
+    )
+    events = []
+    task = SimpleNamespace(
+        cfg=cfg,
+        is_audio_trans=False,
+        precent=1,
+        cost_duration=0,
+        signal=lambda **event: events.append(event),
+        set_end=lambda succeed: events.append({"type": "succeed", "succeed": succeed}),
+        _exit=lambda: False,
+    )
+    monkeypatch.setattr(app_cfg, "exec_mode", "gui")
+
+    AssembleMixin.task_done(task)
+
+    assert [event["type"] for event in events] == ["output_receipt", "succeed"]
+    receipt = json.loads(events[0]["text"])
+    assert receipt["video_path"] == str(video)
+    assert receipt["subtitle_type"] == 1

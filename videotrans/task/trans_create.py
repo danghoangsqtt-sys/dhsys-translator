@@ -85,7 +85,9 @@ class TransCreate(
         if self.cfg.voice_role and self.cfg.voice_role != 'No' and self.cfg.target_language_code:
             self.should_dubbing = True
 
-        if self.cfg.app_mode != 'tiqu' and (self.should_dubbing or self.cfg.subtitle_type > 0):
+        # The main video workflow still produces a video when the user
+        # deliberately confirms "no subtitles" and does not select dubbing.
+        if self.cfg.app_mode != 'tiqu':
             self.should_hebing = True
 
         if self.cfg.target_language_code and self.cfg.target_language_code != self.cfg.source_language_code:

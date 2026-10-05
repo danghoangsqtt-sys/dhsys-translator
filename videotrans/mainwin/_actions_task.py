@@ -1,4 +1,5 @@
 import copy
+import json
 import re
 import sys
 
@@ -18,6 +19,25 @@ from videotrans.util.help_misc import show_error, shutdown_system
 from videotrans.util.help_ffmpeg import format_video
 from videotrans.task.only_one import Worker
 from videotrans.task.mult_video import MultVideo
+from videotrans.task.subtitle_output import subtitle_type_key
+
+
+def format_output_receipt(receipt: dict) -> str:
+    subtitle_type = int(receipt.get('subtitle_type', 1))
+    lines = [
+        f"{tr('subtitle_type_label')}: {tr(subtitle_type_key(subtitle_type))}",
+        f"{tr('output_video_path')}: {receipt.get('video_path', '')}",
+    ]
+    subtitle_paths = receipt.get('subtitle_paths') or []
+    if subtitle_paths:
+        lines.append(f"{tr('output_subtitle_paths')}:")
+        lines.extend(f"- {path}" for path in subtitle_paths)
+    order = receipt.get('bilingual_order')
+    if order:
+        lines.append(f"{tr('bilingual_subtitle_order')}: {tr('bilingual_order_' + order)}")
+    if receipt.get('soft_track_requires_player'):
+        lines.append(tr('soft_subtitle_player_instruction'))
+    return "\n".join(lines)
 
 class WinActionTaskMixin:
 
@@ -26,6 +46,7 @@ class WinActionTaskMixin:
         target_dir = (Path(
             self.queue_mp4[0]).parent / '_video_out').as_posix() if not self.main.target_dir else self.main.target_dir
         self.obj_list = []
+        self.output_receipts = {}
 
         forbid_names = []
         for video_path in self.queue_mp4:
@@ -80,6 +101,7 @@ class WinActionTaskMixin:
         self.delete_process()
         self.update_status('ing')
         self.obj_list = []
+        self.output_receipts = {}
 
         cfg = copy.deepcopy(self.cfg)
         for v in self.retry_queue_mp4:
@@ -228,6 +250,13 @@ class WinActionTaskMixin:
 
         self.main.workflow_presenter.handle_message_type(d['type'])
 
+        if d['type'] == 'output_receipt':
+            try:
+                self.output_receipts[uuid] = json.loads(d['text'])
+            except (TypeError, ValueError):
+                return
+            return
+
         if d['type'] == 'ffmpeg':
             self.main.startbtn.setText(d['text'])
             self.main.startbtn.setDisabled(True)
@@ -348,5 +377,12 @@ class WinActionTaskMixin:
     def _check_all_done(self):
         active = [obj for obj in self.obj_list if obj['uuid'] not in app_cfg.stoped_uuid_set]
         if not active:
+            receipts = list(self.output_receipts.values())
             self.update_status('end')
             self.main.retrybtn.setVisible(bool(self.retry_queue_mp4))
+            if receipts:
+                QMessageBox.information(
+                    self.main,
+                    tr('output_receipt_title'),
+                    "\n\n".join(format_output_receipt(receipt) for receipt in receipts),
+                )

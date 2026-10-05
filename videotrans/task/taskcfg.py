@@ -261,13 +261,8 @@ class TaskCfgVTT(TaskCfgSTT, TaskCfgTTS, TaskCfgSTS):
         from videotrans.util.tools import get_recogn_type, get_tanslate_type, get_tts_type
         from videotrans.configure.config import tr, settings, app_cfg
 
-        _subtitles = [
-            tr('nosubtitle'),
-            tr('embedsubtitle'),
-            tr('softsubtitle'),
-            tr('embedsubtitle2'),
-            tr('softsubtitle2')
-        ]
+        from videotrans.task.subtitle_output import SUBTITLE_TYPE_KEYS
+        _subtitles = [tr(key) for key in SUBTITLE_TYPE_KEYS]
 
         if self.app_mode == "tiqu":
             _msg.append(tr("work_mode_transcribe_translate"))
