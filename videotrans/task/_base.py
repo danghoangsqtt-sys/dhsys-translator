@@ -91,7 +91,7 @@ class BaseTask(BaseCon):
                 f.write(txt)
         except Exception as e:
             from videotrans.configure.excepts import VideoTransError
-            raise VideoTransError(f'保存字幕前格式化srt失败:{file=}') from e
+            raise VideoTransError(f'Failed to format subtitle before saving:{file=}') from e
 
         self.signal(text=Path(file).read_text(encoding='utf-8', errors="ignore"), type='replace_subtitle')
         return True
@@ -105,10 +105,10 @@ class BaseTask(BaseCon):
             srt_list = ob.llm_segment(raw_subtitles,step=step)
             if srt_list and len(srt_list) > len(raw_subtitles) / 2:
                 return srt_list
-            logger.error(f'二次识别后LLM重新断句失败，已恢复原样,原始字幕行:{len(raw_subtitles)}, 重新断句后字幕行:{len(srt_list)}\n断句结果:\n{srt_list=}')
+            logger.error(f'LLM resegmentation after secondary recognition failed; restored original subtitles. Original lines: {len(raw_subtitles)}, resegmented lines: {len(srt_list)}\nSegmentation Result:\n{srt_list=}')
         except Exception as e:
             self.signal(text=tr("Re-segmenting Error"))
-            logger.exception(f"二次识别后重新断句失败，已恢复原样 {e}", exc_info=True)
+            logger.exception(f"Resegmentation after secondary recognition failed; restored original subtitles: {e}", exc_info=True)
         return raw_subtitles
 
     # 如果启用了 LLM重新断句，则跳过该步骤，LLM断句后时间轴发生变更，无法和原始字幕对齐
@@ -117,16 +117,16 @@ class BaseTask(BaseCon):
         source_len = len(source_srt_list)
         target_len = len(target_srt_list)
         if source_len == target_len:
-            logger.debug(f'原始语言字幕和目标语言字幕行数一致，均为 {source_len=}')
+            logger.debug(f'Original subtitle lines match target language subtitle lines, both are {source_len=}')
             return target_srt_list
 
-        logger.warning(f'翻译结果行数{target_len}，原始字幕行数{source_len}，不一致,根据原始字幕时间轴获取对应目标字幕文本')
+        logger.warning(f'Translated line count{target_len}, original subtitle lines{source_len}, inconsistent. Retrieve corresponding target subtitle text based on the original subtitle time axis')
         # 根据原始字幕的时间轴，到目标字幕内寻找同样时间轴的字幕文本，更准确
         _time2srt = {}
         for it in target_srt_list:
             _time2srt[it['time']] = it['text']
 
-        logger.debug(f'翻译结果行数{target_len} > 原始字幕行{source_len}，根据原始字幕的时间轴，到目标字幕内寻找同样时间轴的字幕文本')
+        logger.debug(f'Translated line count{target_len} > Original subtitle line{source_len}, find the same time-axis subtitle text in the target subtitle according to the original subtitle\'s time axis')
         _source = copy.deepcopy(source_srt_list)
         for it in _source:
             it['text'] = _time2srt.get(it['time'], '')
@@ -150,7 +150,7 @@ class BaseTask(BaseCon):
                 if self.cfg.cache_folder and getattr(self.cfg, 'clear_cache', True):
                     _clear_managed_cache(self.cfg.cache_folder)
             except Exception as e:
-                logger.exception(f'任务结束后清理临时文件失败，跳过,{e}:{self.cfg.cache_folder=}', exc_info=True)
+                logger.exception(f'Failed to clean up temporary files after task, skipping.{e}:{self.cfg.cache_folder=}', exc_info=True)
         app_cfg.stoped_uuid_set.add(self.uuid)
 
 
@@ -163,7 +163,7 @@ class BaseTask(BaseCon):
         #     logger.error(f'当前选择 built 说话人分离模型，但不支持当前语言:{self.cfg.detect_language}')
         #     return
         if speaker_type in ['pyannote', 'reverb'] and not hf_token:
-            logger.error(f'当前选择 pyannote 说话人分离模型，但未设置 huggingface.co 的token: {self.cfg.detect_language}')
+            logger.error(f'Current selected Pyannote speaker separation model but no Huggingface.co token is set: {self.cfg.detect_language}')
             return
         from videotrans.util.help_down import down_file_from_hf, check_and_down_ms
         ishf=is_connect_hf()
@@ -193,7 +193,7 @@ class BaseTask(BaseCon):
             elif speaker_type in ['pyannote','reverb']:
                 from videotrans.process.prepare_audio import pyannote_speakers as _run_speakers
             else:
-                logger.error(f'当前所选说话人分离模型不支持:{speaker_type=}')
+                logger.error(f'Selected speaker separation model does not support:{speaker_type=}')
                 return
             if speaker_type in ['pyannote', 'reverb']:
                 from videotrans.util.help_down import check_and_down_hf
@@ -223,15 +223,15 @@ class BaseTask(BaseCon):
                                          is_cuda=self.cfg.is_cuda and speaker_type != 'built', kwargs=kw)
 
             if _rs:
-                logger.debug('分离说话人成功完成')
+                logger.debug('Speaker separation successful completion')
                 shutil.copy2(self.cfg.cache_folder + "/speaker.json", self.cfg.target_dir + "/speaker.json")
             else:
-                logger.error('分离失败说话人失败')
+                logger.error('Speaker diarization failed')
             self.signal(text=tr('separating speakers end'))
         except Exception as e:
-            logger.exception(f'说话人分离失败，跳过 {e}', exc_info=True)
+            logger.exception(f'Speaker separation failure, skipping {e}', exc_info=True)
 
-        logger.debug(f'[说话人分离阶段结束耗时]:{time.time()-_st}s')
+        logger.debug(f'[Speaker diarization elapsed time]: {time.time()-_st}s')
 
 
     async def _edgetts_single(self, target_audio, kwargs):

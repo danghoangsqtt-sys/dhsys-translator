@@ -97,7 +97,7 @@ class BaseTrans(BaseCon):
         """
 
         target_list = []
-        logger.debug(f'以纯文本行形式翻译，每次翻译{self.trans_thread}行，翻译后暂停{self.wait_sec}s')
+        logger.debug(f'Translating plain text in batches of {self.trans_thread} lines; waiting {self.wait_sec}s between batches')
         
         for i, it in enumerate(split_source_text):
             """ it=['你好啊我的朋友','第二行']  此时 _item_task 接收的是 list[str] """
@@ -114,12 +114,12 @@ class BaseTrans(BaseCon):
                     self.signal(text=result_item + "\n", type='subtitle')
             # 行数不匹配填充空行
             if len(sep_res) < len(it):
-                logger.debug(f'行数不匹配，原始：{len(it)}, 结果：{len(sep_res)}\n{it=}\n{sep_res=}')
+                logger.debug(f'Line count mismatch: source {len(it)}, result {len(sep_res)}\n{it=}\n{sep_res=}')
                 tmp = ["" for x in range(len(it) - len(sep_res))]
                 target_list += tmp
             time.sleep(self.wait_sec)
         max_i = len(target_list)
-        logger.debug(f'原始行数:{len(self.text_list)},翻译后行数:{max_i}')
+        logger.debug(f'Source lines: {len(self.text_list)}, translated lines: {max_i}')
         _empty_line = 0
         for i, it in enumerate(self.text_list):
             text = target_list[i].strip() if i < max_i else ""
@@ -142,7 +142,7 @@ class BaseTrans(BaseCon):
             ...
         ]
         """
-        logger.debug(f'以SRT字幕块翻译，每次翻译 {self.trans_thread} 条字幕块，翻译后暂停{self.wait_sec}s')
+        logger.debug(f'Translate SRT subtitle blocks: {self.trans_thread} subtitle blocks per request, then wait {self.wait_sec}s')
         from videotrans.configure.excepts import TranslateSrtError
         raws_list = []
         for i, it in enumerate(split_source_text):
@@ -168,7 +168,7 @@ class BaseTrans(BaseCon):
                 _empty_line += 1
         if _empty_line >= len(raws_list):
             raise TranslateSrtError(tr("Translate result is empty")+f'\n{self=}')
-        logger.debug(f'原始字幕行数：{len(self.text_list)}, 翻译后行数:{len(raws_list)}')
+        logger.debug(f'Original SRT line count:{len(self.text_list)}, Translated Line Count:{len(raws_list)}')
         return raws_list
 
     # 若需下载模型，子类应实现，下载到 ｛ROOT_DIR｝/models 目录内
@@ -184,7 +184,7 @@ class BaseTrans(BaseCon):
         if self.is_test: return
         file_cache = TEMP_ROOT + f'/translate_cache/{self._get_key(it)}.txt'
         if Path(file_cache).exists():
-            logger.debug(f'本次跳过翻译，使用缓存')
+            logger.debug(f'Skipping translation; using cached result')
             return Path(file_cache).read_text(encoding='utf-8')
         return
 

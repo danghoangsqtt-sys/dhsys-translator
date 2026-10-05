@@ -27,7 +27,7 @@ def nemotron_asr(
         model = AutoModelForRNNT.from_pretrained(local_dir, device_map="auto")
         msg = f"running on {model.device}"
         _write_log(logs_file, json.dumps({"type": "logs", "text": msg}))
-        logger.debug(f'huggingface_asr渠道使用模型: {local_dir},{msg}')
+        logger.debug(f'Hugging Face ASR provider using model: {local_dir},{msg}')
 
         total = len(raws)
 

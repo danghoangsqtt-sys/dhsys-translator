@@ -66,7 +66,7 @@ class AlignMixin:
                                      os.path.basename(tmp_name)], cmd_dir=self.cfg.cache_folder)
                     shutil.copy2(tmp_name, self.cfg.target_wav)
             except Exception as e:
-                logger.exception(f'配音后调节音量失败，静默跳过 {e}', exc_info=True)
+                logger.exception(f'Failed to adjust volume after dubbing; skipping: {e}', exc_info=True)
 
         self.signal(text=tr('Alignment phase complete, awaiting the next step'))
-        logger.debug(f'[声画字幕对齐阶段结束耗时]:{time.time()-_st}s')
+        logger.debug(f'[Audio/video/subtitle alignment elapsed time]: {time.time()-_st}s')

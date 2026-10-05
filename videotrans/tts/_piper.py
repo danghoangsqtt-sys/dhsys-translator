@@ -131,6 +131,6 @@ class PiperTTS(BaseTTS):
             msg=f'[{err}] errors, {ok} succeed'
 
         self.signal(text=msg)
-        logger.debug(f'piper配音结束：{msg}')
+        logger.debug(f'piper TTS ends:{msg}')
 
 

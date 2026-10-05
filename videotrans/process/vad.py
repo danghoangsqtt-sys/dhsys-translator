@@ -23,7 +23,7 @@ def get_speech_timestamp_silero(input_wav,
         "min_silence_duration_ms": int(max(min_silent_duration_ms, 140)),#静音分割区间
         "speech_pad_ms": speech_pad_ms  # 仅 faster-whisper时在此处进行边缘补白，因无需cut_audio
     }
-    logger.debug(f'[silero-VAD]:最终断句参数：{vad_p=}')
+    logger.debug(f'[silero-VAD]: Final Segmentation Parameters:{vad_p=}')
     _rc=max(int(max_speech_duration_ms*0.2),1500)
 
     sampling_rate = 16000
@@ -78,7 +78,7 @@ def get_speech_timestamp_silero(input_wav,
 
         # 如果一个片段合并后依然极其短（如 <140ms），且前后间隔都很远，说明是孤立的杂音/爆音
         if duration < min_isolated_duration_ms:
-            logger.warning(f"丢弃前后孤立的极短杂音片段: [{s}ms - {e}ms] ({duration}ms)")
+            logger.warning(f"Discard isolated short noise segments at the beginning and end: [{s}ms - {e}ms] ({duration}ms)")
             continue
 
         # 边界越界保护
@@ -103,7 +103,7 @@ def get_speech_timestamp_silero(input_wav,
         _thrid_segs[-1][1]=it[1]
 
     logger.debug(
-        f"[silero-VAD]: 原始片段数 {len(raw_segments)} -> {len(final_segments)} -> {len(_thrid_segs)} 句子"
+        f"[silero-VAD]: Original segments: {len(raw_segments)} -> {len(final_segments)} -> {len(_thrid_segs)} sentences"
     )
 
     return _thrid_segs
@@ -128,10 +128,10 @@ def get_speech_timestamp(
     try:
         sr, data = Wavfile.read(input_wav)
     except Exception as e:
-        logger.exception(f"读取音频失败: {e}", exc_info=True)
+        logger.exception(f"Audio read failure: {e}", exc_info=True)
         return None
 
-    logger.debug(f'[ten-vad]最终参数:{threshold=},{max_speech_duration_ms=},{min_speech_duration_ms},{min_silent_duration_ms=},{speech_pad_ms=},{max_merge_gap_ms=},{min_isolated_duration_ms=}')
+    logger.debug(f'[ten-vad] Final parameters: {threshold=},{max_speech_duration_ms=},{min_speech_duration_ms},{min_silent_duration_ms=},{speech_pad_ms=},{max_merge_gap_ms=},{min_isolated_duration_ms=}')
     _rc=max(int(max_speech_duration_ms*0.2),1500)
     if data.ndim > 1:
         data = np.mean(data, axis=1)
@@ -216,7 +216,7 @@ def get_speech_timestamp(
         # 只有在完全孤立且时长 < min_isolated_duration_ms 时才丢弃
         if duration < min_isolated_duration_ms:
             logger.debug(
-                f"[Ten-VAD] 丢弃孤立短噪点: [{s}ms - {e}ms], 时长: {duration}ms"
+                f"[Ten-VAD]: Discard isolated short noise segments: [{s}ms - {e}ms],  duration: {duration}ms"
             )
             continue
         final_segments.append([s, e])
@@ -239,7 +239,7 @@ def get_speech_timestamp(
 
 
     logger.debug(
-        f"[Ten-VAD] {len(merged_segments)} -> {len(final_segments)} -> {len(_thrid_segs)} 优化"
+        f"[Ten-VAD] {len(merged_segments)} -> {len(final_segments)} -> {len(_thrid_segs)} optimized"
     )
 
     return _thrid_segs

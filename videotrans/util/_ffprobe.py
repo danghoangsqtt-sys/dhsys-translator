@@ -161,14 +161,14 @@ def _get_ms_from_media(file):
                 ['-v', 'error', '-select_streams', 'a:0', '-show_entries', 'stream=duration', '-of',
                  'default=noprint_wrappers=1:nokey=1', file])) * 1000)
     except Exception as e:
-        logger.exception(f'无法从视频或音频流中获取时长:{file=},{e}', exc_info=True)
+        logger.exception(f'Unable to retrieve duration from video or audio streams:{file=},{e}', exc_info=True)
 
     if ms == 0:
         try:
             ms = int(float(runffprobe(
             ['-v', 'error', '-show_entries', 'format=duration', '-of', 'default=noprint_wrappers=1:nokey=1', file]))*1000)
         except Exception as e:
-            logger.error(f'再次从 format=duration 中读取失败 {e}')
+            logger.error(f'Failed to read again from format=duration {e}')
     return ms
 
 

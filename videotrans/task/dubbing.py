@@ -32,7 +32,7 @@ class DubbingSrt(BaseTask):
     subs: List = field(default_factory=list, repr=False)
 
     def __repr__(self):        
-        return f'[DubbingSrt]语音合成: {self.out_ext=},{self.is_multi_role=}\n{self.cfg}'
+        return f'[DubbingSrt] Speech synthesis: {self.out_ext=},{self.is_multi_role=}\n{self.cfg}'
 
     def __post_init__(self):
         super().__post_init__()
@@ -144,7 +144,7 @@ class DubbingSrt(BaseTask):
                      pitch=self.cfg.pitch
                      )
             ))
-            logger.debug(f'edge-tts配音，未音频加速，未视频慢速，未强制对齐，已删字幕间静音，使用单独文本配音')
+            logger.debug(f'Edge TTS dubbing without audio speedup, video slowdown or forced alignment; silence between subtitles was removed and each text segment is dubbed separately')
             if not self.cfg.target_wav.endswith('.mp3'):
                 runffmpeg(['-y', '-i', tmp_name, '-b:a', '128k', self.cfg.target_wav])
                 Path(tmp_name).unlink(missing_ok=True)
@@ -182,7 +182,7 @@ class DubbingSrt(BaseTask):
                 spec_role = app_cfg.dubbing_role.get(int(it.get('line', 1))) if self.is_multi_role else None
             except Exception as e:
                 # 每条字幕的单独角色，错误可忽略
-                logger.exception(f'每条字幕的单独角色:{e}',exc_info=True)
+                logger.exception(f'Voice assigned to each subtitle:{e}',exc_info=True)
                 spec_role = None
             voice_role = spec_role if spec_role else self.cfg.voice_role
             from videotrans.util.help_misc import get_md5
@@ -267,7 +267,7 @@ class DubbingSrt(BaseTask):
                 tmp_name = self.cfg.cache_folder + f'/volume-{volume}-{Path(self.cfg.target_wav).name}'
                 runffmpeg(['-y', '-i', self.cfg.target_wav, '-af', f"volume={volume}", tmp_name])
             except Exception as e:
-                logger.exception(f'配音完毕后调节音量失败 {e}', exc_info=True)
+                logger.exception(f'Failed to adjust volume after dubbing: {e}', exc_info=True)
 
     def task_done(self):
         if self._exit(): return

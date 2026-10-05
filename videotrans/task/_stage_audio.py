@@ -46,7 +46,7 @@ class AudioMixin:
             runffmpeg(cmd, cmd_dir=self.cfg.cache_folder)
             self.cfg.target_wav = self.cfg.cache_folder + f"/lastend.wav"
         except Exception as e:
-            logger.exception(f'添加背景音乐失败,静默跳过 {e}', exc_info=True)
+            logger.exception(f'Background music addition failed, skipping silently. {e}', exc_info=True)
 
     def _separate(self) -> None:
         if self._exit() or not self.cfg.embed_bgm or not vail_file(self.cfg.instrument) or not vail_file(self.cfg.target_wav):
@@ -60,7 +60,7 @@ class AudioMixin:
             beishu = math.ceil(vtime / atime)
 
             instrument_file = self.cfg.instrument
-            logger.debug(f'合并背景音 {beishu=},{atime=},{vtime=}')
+            logger.debug(f'Merging background sound. {beishu=},{atime=},{vtime=}')
             if atime + 1000 < vtime:
                 if int(self.cfg.loop_backaudio) == 1:
                     file_list = [instrument_file for n in range(beishu + 1)]
@@ -84,7 +84,7 @@ class AudioMixin:
                              '-c:a', 'pcm_s16le', os.path.basename(tmp_out_wav)], cmd_dir=self.cfg.cache_folder)
             shutil.copy2(tmp_out_wav, self.cfg.target_wav)
         except Exception as e:
-            logger.exception(f'重新嵌入分离的背景音失败 {e}', exc_info=True)
+            logger.exception(f'Failed to reembed separated background sound, skipping. {e}', exc_info=True)
     
     def _set_volume(self,input_file,output_file):
         runffmpeg([

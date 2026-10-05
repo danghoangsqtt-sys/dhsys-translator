@@ -25,7 +25,7 @@ def _check_gorm(name='google'):
         res=requests.get(f"https://translate.google.com/m", timeout=5,headers=headers)
         return res.status_code
     except Exception as e:
-        logger.exception(f'检测 {name} 翻译失败:{e}', exc_info=True)
+        logger.exception(f'Detection {name} Translation failed:{e}', exc_info=True)
     return 0
 
 
@@ -58,7 +58,7 @@ def run(*, translate_type=0,
     # 未设置代理并且检测google失败，则使用微软翻译
     if translate_type == GOOGLE_INDEX:
         _rs=_check_gorm(name='google')
-        logger.debug(f'测试Google翻译测试返回status_code={_rs}')
+        logger.debug(f'status_code={_rs}')
         if _rs == 200:
             from videotrans.translator._google import Google
             return Google(**kwargs).run()
@@ -67,7 +67,7 @@ def run(*, translate_type=0,
         #     from videotrans.translator._googlepy import GoogleTrans
         #     return GoogleTrans(**kwargs).run()
 
-        logger.warning(f'检测google翻译失败:status_code={_rs}，改为使用微软翻译')
+        logger.warning(f'Detection of Google translation failed:status_code={_rs}Change to use Microsoft translation')
         translate_type = MICROSOFT_INDEX
         kwargs['translate_type']=translate_type
     _cls: Union[Type[BaseTrans], None] = get_class(translate_type,"translator",ID_NAME_DICT)

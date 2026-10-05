@@ -62,7 +62,7 @@ class SpeakerAssignmentDialog(QDialog,DanspMixin):
                 self.speaker_list_sub = _list_sub
                 self.speakers = {it: None for it in sorted(list(_set))}
         except Exception as e:
-            logger.exception(f'获取说话人id失败:{e}', exc_info=True)
+            logger.exception(f'Failed to get speaker ID:{e}', exc_info=True)
 
         self.all_voices = all_voices or []
 

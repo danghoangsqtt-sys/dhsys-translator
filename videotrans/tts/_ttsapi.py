@@ -52,7 +52,7 @@ class TTSAPI(BaseTTS):
         _gradio_api=f'{ROOT_DIR}/gradio_api.txt'
         if Path(_gradio_api).exists() and Path(_gradio_api).stat().st_size>0:
             _args=Path(_gradio_api).read_text(encoding='utf-8').strip().split("\n")
-            logger.debug(f'来自 {_gradio_api} 的参数为: {_args}')
+            logger.debug(f'from {_gradio_api} the parameters are: {_args}')
             return self._send(_args,data_item,ref_wav,ref_text)
         
         
@@ -66,7 +66,7 @@ class TTSAPI(BaseTTS):
             'Content-Type': 'application/x-www-form-urlencoded',
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36"
         }
-        logger.debug(f'自定义TTS API发送数据 {data=}')
+        logger.debug(f'Custom TTS API sends data: {data=}')
         if ref_wav:
             with open(ref_wav, 'rb') as f:
                 files = {'file': f}
@@ -77,7 +77,7 @@ class TTSAPI(BaseTTS):
             raise StopTask(resraw.text)
         resraw.raise_for_status()
         res=resraw.json()
-        logger.debug(f'返回数据 {res["code"]=}')
+        logger.debug(f'Return Data {res["code"]=}')
         if "code" not in res or "msg" not in res or res['code'] != 0:
             return f'TTS-API:{res["msg"]}'
 
@@ -105,7 +105,7 @@ class TTSAPI(BaseTTS):
     def get_thread_client(self)->Client:
         # 检查当前线程是否已经有存活的 client
         if not hasattr(thread_local, "client") or thread_local.client is None:
-            logger.debug(f"正在为线程 {threading.current_thread().name} 初始化 Gradio Client: {self.api_url}")
+            logger.debug(f"Initializing Thread {threading.current_thread().name} Initializing Gradio Client: {self.api_url}")
             thread_local.client = Client(
                     self.api_url,
                     httpx_kwargs={"timeout": 3600}, # 连接超时设置短一点因为只是拉取配置
@@ -141,7 +141,7 @@ class TTSAPI(BaseTTS):
             else:
                 kwargs[_kv[0]]=_kv[1]
                     
-        logger.debug(f'[自定义TTS API]:{self.api_url=},\n实际使用处理后来自 gradio_api.txt 的参数为:{kwargs=}')
+        logger.debug(f'[Custom TTS API]: {self.api_url=},\nprocessed parameters from gradio_api.txt: {kwargs=}')
         try:
             client = self.get_thread_client()
             result = client.predict(**kwargs)
@@ -156,7 +156,7 @@ class TTSAPI(BaseTTS):
         except (TypeError,ValueError,IndexError,AttributeError,urllib3.exceptions.NewConnectionError,httpx.ConnectError) as e:
             raise StopTask(e) from e
         except concurrent.futures.CancelledError as e:
-            logger.exception(f'自定义TTS-API配音失败',exc_info=True)
+            logger.exception(f'Custom TTS-API voice failed',exc_info=True)
             # 清理当前线程的客户端缓存，防止下次复用一个已损坏的连接
             if hasattr(thread_local, "client"):
                 del thread_local.client

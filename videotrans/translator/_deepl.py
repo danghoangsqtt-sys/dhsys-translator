@@ -44,5 +44,5 @@ class DeepL(BaseTrans):
             glossary=params.get('deepl_gid')
         )
 
-        logger.debug(f'[DeepL]返回:{result=}')
+        logger.debug(f'[DeepL] Return:{result=}')
         return result.text

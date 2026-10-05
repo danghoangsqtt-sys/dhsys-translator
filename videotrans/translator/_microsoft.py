@@ -47,7 +47,7 @@ class Microsoft(BaseTrans):
             'Content-Type': 'application/json',
         }
         response = requests.post(url, json=texts, headers=headers, timeout=300)
-        logger.debug(f'[Microsoft]返回:{response=}')
+        logger.debug(f'[Microsoft]Return:{response=}')
         response.raise_for_status()
         re_result = response.json()
         if not re_result:

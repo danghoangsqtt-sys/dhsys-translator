@@ -157,5 +157,5 @@ class OpenaiAPIRecogn(BaseRecogn):
                 if speaker_list:
                     Path(f'{self.cache_folder}/speaker.json').write_text(json.dumps(speaker_list), encoding='utf-8')
             except Exception as e:
-                logger.exception(f'说话人重排序出错，忽略{e}',exc_info=True)
+                logger.exception(f'Speaker reordering failed, ignore it:{e}',exc_info=True)
         return raws

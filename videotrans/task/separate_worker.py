@@ -86,7 +86,7 @@ class SeparateWorker(QThread):
             if rs is False:
                 self.finish_event.emit(err)
         except Exception as e:
-            logger.exception(f'分离人声背景声失败{e}',exc_info=True)
+            logger.exception(f'Separating voice from background sound failed{e}',exc_info=True)
             msg = f"error:separate vocal and background music:{str(e)}"
             self.error=msg
             self.finish_event.emit(msg)

@@ -110,7 +110,7 @@ class GlobalProcessManager:
         if cls._executor_cpu is None:
             ctx = multiprocessing.get_context('spawn')
             max_workers = app_cfg.MAX_CPU_PROCESS
-            logger.debug(f'CPU进程池:{max_workers=}')
+            logger.debug(f'CPU process pool:{max_workers=}')
             cls._executor_cpu = ctx.Pool(
                 processes=int(max_workers),
                 initializer=pool_init_worker, 
@@ -126,7 +126,7 @@ class GlobalProcessManager:
         if cls._executor_gpu is None:
             ctx = multiprocessing.get_context('spawn')
             max_workers = app_cfg.MAX_GPU_PROCESS
-            logger.debug(f'GPU进程池:{max_workers=}')
+            logger.debug(f'GPU Process Pool:{max_workers=}')
             cls._executor_gpu = ctx.Pool(
                 processes=int(max_workers),
                 initializer=pool_init_worker, 
@@ -142,7 +142,7 @@ class GlobalProcessManager:
         async_result = _executor.apply_async(
             _task_worker_wrapper,
             args=(func, kwargs),
-            error_callback=lambda e: logger.error(f"CPU进程池回调异常: {e}")
+            error_callback=lambda e: logger.error(f"CPU Process Pool Callback Exception: {e}")
         )
         return AsyncResultFutureWrapper(async_result, _executor)
 
@@ -152,7 +152,7 @@ class GlobalProcessManager:
         async_result = _executor.apply_async(
             _task_worker_wrapper,
             args=(func, kwargs),
-            error_callback=lambda e: logger.error(f"GPU进程池回调异常: {e}")
+            error_callback=lambda e: logger.error(f"GPU Process Pool Callback Exception: {e}")
         )
 
         return AsyncResultFutureWrapper(async_result, _executor)

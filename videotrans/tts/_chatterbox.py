@@ -67,7 +67,7 @@ class ChatterBoxTTS(BaseTTS):
                 try:
                     ref_wav, _ = self.get_ref_wav(item)
                 except Exception:
-                    logger.warn('无参考音频，使用内置音色')
+                    logger.warn('No Reference Audio, Using Built-in Voice')
                 try:
                     self.signal(text=f'{tr("Dubbing")} {i}/{self.len}')
                     wav_tensor = model.generate(item['text'], exaggeration=exaggeration, cfg_weight=cfg_weight,
@@ -101,4 +101,4 @@ class ChatterBoxTTS(BaseTTS):
             msg = f'[{err}] errors, {ok} succeed'
 
         self.signal(text=msg)
-        logger.debug(f'ChatterBox 配音结束：{msg}')
+        logger.debug(f'Chatterbox dubbing finished: {msg}')

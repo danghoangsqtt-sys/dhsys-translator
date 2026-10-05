@@ -27,7 +27,7 @@ class WhisperXRecogn(BaseRecogn):
         raws = []
         speaker_list = []
         speaker_name = []
-        logger.debug(f'[whisperx-api]:指定最大说话人：{self.max_speakers=}')
+        logger.debug(f'[whisperx-api]: Specified maximum speakers:{self.max_speakers=}')
         try:
             with open(self.audio_file, 'rb') as file:
                 transcript = client.audio.transcriptions.create(
@@ -73,7 +73,7 @@ class WhisperXRecogn(BaseRecogn):
                 if speaker_list:
                     Path(f'{self.cache_folder}/speaker.json').write_text(json.dumps(speaker_list), encoding='utf-8')
             except Exception as e:
-                logger.exception(f'说话人重排序出错，忽略{e}',exc_info=True)
+                logger.exception(f'Speaker reordering failed, ignore it:{e}',exc_info=True)
         
         return raws
 

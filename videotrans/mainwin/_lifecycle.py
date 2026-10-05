@@ -113,7 +113,7 @@ class LifecycleMixin:
                 if w and hasattr(w, 'hide'):
                     w.hide()
         except Exception as e:
-            logger.exception(f'子窗口隐藏中出错 {e}', exc_info=True)
+            logger.exception(f'Sub-window hiding process failed {e}', exc_info=True)
 
         for thread in self.worker_threads:
             if thread and thread.isRunning():
@@ -129,7 +129,7 @@ class LifecycleMixin:
                 if w and hasattr(w, 'close'):
                     w.close()
         except Exception as e:
-            logger.exception(f'子窗口关闭中出错{e}', exc_info=True)
+            logger.exception(f'Sub-window closing process failed{e}', exc_info=True)
 
         QThreadPool.globalInstance().waitForDone(5000)
         self.kill_ffmpeg_processes()

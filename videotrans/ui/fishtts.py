@@ -42,7 +42,7 @@ class Ui_fishtts(QDialog):
 
         self.label_5 = QLabel(fishttsform)
         self.label_5.setObjectName("label_5")
-        self.label_5.setText('API请求说明')
+        self.label_5.setText(tr('API request instructions'))
         v1.addWidget(self.label_5)
 
         self.tips = QPlainTextEdit(fishttsform)
@@ -87,28 +87,11 @@ class Ui_fishtts(QDialog):
     # setupUi
 
     def retranslateUi(self, fishttsform):
-        tips = """
-Fish-speech TTS 开源地址 https://github.com/fishaudio/fish-speech
-
-将以POST请求向填写的API地址发送application/json数据：
-
-FishTTS自带 tools/api_server.py，可接受请求
-
-本工具将向填写的API地址发送以下3个参数
-
-text:需要合成的文本/字符串
-references[0][audio]:参考音频路径，请放在本软件的根目录下，例如 1.wav或 wavs/1.wav
-references[0][text]:参考音频中的语音文本
-
-
-请求失败时返回json格式数据
-      
-请求成功时返回音频流
-"""
+        tips = tr('fish_tts_api_help')
 
         fishttsform.setWindowTitle("Fish-speech API " +tr('This channel needs deployed and started before available'))
         self.tips.setPlainText(tips)
         self.save.setText(tr("Save"))
-        self.api_url.setPlaceholderText("填写http开头的API,Fish-speech 1.5.0默认 http://127.0.0.1:8080/v1/tts")
+        self.api_url.setPlaceholderText(tr('fish_tts_api_url_hint'))
         self.label.setText("Fish-speech API")
         self.test.setText(tr("Test"))

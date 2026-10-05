@@ -12,6 +12,14 @@ from videotrans.configure.excepts import (
 )
 
 
+def test_connection_error_copy_uses_vietnamese_or_english():
+    from videotrans.configure.excepts import _handle_connection_error_detail
+
+    error = ConnectionError('Name or service not known')
+    assert 'Không phân giải được tên miền' in _handle_connection_error_detail(error, 'vi_VN')
+    assert 'Domain name resolution failed' in _handle_connection_error_detail(error, 'en_US')
+
+
 class TestExceptionHierarchy:
     def test_videotrans_error_is_exception(self):
         assert issubclass(VideoTransError, Exception)

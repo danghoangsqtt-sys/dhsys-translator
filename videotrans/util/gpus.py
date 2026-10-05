@@ -24,7 +24,7 @@ def getset_gpu(force_cpu=False) -> int:
     import torch
     # 无可用显卡
     app_cfg.NVIDIA_GPU_NUMS = 0 if not torch.cuda.is_available() else torch.cuda.device_count()
-    logger.debug(f'可用 Nvidia 显卡数: {app_cfg.NVIDIA_GPU_NUMS}')
+    logger.debug(f'NVIDIA GPUs Available: {app_cfg.NVIDIA_GPU_NUMS}')
     return app_cfg.NVIDIA_GPU_NUMS
 
 # MacOSX 判断是否支持 mps

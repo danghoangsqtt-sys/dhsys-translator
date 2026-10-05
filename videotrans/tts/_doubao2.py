@@ -45,7 +45,7 @@ class Doubao2TTS(BaseTTS):
                 wf.writeframes(audio_data)
 
         except Exception as e:
-            logger.exception(f"保存WAV文件时出错: {e}", exc_info=True)
+            logger.exception(f"Error Saving WAV File: {e}", exc_info=True)
 
     @retry(retry=retry_if_not_exception_type(NO_RETRY_EXCEPT), stop=(stop_after_attempt(settings.get('retry_nums'))), wait=wait_fixed(2), before=before_log(logger, logging.INFO), after=after_log(logger, logging.INFO))
     def _run(self, data_item: Union[Dict, List, None], idx: int = -1) -> Union[str, None]:
@@ -85,9 +85,9 @@ class Doubao2TTS(BaseTTS):
         response = requests.post(url, headers=headers, json=payload, stream=True)
 
         if response.status_code in [404, 402, 401, 400]:
-            raise StopTask('请检查 appid 和 access token 参数是否正确')
+            raise StopTask('Please Check if the AppID and Access Token Parameters Are Correct')
         if response.status_code == 403:
-            raise StopTask('该角色正式版可能需要在字节后台单独开通购买')
+            raise StopTask('The full version of this role may require individual opening of the purchase in Byte backend')
 
         response.raise_for_status()
         logger.debug(f"code: {response.status_code} header: {response.headers}")

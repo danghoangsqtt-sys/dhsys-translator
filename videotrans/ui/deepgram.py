@@ -68,7 +68,7 @@ class Ui_deepgram(QDialog):
         self.label_utt.setMinimumSize(QtCore.QSize(100, 35))
         self.label_utt.setAlignment(QtCore.Qt.AlignJustify | QtCore.Qt.AlignVCenter)
         self.label_utt.setObjectName("label")
-        self.label_utt.setText('静默时间长度/毫秒')
+        self.label_utt.setText(tr('Silence duration (ms)'))
 
         self.utt = QtWidgets.QLineEdit(deepgramform)
         self.utt.setMinimumSize(QtCore.QSize(0, 35))

@@ -50,7 +50,7 @@ def faster_whisper(
         device="cuda" if is_cuda else 'cpu'
     def _create_model(_compute_type):
         try:
-            logger.debug(f'[faster_whisper]加载模型{model_name}: running on {device},{_compute_type=}')
+            logger.debug(f'[faster_whisper] Loading model{model_name}: running on {device},{_compute_type=}')
             model = WhisperModel(
                 local_dir,
                 device=device,
@@ -63,28 +63,28 @@ def faster_whisper(
             # 对数据类型问题引发的错误重试
             # cuda下先尝试使用 float16
             if is_cuda and _compute_type != 'float16':
-                logger.warning(f'faster-whisper CUDA下 加载模型失败，更改为 [float16] 类型后重试{e}')
+                logger.warning(f'faster-whisper CUDA load failed, change to [float16] type and retry{e}')
                 return _create_model('float16')
 
 
             # 如果cpu并且非 int8,先尝试 int8
             if not is_cuda and _compute_type != 'int8':
-                logger.warning(f'faster-whisper CPU下 加载模型失败，更改为 [int8] 类型后重试{e}')
+                logger.warning(f'faster-whisper CPU load failed, change to [int8] type and retry{e}')
                 return _create_model('int8')
             # 保底 float32
             if _compute_type != 'float32':
-                logger.warning(f'faster-whisper  加载模型失败，更改为 [float32] 类型后重试, {is_cuda=}')
+                logger.warning(f'faster-whisper load failed, change to [float32] type and retry, {is_cuda=}')
                 return _create_model('float32')
             raise
 
     try:
         # 1. 加载基础模型
         _write_log(logs_file, json.dumps({"type": "logs", "text": f'Loading {model_name}'}))
-        logger.debug(f'开始加载 faster-whisper模型{model_name},数据类型:{compute_type}')
+        logger.debug(f'Starting to load faster-whisper model{model_name}, data type:{compute_type}')
         model = _create_model(compute_type)
     except Exception as e:
         error = traceback.format_exc()
-        logger.error(f'[faster_whisper][{is_cuda=}]语音转录加载模型失败:{local_dir=}\n{error}')
+        logger.error(f'[faster_whisper][{is_cuda=}] Speech-to-Text failed to load model:{local_dir=}\n{error}')
         return False, f'{e},{error}'
 
     try:
@@ -102,7 +102,7 @@ def faster_whisper(
         else:
             temperature = float(temperature)
 
-        logger.debug(f'直接传递完整音频，由faster-whisper内部VAD处理，返回字级时间戳数据')
+        logger.debug(f'Directly pass the full audio, which is internally processed by faster-whisper\'s VAD and returns character-level timestamp data')
         _write_log(logs_file, json.dumps({"type": "logs", "text": 'Transcribe word timestamps'}))
         segments, info = model.transcribe(
             audio_file,
@@ -136,7 +136,7 @@ def faster_whisper(
             })
             _write_log(logs_file, json.dumps({"type": "subtitle", "text": f'Faster-whisper [{i}] {segment.text}\n'}))
 
-        logger.debug(f'faster-whisper模式下，对{model_name}模型返回的字级时间戳进行断句')
+        logger.debug(f'In Faster Whisper mode, segmenting word timestamps from {model_name} model')
         if not texts:
             _kw=dict(beam_size=beam_size,
                 best_of=best_of,
@@ -153,20 +153,20 @@ def faster_whisper(
             return False, msg
         recogn2_max_speech,recogn2_min_speech=kw.get('recogn2_max_speech'), kw.get('recogn2_min_speech')
         if recogn2_max_speech and recogn2_min_speech:
-            logger.debug(f'进入二次识别重新断句:{recogn2_min_speech=},{recogn2_max_speech=},{info.language=}')
+            logger.debug(f'Enter secondary recognition for re-sentence segmentation:{recogn2_min_speech=},{recogn2_max_speech=},{info.language=}')
             raws = _resegment2(texts, info.language, recogn2_max_speech,recogn2_min_speech, logs_file)
-            logger.debug(f'二次识别断句完成')
+            logger.debug(f'Secondary recognition sentence segmentation completed:')
         else:
             raws = _resegment(texts, info.language, max_speech_ms,min_speech_ms, logs_file)
             Path(f'{TEMP_ROOT}/detect_language_source_{kw.get("uuid")}.txt').write_text(info.language)
-            logger.debug(f'断句完毕返回结果:{max_speech_ms=},{min_speech_ms=}')
+            logger.debug(f'Sentence segmentation finished and results are returned:{max_speech_ms=},{min_speech_ms=}')
         if jianfan and raws:
             for it in raws:
                 it['text'] = zhconv.convert(it['text'], 'zh-hans')
         # 保存识别结果到临时目录下，防止进程崩溃后永久等待
         if subtitle_srt:
             Path(subtitle_srt).write_text("\n\n".join([f'{i+1}\n{it.startraw} --> {it.endraw}\n{it.text}' for i,it in enumerate(raws)]),encoding="utf-8")
-            logger.debug(f'faster-whisper下已临时保存识别结果到 {subtitle_srt}，防止进程崩溃后永久等待')
+            logger.debug(f'Faster Whisper recognition results were temporarily saved to {subtitle_srt} to prevent indefinite waiting after a worker crash')
         return raws,None
     except BaseException as e:
         msg = traceback.format_exc()

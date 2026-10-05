@@ -39,7 +39,7 @@ class RecognMixin:
             if vail_file(_remove_noise_wav):
                 self.cfg.source_wav = _remove_noise_wav
                 self.clone_ref = _remove_noise_wav
-                logger.debug(f'复用已存在的降噪缓存文件')
+                logger.debug(f'Reuse existing denoising cache file.')
             else:
                 title = tr("Starting to process speech noise reduction, which may take a long time, please be patient")
                 kw = {
@@ -57,7 +57,7 @@ class RecognMixin:
                         self.cfg.source_wav = _remove_noise_wav
                     self.signal(text='remove noise end')
                 except Exception as e:
-                    logger.exception(f'降噪失败，跳过 {e}', exc_info=True)
+                    logger.exception(f'Noise reduction failed, skipping {e}', exc_info=True)
 
         self.signal(text=tr("Speech Recognition to Word Processing"))
         raw_subtitles = run_recogn(
@@ -76,7 +76,7 @@ class RecognMixin:
             raise SpeechToTextError(self.cfg.basename + tr('recogn result is empty'))
 
         if self.cfg.app_mode=='tiqu' and not self.should_trans and self.cfg.fix_punc==2:
-            logger.debug('仅提取不翻译模式下，移除所有标点')
+            logger.debug('In the mode of only extracting without translation, remove all punctuation.')
             for it in raw_subtitles:
                 it['text'] = delete_punc(it['text'])
 
@@ -101,9 +101,9 @@ class RecognMixin:
                             it['text'] = it['text'].replace('，', ',').replace('。', '. ').replace('？', '?').replace('！','!')
                     self._save_srt_target(self.source_srt_list, self.cfg.source_sub)
                 else:
-                    logger.error('标点恢复出错了，跳过')
+                    logger.error('Punctuation restoration failed, skipping')
             except Exception as e:
-                logger.exception(f'标点恢复失败，跳过 {e}', exc_info=True)
+                logger.exception(f'Punctuation restoration failed, skipping {e}', exc_info=True)
 
         self.signal(text=Path(self.cfg.source_sub).read_text(encoding='utf-8'), type='replace_subtitle')
 
@@ -114,7 +114,7 @@ class RecognMixin:
         
         self._recogn_succeed()
         self.signal(text=tr('endtiquzimu'))
-        logger.debug(f'[语音识别阶段结束耗时]:{time.time()-_st}s')
+        logger.debug(f'[Speech recognition elapsed time]: {time.time()-_st}s')
 
     def _recogn_succeed(self) -> None:
         self.precent += 5
@@ -128,7 +128,7 @@ class RecognMixin:
         if not self.should_recogn2 or self._exit():
             return
         if not vail_file(self.cfg.target_wav):
-            logger.debug(f'跳过二次识别，因无配音音频文件')
+            logger.debug(f'Skipping secondary recognition due to no voice audio file')
             return
 
         self.precent += 3
@@ -139,11 +139,11 @@ class RecognMixin:
         try:
             conver_to_16k(self.cfg.target_wav, shibie_audio)
         except Exception as e:
-            logger.exception(f'二次识别配音音频生成字幕时，预处理音频失败，静默跳过 {e}', exc_info=True)
+            logger.exception(f'Secondary recognition: subtitle generation from voice audio preprocessing failed, silently skipping {e}', exc_info=True)
             return
 
         if not vail_file(shibie_audio):
-            logger.error(f'二次识别配音音频生成字幕时，预处理音频失败，静默跳过')
+            logger.error(f'Secondary recognition: subtitle generation from voice audio preprocessing failed, silently skipping')
             return
 
         try:
@@ -151,7 +151,7 @@ class RecognMixin:
             detect_language = self.cfg.target_language_code.split('-')[0]
             recogn_type = FASTER_WHISPER
             model_name = settings.get('model_for_recogn2','large-v3-turbo')
-            logger.debug(f'二次识别：faster-whisper + {detect_language=} + {model_name=}')
+            logger.debug(f'Secondary recognition: faster-whisper + {detect_language=} + {model_name=}')
             raw_subtitles = run_recogn(
                 recogn_type=recogn_type,
                 uuid=self.uuid,
@@ -164,28 +164,28 @@ class RecognMixin:
             )
             if self._exit(): return
             if not raw_subtitles:
-                logger.error('二次识别出错：' + tr('recogn result is empty'))
+                logger.error('Secondary recognition failed:' + tr('recogn result is empty'))
                 return
 
             if self.cfg.rephrase:
                 raw_subtitles=self._llmpost(raw_subtitles,'2')
 
             if self.cfg.fix_punc==2:
-                logger.debug('二次识别后，移除所有标点')
+                logger.debug('Remove all punctuation after secondary recognition.')
                 for it in raw_subtitles:
                     it['text']=delete_punc(it['text'])
             self._save_srt_target(raw_subtitles, outsrt_file)
 
             if not vail_file(outsrt_file):
-                logger.error(f'二次识别配音文件失败，原因未知')
+                logger.error('Secondary recognition of the dubbed audio failed for an unknown reason')
                 return
             shutil.copy2(outsrt_file, self.cfg.target_sub)
             self.signal(text='STT 2 pass end')
-            logger.debug('二次识别成功完成')
+            logger.debug('Secondary recognition completed successfully.')
         except Exception as e:
-            logger.exception(f'二次识别配音音频生成字幕时失败，静默跳过 {e}', exc_info=True)
+            logger.exception(f'Failed to generate subtitles for the generated audio during secondary recognition. Skipping silently. {e}', exc_info=True)
             return
-        logger.debug(f'[二次识别阶段结束耗时]:{time.time()-_st}s')
+        logger.debug(f'[Duration of secondary recognition phase]:{time.time()-_st}s')
 
 
 
@@ -211,12 +211,12 @@ class RecognMixin:
                 ])
                 vocal=tmpfile
             except Exception as e:
-                logger.exception(f'克隆语音前分离出 44.1k 的原始音频失败',exc_info=True)
+                logger.exception(f'Cloning voice failed to extract 44.1k original audio before cloning.',exc_info=True)
 
-        logger.debug(f'语音克隆模式下，所用参考音频为:{vocal}')
+        logger.debug(f'In voice cloning mode, the used reference audio is:{vocal}')
         def _cutaudio_from_vocal(it):
             try:
-                logger.debug(f"裁切对应片段为参考音频：{it['startraw']}->{it['endraw']}\n当前{it=}")
+                logger.debug(f"Cutting out corresponding segment as reference audio:{it['startraw']}->{it['endraw']}\nCurrent{it=}")
                 cut_from_audio(
                     audio_file=vocal,
                     ss=it['startraw'],
@@ -224,7 +224,7 @@ class RecognMixin:
                     out_file=it['ref_wav']
                 )
             except Exception as e:
-                logger.exception(f'裁切参考音频失败:{it=},{e}', exc_info=True)
+                logger.exception(f'Cut Reference Audio Failed:{it=},{e}', exc_info=True)
 
         all_task = []
         with ThreadPoolExecutor(max_workers=min(8, len(self.queue_tts), os.cpu_count())) as pool:

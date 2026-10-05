@@ -126,72 +126,72 @@ def _handle_connection_error_detail(error, lang):
 
     if "dns" in error_str or "name or service not known" in error_str:
         base_message = (
-            "域名解析失败，无法找到服务器地址" if lang == 'zh'
+            "Không phân giải được tên miền; không tìm thấy địa chỉ máy chủ" if lang == 'vi_VN'
             else "Domain name resolution failed, cannot find server address"
         )
     elif "ProxyError" in error_str:
         base_message = (
-            "代理设置不正确或代理不可用，请检查代理或关闭代理并删掉代理文本框中所填内容" if lang == 'zh'
+            "Cấu hình proxy sai hoặc proxy không khả dụng. Hãy kiểm tra proxy hoặc tắt proxy và xóa địa chỉ đã nhập." if lang == 'vi_VN'
             else "The proxy address is not available, please check"
         )
 
     elif "refused" in error_str or "10061" in error_str or "积极拒绝" in error_str:
         if is_local:
             base_message = (
-                "连接被拒绝，请确保本地服务已启动并正在运行" if lang == 'zh'
+                "Kết nối bị từ chối. Hãy đảm bảo dịch vụ cục bộ đã khởi động và đang chạy." if lang == 'vi_VN'
                 else "Connection refused, please ensure the local service is started and running"
             )
         else:
             base_message = (
-                "连接被拒绝，无法连接目标服务" if lang == 'zh'
+                "Kết nối bị từ chối; không thể kết nối tới dịch vụ đích." if lang == 'vi_VN'
                 else "Connection refused"
             )
     elif "reset" in error_str:
         base_message = (
-            "连接被重置，网络可能不稳定" if lang == 'zh'
+            "Kết nối bị đặt lại; mạng có thể không ổn định." if lang == 'vi_VN'
             else "Connection reset, network may be unstable"
         )
     elif "timeout" in error_str or "timed out" in error_str:
         base_message = (
-            "连接超时，请检查网络连接是否稳定" if lang == 'zh'
+            "Kết nối hết thời gian chờ. Hãy kiểm tra đường truyền mạng." if lang == 'vi_VN'
             else "Connection timeout, please check network stability"
         )
     elif "max retries exceeded" in error_str:
         if is_local:
             if "0.0.0.0" in error_str:
                 base_message = (
-                    "API 地址不可是 0.0.0.0 ，请修改为 127.0.0.1 " if lang == 'zh'
+                    "Địa chỉ API không thể là 0.0.0.0; hãy đổi thành 127.0.0.1." if lang == 'vi_VN'
                     else "The API address cannot be 0.0.0.0, please change it to 127.0.0.1"
                 )
             else:
                 base_message = (
-                    "多次重试连接失败，请确保本地服务已正确启动" if lang == 'zh'
+                    "Kết nối vẫn thất bại sau nhiều lần thử. Hãy kiểm tra dịch vụ cục bộ đã khởi động." if lang == 'vi_VN'
                     else "Multiple connection retries failed, please ensure local service is properly started"
                 )
         else:
             base_message = (
-                "多次重试连接失败，服务可能暂时不可用" if lang == 'zh'
+                "Kết nối vẫn thất bại sau nhiều lần thử; dịch vụ có thể tạm thời không khả dụng." if lang == 'vi_VN'
                 else "Multiple connection retries failed, service may be temporarily unavailable"
             )
 
     else:
         base_message = (
-            "网络连接失败" if lang == 'zh'
+            "Kết nối mạng thất bại." if lang == 'vi_VN'
             else "Network connection failed"
         )
 
     # 为中文用户添加额外提示
-    if lang == 'zh' and api_url and not is_local:
+    if lang == 'vi_VN' and api_url and not is_local:
         if "api.msedgeservices.com" in api_url.lower():
-            base_message += ". EdgeTTS使用频繁可能触发限流，请稍等段时间重试。"
+            base_message += " Edge TTS có thể đang giới hạn yêu cầu; hãy đợi một lúc rồi thử lại."
             return base_message
         if "edge.microsoft.com" in api_url.lower():
-            base_message += ". 微软翻译使用频繁可能触发限流，请稍等段时间重试。"
+            base_message += " Microsoft Translator có thể đang giới hạn yêu cầu; hãy đợi một lúc rồi thử lại."
             return base_message
         # 检查是否为国外知名API服务
         foreign_apis = ['openai', 'anthropic', 'claude', 'elevenlabs', 'deepgram', 'google', 'aws.amazon']
         if any(api in api_url.lower() for api in foreign_apis):
-            base_message += "。注意：某些国外服务需要科学上网才能访问"
+            base_message += " Một số dịch vụ có thể cần kết nối mạng phù hợp để truy cập."
 
     return base_message
 
@@ -200,8 +200,8 @@ def _handle_connection_error_detail(error, lang):
 def _nofoundfile(e,lang):
     filename=getattr(e, 'filename', '')
     if sys.platform=='win32' and filename and "/tmp/" not in filename and len(filename)>250:
-        return f'请检查文件是否存在，若存在，可能文件名可能过长，请重命名为简短名称，并移动到浅层目录下:\n{filename}' if lang=='zh' else f'The filename may be too long. Please rename it to a shorter name and move it to a shallow directory.:\n{filename}'
-    return f"文件不存在：{filename}" if lang == 'zh' else f"File not found: {filename}"
+        return f'Hãy kiểm tra tệp có tồn tại không. Nếu có, tên hoặc đường dẫn có thể quá dài; hãy dùng tên ngắn hơn và chuyển tệp lên thư mục gần gốc hơn:\n{filename}' if lang=='vi_VN' else f'The filename may be too long. Please rename it to a shorter name and move it to a shallow directory.:\n{filename}'
+    return f"Không tìm thấy tệp: {filename}" if lang == 'vi_VN' else f"File not found: {filename}"
 
 # 根据异常类型，返回整理后的可读性错误消息
 def get_msg_from_except(ex:Exception)->str:
@@ -223,12 +223,12 @@ def get_msg_from_except(ex:Exception)->str:
     exception_handlers = {
         # === 认证和权限问题 ===
         AuthenticationError: lambda e: (
-            f"API密钥错误，请检查密钥是否正确 {e.message}" if lang == 'zh'
+            f"Khóa API không hợp lệ. Hãy kiểm tra lại khóa: {e.message}" if lang == 'vi_VN'
             else (e.body.get('message') if e.body else e.message)
         ),
 
         PermissionDeniedError: lambda e: (
-            f"当前密钥没有访问权限，请检查权限设置 {e.message}" if lang == 'zh'
+            f"Khóa API không có quyền truy cập. Hãy kiểm tra quyền: {e.message}" if lang == 'vi_VN'
             else (e.body.get('message') if e.body else e.message)
         ),
 
@@ -238,22 +238,22 @@ def get_msg_from_except(ex:Exception)->str:
         # === 服务端问题 ===
         (RateLimitError,InternalServerError, NotFoundError, BadRequestError, APIConnectionError, APIError): lambda e: e.body.get('message') if hasattr(e, 'body') and e.body else e.message,
 
-        LengthFinishReasonError: lambda e: f'内容太长超出最大允许Token，请减小内容或增大max_token,或者降低每次发送字幕行数\n{e}' if lang == 'zh' else f'{e}',
+        LengthFinishReasonError: lambda e: f'Nội dung vượt giới hạn token. Hãy rút ngắn nội dung, tăng max_token hoặc giảm số dòng phụ đề mỗi lần gửi.\n{e}' if lang == 'vi_VN' else f'{e}',
         ContentFilterFinishReasonError: lambda
-            e: f"内容触发AI风控被过滤 {e}" if lang == 'zh' else f'Content triggers AI risk control and is filtered\n{e}',
+            e: f"Nội dung bị bộ lọc an toàn của AI từ chối: {e}" if lang == 'vi_VN' else f'Content triggers AI risk control and is filtered\n{e}',
 
         # === 配置和地址问题 ===
         (TooManyRedirects, MissingSchema, InvalidSchema, InvalidURL): lambda e: (
-            f"请求地址格式不正确，请检查配置 {e.message}" if lang == 'zh'
+            f"Địa chỉ yêu cầu không hợp lệ. Hãy kiểm tra cấu hình: {e.message}" if lang == 'vi_VN'
             else f"Request URL format is incorrect, check configuration {e.message}"
         ),
 
         (ProxyError, aiohttp.client_exceptions.ClientProxyConnectionError): lambda e: (
-            "代理设置不正确或代理不可用，请检查代理或关闭代理并删掉代理文本框中所填内容" if lang == 'zh'
+            "Cấu hình proxy sai hoặc proxy không khả dụng. Hãy kiểm tra proxy hoặc tắt proxy và xóa địa chỉ đã nhập." if lang == 'vi_VN'
             else "Proxy configuration issue, check settings or disable proxy"
         ),
         SSLError: lambda e: (
-            "安全连接失败，请检查系统时间或网络设置，如果使用了代理，请关闭后重试" if lang == 'zh'
+            "Kết nối bảo mật thất bại. Hãy kiểm tra giờ hệ thống và mạng; nếu dùng proxy, hãy tắt rồi thử lại." if lang == 'vi_VN'
             else "Secure connection failed, check system time or network settings"
         ),
 
@@ -278,69 +278,69 @@ def get_msg_from_except(ex:Exception)->str:
         ),
 
         FileExistsError: lambda e: (
-            f"文件已存在：{getattr(e, 'filename', '')}" if lang == 'zh'
+            f"Tệp đã tồn tại: {getattr(e, 'filename', '')}" if lang == 'vi_VN'
             else f"File already exists: {getattr(e, 'filename', '')}"
         ),
 
         # === 操作系统错误 ===
         OSError: lambda e: (
-            f"系统错误 ({e.errno})：{e.strerror}" if lang == 'zh'
+            f"Lỗi hệ thống ({e.errno}): {e.strerror}" if lang == 'vi_VN'
             else f"System Error ({e.errno}): {e.strerror}"
         ),
 
         # === 数据处理错误 ===
         KeyError: lambda e: (
-            f"处理数据时缺少必需的键：{e}" if lang == 'zh'
+            f"Thiếu khóa bắt buộc khi xử lý dữ liệu: {e}" if lang == 'vi_VN'
             else f"{e}"
         ),
 
         IndexError: lambda e: (
-            f"处理列表或序列时索引越界:{e}" if lang == 'zh'
+            f"Chỉ số vượt phạm vi danh sách hoặc chuỗi: {e}" if lang == 'vi_VN'
             else f"{e}"
         ),
 
         LookupError: lambda e: (
-            f"查找错误，指定的键或索引不存在:{e}" if lang == 'zh'
+            f"Không tìm thấy khóa hoặc chỉ số được yêu cầu: {e}" if lang == 'vi_VN'
             else f"{e}"
         ),
 
         UnicodeDecodeError: lambda e: (
-            f"文件或数据解码失败，编码格式错误：{e.reason}" if lang == 'zh'
+            f"Không giải mã được tệp hoặc dữ liệu; định dạng mã hóa không hợp lệ: {e.reason}" if lang == 'vi_VN'
             else f" {e.reason}"
         ),
 
         # === 程序内部错误 ===
         AttributeError: lambda e: (
-            f"程序内部错误：{e}" if lang == 'zh'
+            f"Lỗi nội bộ ứng dụng: {e}" if lang == 'vi_VN'
             else f"{e}"
         ),
 
         NameError: lambda e: (
-            f"程序内部错误：未定义的变量 '{e.name}'" if lang == 'zh' else f"{e}"
+            f"Lỗi nội bộ ứng dụng: biến chưa được định nghĩa '{e.name}'" if lang == 'vi_VN' else f"{e}"
         ),
 
         TypeError: lambda e: (
-            f"程序内部错误：{e}" if lang == 'zh'
+            f"Lỗi nội bộ ứng dụng: {e}" if lang == 'vi_VN'
             else f"{e}"
         ),
 
         RecursionError: lambda e: (
-            f"程序内部错误：发生无限递归:{e}" if lang == 'zh'
+            f"Lỗi nội bộ ứng dụng: đệ quy quá sâu: {e}" if lang == 'vi_VN'
             else f"{e}"
         ),
 
         ZeroDivisionError: lambda e: (
-            f"算术错误：除数为零:{e}" if lang == 'zh'
+            f"Lỗi tính toán: chia cho 0: {e}" if lang == 'vi_VN'
             else f"{e}"
         ),
 
         OverflowError: lambda e: (
-            f"算术错误：数值超出最大限制:{e}" if lang == 'zh'
+            f"Lỗi tính toán: giá trị vượt quá giới hạn: {e}" if lang == 'vi_VN'
             else f"{e}"
         ),
 
         BrokenPipeError: lambda e: (
-            "连接管道损坏，请检查网络连接" if lang == 'zh'
+            "Kết nối đường ống bị hỏng; hãy kiểm tra mạng." if lang == 'vi_VN'
             else "Broken pipe error, check network connection"
         ),
     }

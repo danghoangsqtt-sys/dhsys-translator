@@ -36,7 +36,7 @@ class SpeechToText(BaseTask):
     spk_insert: bool = True
 
     def __repr__(self):        
-        return f'[SpeechToText]语音转录: {self.out_format=},{self.copysrt_rawvideo=},{self.spk_insert=}\n{self.cfg}'
+        return f'[SpeechToText] Speech to text: {self.out_format=},{self.copysrt_rawvideo=},{self.spk_insert=}\n{self.cfg}'
 
     def __post_init__(self):
         super().__post_init__()
@@ -77,7 +77,7 @@ class SpeechToText(BaseTask):
 
         # 需要降噪
         if self.cfg.remove_noise:
-            logger.debug('开始降噪')
+            logger.debug('Starting noise reduction')
             try:
                 from videotrans.process.prepare_audio import remove_noise
                 title = tr('Starting to process speech noise reduction, which may take a long time, please be patient')
@@ -94,7 +94,7 @@ class SpeechToText(BaseTask):
                     self.cfg.shibie_audio = _noise_wav
                 self.signal(text='remove noise end')
             except Exception as e:
-                logger.exception(f'降噪失败，跳过 {e}', exc_info=True)
+                logger.exception(f'Noise reduction failed, skipping {e}', exc_info=True)
 
         if self._exit(): return
         raw_subtitles = run(
@@ -135,9 +135,9 @@ class SpeechToText(BaseTask):
                                 '！', '!')
                     self._save_srt_target(self.source_srt_list, self.cfg.target_sub)
                 else:
-                    logger.error('标点恢复出错')
+                    logger.error('Punctuation restoration error')
             except Exception as e:
-                logger.exception(f'恢复标点出错，跳过{e}', exc_info=True)
+                logger.exception(f'Failed to reinsert punctuation, skipping{e}', exc_info=True)
 
         # 本身已有说话人识别的，就不再重新断句
         self.signal(text=Path(self.cfg.target_sub).read_text(encoding='utf-8'), type='replace_subtitle')

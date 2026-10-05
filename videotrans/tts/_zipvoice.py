@@ -138,4 +138,4 @@ class ZipVoice(BaseTTS):
 
 
         self.signal(text=msg)
-        logger.debug(f'zipvoice 配音结束：{msg}')
+        logger.debug(f'Zipvoice voice finished:{msg}')

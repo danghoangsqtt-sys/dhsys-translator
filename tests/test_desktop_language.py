@@ -58,3 +58,46 @@ def test_legacy_chinese_catalog_cannot_become_ui_locale(tmp_path, monkeypatch):
         assert set(_i18n._get_langjson_list()) == {'vi_VN', 'en_US'}
     finally:
         _i18n._get_langjson_list.cache_clear()
+
+
+@pytest.mark.parametrize('flag,heading', [
+    ('vi', 'Cài đặt chung'), ('en', 'General'),
+])
+def test_settings_page_labels_and_tooltips_follow_supported_locale(flag, heading):
+    env = os.environ.copy()
+    env['QT_QPA_PLATFORM'] = 'offscreen'
+    env['PYTHONIOENCODING'] = 'utf-8'
+    env['PYVIDEOTRANS_LANG'] = flag
+    script = (
+        "import re; from videotrans.ui.setini import notices, titles, heads; "
+        "values=[*titles.values(), *heads.values(), "
+        "*(text for group in notices.values() for text in group.values())]; "
+        "assert len(values) >= 200; "
+        "assert not any(re.search('[\\u4e00-\\u9fff]', text) for text in values); "
+        "print('SETTINGS_HEADING=' + heads['common'])"
+    )
+    result = subprocess.run([sys.executable, '-c', script],
+                            capture_output=True, text=True, encoding='utf-8',
+                            env=env, timeout=30, check=True)
+    assert f'SETTINGS_HEADING={heading}' in result.stdout
+
+
+def test_legal_terms_are_readable_in_both_ui_locales():
+    import re
+
+    from PySide6.QtGui import QTextDocument
+    from videotrans.ui._legal_terms import legal_terms_html
+
+    for locale, heading in (
+        ('en_US', 'Software License and Service Agreement'),
+        ('vi_VN', 'Giấy phép và điều khoản dịch vụ'),
+    ):
+        html = legal_terms_html(locale)
+        document = QTextDocument()
+        document.setHtml(html)
+        text = document.toPlainText()
+        assert heading in text
+        assert 'GPLv3' in text
+        assert 'https://github.com/jianchang512/pyvideotrans' in html
+        assert len(text) > 3000
+        assert not re.search(r'[\u4e00-\u9fff]', text)

@@ -43,7 +43,7 @@ class QwenMT(BaseTrans):
                 "content":text
             }
         ]
-        logger.debug(f'qwen-mt请求:{model_name=}')
+        logger.debug(f'qwen-mt Request:{model_name=}')
 
         translation_options = {
             "source_lang": "auto" if not self.source_code else self.source_code.split('-')[0],
@@ -69,7 +69,7 @@ class QwenMT(BaseTrans):
             raise TranslateSrtError(response.message)
         if not response.output.choices:
             raise TranslateSrtError(f'qwen-mt returned empty choices')
-        logger.debug(f'qwen-mt返回响应:{response.output.choices[0].message.content}')
+        logger.debug(f'qwen-mt Response:{response.output.choices[0].message.content}')
         return response.output.choices[0].message.content
 
     def _openai(self,model_name,text):

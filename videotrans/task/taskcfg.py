@@ -3,10 +3,28 @@ from dataclasses import dataclass, asdict
 from typing import Optional, Union
 from pathlib import Path
 
-isTrue = {True: "已选", False: "未选"}
-_duanjus = ["默认断句", "LLM重新断句"]
-_outs = ["单字幕", "目标语言在下双字幕", "目标语言在上双字幕"]
-_loops = ["循环播放", "拉长(降速播放)"]
+from videotrans.configure.config import tr
+
+class _LocalizedChoices:
+    def __init__(self, keys):
+        self.keys = keys
+
+    def __getitem__(self, index):
+        return tr(self.keys[index])
+
+
+isTrue = _LocalizedChoices({True: "selected", False: "unselected"})
+_duanjus = _LocalizedChoices(["default_segment", "llm_resegment"])
+_outs = _LocalizedChoices(["monolingual_subtitle", "target_below", "target_above"])
+_loops = _LocalizedChoices(["loop_bgm", "extend_bgm"])
+
+
+def _cuda_status(enabled):
+    return tr("cuda_status", tr("enabled" if enabled else "disabled"))
+
+
+def _speaker_limit(count):
+    return tr("unlimited") if count < 1 else count + 1
 
 
 @dataclass
@@ -144,19 +162,19 @@ class TaskCfgSTT(TaskCfgBase):
         from videotrans.recognition import ALLOW_CHANGE_MODEL
         from videotrans.util.tools import get_recogn_type
         from videotrans.configure.config import tr, app_cfg
-        _msg = [f'[TaskCfgSTT]', f'原始输入文件名: {self.name}, \n输出结果保存到文件夹: {self.target_dir},\n临时文件夹: {self.cache_folder}',
-                f'{"已" if self.is_cuda else "未"}启用CUDA加速', f'{isTrue[self.remove_noise]} 降噪']
+        _msg = [f'[TaskCfgSTT]', tr("task_summary_file", self.name, self.target_dir, self.cache_folder),
+                _cuda_status(self.is_cuda), tr("noise_reduction_status", isTrue[self.remove_noise])]
         if self.enable_diariz:
-            _msg.append(f'已选 识别说话人，最大说话人数量{"不限制" if self.nums_diariz < 1 else self.nums_diariz + 1}')
+            _msg.append(tr("speaker_diarization_enabled", _speaker_limit(self.nums_diariz)))
         if self.fix_punc > 0:
-            _msg.append(f'{"已选 恢复标点符号" if self.fix_punc == 1 else "已选 删除所有标点符号"}')
+            _msg.append(tr("punctuation_restored" if self.fix_punc == 1 else "punctuation_removed"))
 
         _msg.append(
-            f"{tr('Speech Recognit')}:{get_recogn_type(self.recogn_type)}, {self.model_name if self.recogn_type in ALLOW_CHANGE_MODEL else ''}  断句方式:{_duanjus[self.rephrase]}")
-        _msg.append(f'发音语言:' + ('自动检测' if self.detect_language == 'auto' else self.detect_language))
-        _msg.append(f'{isTrue[self.remove_noise]} 降噪')
+            f"{tr('Speech Recognit')}:{get_recogn_type(self.recogn_type)}, {self.model_name if self.recogn_type in ALLOW_CHANGE_MODEL else ''}  {tr('segmentation')}:{_duanjus[self.rephrase]}")
+        _msg.append(tr("source_language_auto") if self.detect_language == 'auto' else
+                    f"{tr('source_language')}: {self.detect_language}")
         if app_cfg.proxy:
-            _msg.append(f'代理地址:{app_cfg.proxy}')
+            _msg.append(tr("proxy_address", app_cfg.proxy))
         return "\n".join(_msg)
 
 
@@ -180,17 +198,17 @@ class TaskCfgTTS(TaskCfgBase):
         from videotrans.configure.config import tr, app_cfg
 
         _msg.append(f'[TaskCfgTTS]')
-        _msg.append(f'原始输入文件名: {self.name}, \n输出结果保存到文件夹: {self.target_dir},\n临时文件夹: {self.cache_folder}')
-        _msg.append(f'{"已" if self.is_cuda else "未"}启用CUDA加速')
+        _msg.append(tr("task_summary_file", self.name, self.target_dir, self.cache_folder))
+        _msg.append(_cuda_status(self.is_cuda))
         _msg.append(
-            f"{tr('Dubbing channel')}:{get_tts_type(self.tts_type)}, 角色:{self.voice_role}, 配音语言:{self.target_language_code}")
-        _msg.append(f'音量:{self.volume}, 语速:{self.voice_rate}, {isTrue[self.voice_autorate]} 音频加速')
+            f"{tr('Dubbing channel')}:{get_tts_type(self.tts_type)}, {tr('voice_role')}:{self.voice_role}, {tr('dubbing_language')}:{self.target_language_code}")
+        _msg.append(f'{tr("volume")}:{self.volume}, {tr("speech_rate")}:{self.voice_rate}, {tr("audio_speedup_status", isTrue[self.voice_autorate])}')
 
         if not self.voice_autorate and not self.video_autorate:
-            _msg.append(f'{isTrue[self.remove_silent_mid]} 移除字幕间空隙,  {isTrue[self.align_sub_audio]} 强制对齐字幕和声音')
+            _msg.append(f'{tr("remove_silence_status", isTrue[self.remove_silent_mid])}, {tr("force_align_status", isTrue[self.align_sub_audio])}')
 
         if app_cfg.proxy:
-            _msg.append(f'代理地址:{app_cfg.proxy}')
+            _msg.append(tr("proxy_address", app_cfg.proxy))
         return "\n".join(_msg)
 
 
@@ -205,11 +223,11 @@ class TaskCfgSTS(TaskCfgBase):
         from videotrans.util.tools import get_tanslate_type
         from videotrans.configure.config import tr, settings, app_cfg
         _msg.append(f'[TaskCfgSTS]')
-        _msg.append(f'原始输入文件名: {self.name}, \n输出结果保存到文件夹: {self.target_dir}')
+        _msg.append(tr("task_summary_file", self.name, self.target_dir, ""))
         _msg.append(
-            f"{tr('Translate channel')}:{get_tanslate_type(self.translate_type)},原始语言:{self.source_language_code},目标语言:{self.target_language_code}, {isTrue[settings['aisendsrt']]} {tr('Send SRT')}")
+            f"{tr('Translate channel')}:{get_tanslate_type(self.translate_type)},{tr('source_language')}:{self.source_language_code},{tr('target_language')}:{self.target_language_code}, {isTrue[settings['aisendsrt']]} {tr('Send SRT')}")
         if app_cfg.proxy:
-            _msg.append(f'代理地址:{app_cfg.proxy}')
+            _msg.append(tr("proxy_address", app_cfg.proxy))
         return "\n".join(_msg)
 
 
@@ -252,68 +270,69 @@ class TaskCfgVTT(TaskCfgSTT, TaskCfgTTS, TaskCfgSTS):
         ]
 
         if self.app_mode == "tiqu":
-            _msg.append(f"[TaskCfgVTT]当前工作模式: 转录并翻译字幕")
+            _msg.append(tr("work_mode_transcribe_translate"))
         else:
-            _msg.append(f'[TaskCfgVTT]当前工作模式: 翻译视频  {"批量翻译模式" if self.batch else "单视频模式"}' + (
-                f" 每批{self.batch_size}个" if self.batch and self.batch_size > 0 else ""))
+            mode = tr("batch_mode" if self.batch else "single_video_mode")
+            batch_info = f" {tr('batch_size', self.batch_size)}" if self.batch and self.batch_size > 0 else ""
+            _msg.append(tr("work_mode_translate_video", mode, batch_info))
 
-        _msg.append(f'原始输入文件名: {self.name}, \n输出结果保存到文件夹: {self.target_dir},\n临时文件夹: {self.cache_folder}')
+        _msg.append(tr("task_summary_file", self.name, self.target_dir, self.cache_folder))
 
-        _msg.append(f'{isTrue[self.clear_cache]} 清理已存在')
-        _msg.append(f'{"已" if self.is_cuda else "未"}启用CUDA加速')
-        _msg.append(f'{isTrue[self.remove_noise]} 降噪')
+        _msg.append(tr("clear_cache_status", isTrue[self.clear_cache]))
+        _msg.append(_cuda_status(self.is_cuda))
+        _msg.append(tr("noise_reduction_status", isTrue[self.remove_noise]))
         if self.enable_diariz:
-            _msg.append(f'已选 识别说话人，最大说话人数量{"不限制" if self.nums_diariz < 1 else self.nums_diariz + 1}')
+            _msg.append(tr("speaker_diarization_enabled", _speaker_limit(self.nums_diariz)))
         if self.fix_punc > 0:
-            _msg.append(f'{"已选 恢复标点符号" if self.fix_punc == 1 else "已选 删除所有标点符号"}')
+            _msg.append(tr("punctuation_restored" if self.fix_punc == 1 else "punctuation_removed"))
 
         _msg.append(
-            f"{tr('Speech Recognit')}:{get_recogn_type(self.recogn_type)}, {self.model_name if self.recogn_type in ALLOW_CHANGE_MODEL else ''}, 发音语言: {self.source_language}, 断句方式:{_duanjus[self.rephrase]}")
+            f"{tr('Speech Recognit')}:{get_recogn_type(self.recogn_type)}, {self.model_name if self.recogn_type in ALLOW_CHANGE_MODEL else ''}, {tr('source_language')}: {self.source_language}, {tr('segmentation')}:{_duanjus[self.rephrase]}")
 
         if self.target_language in [None, 'No', '-'] or self.source_language == self.target_language:
-            _msg.append(f'{"发音语言和目标语言相同" if self.source_language == self.target_language else "未选 目标语言"}，不翻译字幕')
+            _msg.append(tr("source_target_same" if self.source_language == self.target_language else "target_language_not_selected"))
         else:
             _msg.append(
-                f"{tr('Translate channel')}:{get_tanslate_type(self.translate_type)},原始语言:{self.source_language},目标语言:{self.target_language}, {isTrue[settings['aisendsrt']]} {tr('Send SRT')}")
+                f"{tr('Translate channel')}:{get_tanslate_type(self.translate_type)},{tr('source_language')}:{self.source_language},{tr('target_language')}:{self.target_language}, {isTrue[settings['aisendsrt']]} {tr('Send SRT')}")
 
         if self.app_mode == 'tiqu':
             if self.copysrt_rawvideo:
-                _msg.append('已选 将生成的字幕复制到视频目录下')
+                _msg.append(tr("copy_subs_to_video_dir"))
             _msg.append(f"{tr('Subtitle format:')}: {_outs[self.output_srt]}")
         else:
 
             if self.voice_role in [None, 'No']:
-                _msg.append('未选 配音角色，不进行配音')
+                _msg.append(tr("dubbing_role_not_selected"))
             else:
                 _msg.append(
-                    f"{tr('Dubbing channel')}:{get_tts_type(self.tts_type)}, 角色:{self.voice_role}, 配音语言:{self.target_language}, {isTrue[self.recogn2pass]} 二次语音识别")
+                    f"{tr('Dubbing channel')}:{get_tts_type(self.tts_type)}, {tr('voice_role')}:{self.voice_role}, {tr('dubbing_language')}:{self.target_language}, {tr('secondary_recognition_status', isTrue[self.recogn2pass])}")
                 if self.recogn2pass and self.subtitle_type > 2:
-                    _msg.append('\t[已选中 二次语音识别，但不会生效，因已选择 嵌入双字幕，需保证原始和目标字幕时间轴一致，而二次语音识别会重新生成时间轴不同的目标字幕]')
+                    _msg.append(tr("secondary_recognition_warning"))
                 _msg.append(
-                    f'音量:{self.volume}, 语速:{self.voice_rate}, {isTrue[self.voice_autorate]} 音频加速, {isTrue[self.video_autorate]} 视频慢速')
+                    f'{tr("volume")}:{self.volume}, {tr("speech_rate")}:{self.voice_rate}, {tr("audio_speedup_status", isTrue[self.voice_autorate])}, {tr("video_slowdown_status", isTrue[self.video_autorate])}')
 
                 if not self.voice_autorate and not self.video_autorate:
-                    _msg.append(f'{isTrue[self.remove_silent_mid]} 移除字幕间空隙,  {isTrue[self.align_sub_audio]} 强制对齐字幕和声音')
+                    _msg.append(f'{tr("remove_silence_status", isTrue[self.remove_silent_mid])}, {tr("force_align_status", isTrue[self.align_sub_audio])}')
             _msg.append(
-                f'字幕: {_subtitles[self.subtitle_type]} {_outs[self.output_srt] if self.subtitle_type > 2 else ""}')
+                f'{tr("subtitle_type_label")}: {_subtitles[self.subtitle_type]} {_outs[self.output_srt] if self.subtitle_type > 2 else ""}')
 
             _vocal_exists = self.vocal and Path(self.vocal).exists()
             _instr_exists = self.instrument and Path(self.instrument).exists()
             if self.is_separate or self.background_music or _vocal_exists or _instr_exists:
 
-                _str = f"{isTrue[self.is_separate]} 分离人声与背景声"
+                _str = tr("separate_vocals_bgm_status", isTrue[self.is_separate])
                 if self.embed_bgm:
-                    _str += f', 已选 重新嵌入背景声, 背景音量{self.backaudio_volume}, 背景声音时长 短于 视频时长时: {_loops[self.loop_backaudio]}'
+                    _str += f', {tr("reembed_bgm", self.backaudio_volume, _loops[self.loop_backaudio])}'
 
                 if self.background_music:
-                    _str += f', 手动添加了背景音频:{self.background_music}\n'
+                    _str += f', {tr("manual_bgm_added", self.background_music)}'
                 if _vocal_exists:
-                    _str += ',存在分离后的纯净人声文件'
+                    _str += f', {tr("vocal_file_exists")}'
                 if _instr_exists:
-                    _str += ',存在分离后的背景声音文件'
+                    _str += f', {tr("instrument_file_exists")}'
                 _msg.append(_str)
             if self.only_out_mp4:
-                _msg.append('已选 仅输出mp4')
+                _msg.append(tr("output_mp4_only"))
         if app_cfg.proxy:
-            _msg.append(f'代理地址:{app_cfg.proxy}')
+            _msg.append(tr("proxy_address", app_cfg.proxy))
         return "\n".join(_msg)

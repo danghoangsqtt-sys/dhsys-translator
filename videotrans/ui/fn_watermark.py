@@ -7,7 +7,7 @@ from PySide6.QtWidgets import (QHBoxLayout, QLabel, QLineEdit,
                                QPushButton,
                                QVBoxLayout)
 
-from videotrans.configure.config import tr, defaulelang, ROOT_DIR
+from videotrans.configure.config import tr, ROOT_DIR
 
 
 class Ui_fn_watermark(QtWidgets.QWidget):
@@ -74,19 +74,9 @@ class Ui_fn_watermark(QtWidgets.QWidget):
         pos = QtWidgets.QHBoxLayout()
         self.labelpos = QtWidgets.QLabel()
         self.compos = QtWidgets.QComboBox()
-        self.compos.addItems([
-                                 "左上角",
-                                 "右上角",
-                                 "右下角",
-                                 "左下角",
-                                 "居 中"
-                             ] if defaulelang == 'zh_CN' else [
-            "Upper left",
-            "Upper right",
-            "Bottom right",
-            "Bottom left",
-            "Center"
-        ])
+        self.compos.addItems([tr(label) for label in (
+            "Upper left", "Upper right", "Bottom right", "Bottom left", "Center"
+        )])
         pos.addWidget(self.labelpos)
         pos.addWidget(self.compos)
         self.verticalLayout.addLayout(pos)

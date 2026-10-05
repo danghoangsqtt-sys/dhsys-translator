@@ -216,7 +216,7 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         _rolelist = role_menu(_tts_type, _langcode)
         self.voice_role.addItems(_rolelist)
         self.current_rolelist = _rolelist
-        logger.debug(f'Version: {VERSION}, Frozen：{config.IS_FROZEN}, OS: {sys.platform}\n上次缓存的角色:{_role},字幕嵌入类型:{_subtitle_type},发音语言:{_source_language},目标语言:{_target_language}，目标语言代码:{_langcode},模型:{_model_name},TTS渠道[{_tts_type}]')
+        logger.debug(f'Version: {VERSION}, Frozen：{config.IS_FROZEN}, OS: {sys.platform}\nPrevious cached voice: {_role}, Subtitle Embedding Type:{_subtitle_type}, Speaking Language:{_source_language}, Target Language:{_target_language}Target language code:{_langcode}Model:{_model_name}TTS channel[{_tts_type}]')
         if _langcode:
             self.target_language.setCurrentText(_target_language)
             if _role in _rolelist:

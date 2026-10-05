@@ -26,7 +26,7 @@ def granite_asr(
 
     msg = f"Loading model running on {model.device}"
     _write_log(logs_file, json.dumps({"type": "logs", "text": msg}))
-    vt_logger.debug(f'huggingface_asr渠道使用模型: {local_dir}, {msg}')
+    vt_logger.debug(f'Hugging Face ASR provider using model: {local_dir}, {msg}')
 
     try:
 

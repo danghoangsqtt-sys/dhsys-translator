@@ -62,7 +62,7 @@ def show_error(tb_str):
     # 添加一个标准的“OK”按钮
     ok_button = msg_box.addButton(QtWidgets.QMessageBox.StandardButton.Ok)
     if defaulelang == 'zh_CN':
-        ok_button.setText("知道了")
+        ok_button.setText("Got it")
 
     copy_button = msg_box.addButton(tr("Copy error details"), QtWidgets.QMessageBox.ButtonRole.ActionRole)
     url_button = None
@@ -212,7 +212,7 @@ def show_glossary_editor(parent):
             with open(file_path, "r", encoding="utf-8-sig", errors="ignore") as f:
                 text_edit.setText(f.read())
     except Exception as e:
-        logger.exception(f"读取术语表文件失败: {e}", exc_info=True)
+        logger.exception(f"Failed to read terminology table file: {e}", exc_info=True)
 
     def save_text():
         """
@@ -223,7 +223,7 @@ def show_glossary_editor(parent):
                 f.write(text_edit.toPlainText())  # toPlainText 获取纯文本
             dialog.accept()
         except Exception as e:
-            logger.exception(f"写入术语表文件失败: {e}", exc_info=True)
+            logger.exception(f"Failed to write terminology table file: {e}", exc_info=True)
 
     button_box.accepted.connect(save_text)
     button_box.rejected.connect(dialog.reject)
@@ -294,7 +294,7 @@ def pygameaudio(filepath=None):
         sd.play(data, fs)
         sd.wait()
     except Exception as e:
-        logger.exception(f'播放试听声音失败:{e}')
+        logger.exception(f'Failed to play voice preview: {e}')
 
 
 def read_last_n_lines(filename, n=100):
@@ -463,11 +463,11 @@ def is_connect_hf()->bool:
             requests.head('https://huggingface.co', timeout=5)
     except Exception as e:
         os.environ['HF_ENDPOINT'] = 'https://hf-mirror.com'
-        logger.debug(f'无法连接 huggingface.co, 使用镜像替换: hf-mirror.com')
+        logger.debug(f'Unable to connect to huggingface.co, using mirror replacement: hf-mirror.com')
         return False
     else:
         os.environ['HF_ENDPOINT'] = 'https://huggingface.co'
-        logger.debug('可以使用 huggingface.co')
+        logger.debug('huggingface.co is reachable')
         return True
 
 def show_refaudio_win():
@@ -572,7 +572,7 @@ def ensure_safe_media_file(file_path: Union[str, Path]) -> str:
         os.replace(src_path, target_path)
         return target_path.as_posix()
     except Exception as e:
-        logger.error(f"创建安全文件名失败 {src_path} -> {target_path}: {e}")
+        logger.error(f"Failed to create secure filename {src_path} -> {target_path}: {e}")
         return src_path.as_posix()
 
 

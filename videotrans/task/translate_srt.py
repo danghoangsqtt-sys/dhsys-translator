@@ -24,8 +24,8 @@ class TranslateSrt(BaseTask):
     should_trans: bool = True
     
     def __repr__(self):        
-        _format=["单语字幕","双语(目标语言在上)","双语(目标语言在下)"]
-        return f'[TranslateSrt]翻译字幕: OutputFormat={_format[self.out_format]}\n{self.cfg}'
+        _format=["Single-language subtitles","Bilingual (Target language on top)","Bilingual (Target language on bottom)"]
+        return f'[TranslateSrt] Translate Subtitles: OutputFormat={_format[self.out_format]}\n{self.cfg}'
 
     def __post_init__(self):
         super().__post_init__()

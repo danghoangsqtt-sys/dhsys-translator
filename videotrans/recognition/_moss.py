@@ -54,5 +54,5 @@ class MossRecogn(BaseRecogn):
         }
         from videotrans.process.stt_mossasr import mosstrans_asr
         jsdata = self._new_process(callback=mosstrans_asr, title=title, is_cuda=self.is_cuda, kwargs=kwargs)
-        logger.debug(f'MOSS-Transcribe-Diarize 返回的字词时间戳数据:{jsdata=}')
+        logger.debug(f'Word timestamp data returned by MOSS-Transcribe-Diarize:{jsdata=}')
         return jsdata

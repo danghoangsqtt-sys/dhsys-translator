@@ -45,5 +45,5 @@ class Tencent(BaseTrans):
 
         req.from_json_string(json.dumps(reqdata))
         resp = client.TextTranslate(req)
-        logger.debug(f'[腾讯]返回:{resp=}')
+        logger.debug(f'[Tencent] Return:{resp=}')
         return resp.TargetText.strip()

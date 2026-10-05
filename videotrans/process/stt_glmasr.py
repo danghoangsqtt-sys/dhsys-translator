@@ -35,7 +35,7 @@ def glmasr_asr(
     )
     msg = f'running on {model.device}'
     _write_log(logs_file, json.dumps({"type": "logs", "text": msg}))
-    logger.debug(f'huggingface_asr 渠道使用模型: {local_dir}, {msg}')
+    logger.debug(f'Hugging Face ASR provider using model: {local_dir}, {msg}')
     try:
         if cut_audio_list and isinstance(cut_audio_list, str):
             cut_audio_list = [item for item in

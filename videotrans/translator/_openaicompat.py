@@ -36,7 +36,7 @@ class OpenAICampat(BaseTrans):
         try:
             self.max_tokens=int(self.max_tokens)
         except (ValueError,TypeError) as e:
-            logger.error(f'当前渠道{self.ainame}设置的最大输出tokens错误，应填写整数，实际填写的是`{self.max_tokens}`\n{e}')
+            logger.error(f'Current Channel{self.ainame}Maximum Output Tokens Setting Error, should be an integer, actual is `{self.max_tokens}`\n{e}')
             self.max_tokens=8192
 
     def _create_completion(self, kwargs):
@@ -90,7 +90,7 @@ class OpenAICampat(BaseTrans):
         if self.reasoning_effort:
             kwargs["reasoning_effort"]=self.reasoning_effort
             
-        logger.debug(f'字幕翻译:{self.ainame=},{kwargs=},{self.extra_body=}')
+        logger.debug(f'Subtitles Translation:{self.ainame=},{kwargs=},{self.extra_body=}')
         kwargs["messages"]=message
 
         
@@ -161,14 +161,14 @@ class OpenAICampat(BaseTrans):
             
         
         new_sublist = []
-        logger.debug(f'LLM纠错前:{srt_list=}')
+        logger.debug(f'LLM Correction Before:{srt_list=}')
         for idx in range(0, len(srt_list), chunk_size):
             self.signal(text=f'[{idx}] {self.ainame} ' + tr("Re-segmenting..."))
             srt_str = "\n\n".join(
                 [f"{line + 1}\n{it['time']}\n{it['text']}" for line, it in enumerate(srt_list[idx: idx + chunk_size])])
             new_sublist.append(_send(srt_str))
 
-        logger.debug(f'LLM纠错后:{new_sublist=}')
+        logger.debug(f'LLM Correction After:{new_sublist=}')
         _srtlist = get_subtitle_from_srt("\n\n".join(new_sublist), is_file=False)
         # 修正可能存在的时间戳错误
         _len = len(_srtlist)
@@ -184,5 +184,5 @@ class OpenAICampat(BaseTrans):
                 it['startraw'] = ms_to_time_string(ms=it['start_time'])
                 it['endraw'] = ms_to_time_string(ms=it['end_time'])
                 it["time"] = f"{it['startraw']} --> {it['endraw']}"
-        logger.debug(f'{"【二次识别后】"  if step else ""}LLM纠错完成,原始字幕行:{len(srt_list)}, 新字幕行:{len(_srtlist)}, 用时:{time.time()-_st}s')
+        logger.debug(f'{"[Re-Identification After]"  if step else ""}LLM Correction Completed, Original Caption Line:{len(srt_list)}, New Caption Line:{len(_srtlist)}, Elapsed Time:{time.time()-_st}s')
         return _srtlist

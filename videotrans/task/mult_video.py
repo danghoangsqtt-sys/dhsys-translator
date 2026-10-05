@@ -26,16 +26,16 @@ class MultVideo(QThread):
     def run(self):
         if app_cfg.exit_soft or app_cfg.current_status != 'ing': return
         if self.batch_nums < 1:
-            logger.debug(f'批量翻译模式并不限制数量')
+            logger.debug(f'Batch translation mode has no batch size limit')
             for it in self.input_file_list:
                 # 压入识别队列开始执行
                 app_cfg.rm_uuid(it['uuid'])
                 app_cfg.prepare_queue.put_nowait(TransCreate(cfg=TaskCfgVTT(**self.cfg | it,batch=True)))
             return
-        logger.debug(f'批量翻译模式，每批次 {self.batch_nums}')
+        logger.debug(f'Batch translation mode, each batch has {self.batch_nums}')
         _obj_list_split = [self.input_file_list[i:i + self.batch_nums] for i in range(0, len(self.input_file_list), self.batch_nums)]
         for i,_it_split in enumerate(_obj_list_split):
-            logger.debug(f'进入第 {i} 批次，当前批次数量:{len(_it_split)}')
+            logger.debug(f'Entering batch {i} batch, current batch size: {len(_it_split)}')
             trk_list = []
             for it in _it_split:
                 app_cfg.rm_uuid(it['uuid'])

@@ -30,7 +30,7 @@ def funasr_mlt(
 
     msg = f'Load {model_name} running on {device}'
     _write_log(logs_file, json.dumps({"type": "logs", "text": msg}))
-    logger.debug(f'阿里FunASR渠道 {msg}')
+    logger.debug(f'Alibaba FunASR provider: {msg}')
 
     try:
         if cut_audio_list and isinstance(cut_audio_list, str):

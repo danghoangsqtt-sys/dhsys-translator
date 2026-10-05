@@ -30,7 +30,7 @@ def confucius_fun(
         model = ConfuciusTTS(
             device=device
         )
-        logger.debug(f'Confucius-TTS 本地内置渠道，{is_cuda=},running on {model.device}')
+        logger.debug(f'Confucius-TTS Local Built-in Channel,{is_cuda=},running on {model.device}')
         if is_redubb:
             queue_tts_file=REDUBB_QUEUE_FILE
         # 循环，用于轮询重新配音数据，非重新配音时，第一轮直接返回
@@ -88,9 +88,9 @@ def confucius_fun(
             break
 
         if ok<1:
-            logger.error(f'配音全部失败：{last_error}')
+            logger.error(f'All dubbing segments failed: {last_error}')
             return False,"Dubbing failed"+last_error
-        logger.debug(f'配音成功{ok}个，失败{err}个')
+        logger.debug(f'Dubbing succeeded for {ok} segments; failed for {err} segments')
         _write_log(logs_file, json.dumps({"type": "logs", "text": f'{ok=},{err=} {last_error}'}))
         return True,None
     except BaseException as e:

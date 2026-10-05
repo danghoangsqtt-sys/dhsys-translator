@@ -99,10 +99,10 @@ class Ui_tencent(QDialog):
         QtCore.QMetaObject.connectSlotsByName(tencentform)
 
     def retranslateUi(self, tencentform):
-        tencentform.setWindowTitle("腾讯翻译")
+        tencentform.setWindowTitle("Tencent Translate")
         self.label.setText("SecretId")
-        self.label_term.setText("术语库id")
-        self.tencent_term.setPlaceholderText("术语库id,多个以英文逗号隔开")
+        self.label_term.setText(tr("Glossary ID"))
+        self.tencent_term.setPlaceholderText(tr("Separate glossary IDs with commas"))
         self.label_2.setText("SecretKey")
         self.set_tencent.setText(tr("Save"))
         self.test.setText(tr("Test"))

@@ -6,7 +6,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QPlainTextEdit, QDialog
 
-from videotrans.configure.config import tr, defaulelang, ROOT_DIR
+from videotrans.configure.config import tr, ROOT_DIR
 from videotrans.util.help_misc import open_url
 
 
@@ -103,46 +103,7 @@ class Ui_recognapi(QDialog):
 
         self.label.setText(tr("API"))
         self.labelkey.setText(tr("Password/Token"))
-        tips = """
-        请求发送：以二进制形式发送键名为 audio 的wav格式音频数据，采样率为16k、通道为1
-        
-        如果填写了密钥密码值，则附加到api_url之后发送，api_url?sk=填写的sk值
-        
-        requests.post(api_url, files={"audio": open(audio_file, 'rb')})
-        
-        失败时返回
-        res={
-            "code":1,
-            "msg":"错误原因"
-        }
-        
-        成功时返回
-        res={
-            "code":0,
-            "data":"1\n00:00:01,000 --> 00:00:06,500\n字幕文字\n\n2\n00:00:06,900 --> 00:00:12,200\n字幕文字"
-        }
-        """
-        if defaulelang != 'zh_CN':
-            tips = '''
-            
-            Request send: sends audio data in wav format with key name audio in binary form, sample rate 16k, channel 1
-            
-            If the Password value is filled in, it will be sent after appending it to the api_url, api_url?sk=filled sk value
-            
-        requests.post(api_url, files={“audio”: open(audio_file, 'rb')})
-        
-        Returns on failure
-        res={
-            “code":1,
-            “msg": ”Reason for error”
-        }
-        
-        Returns on success
-        res={
-            "code":0,
-            "data":""1\n00:00:01,000 --> 00:00:06,500\n字幕文字\n\n2\n00:00:06,900 --> 00:00:12,200\n字幕文字""
-        }
-            '''
+        tips = tr('recognapi_help')
         self.ask.setPlainText(tips)
         self.recognapiform_address.setPlaceholderText('')
         self.set.setText(tr("Save"))

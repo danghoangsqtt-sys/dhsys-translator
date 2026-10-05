@@ -73,4 +73,4 @@ class TranslateMixin:
                 shutil.copy2(self.cfg.target_sub, _output_file)
 
         self.signal(text=tr('endtrans'))
-        logger.debug(f'[字幕翻译阶段结束耗时]:{time.time()-_st}s')
+        logger.debug(f'[Subtitle translation elapsed time]: {time.time()-_st}s')

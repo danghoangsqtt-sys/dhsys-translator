@@ -67,11 +67,11 @@ def vocal_bgm(*, input_file, vocal_file, instr_file, logs_file=None, uvr_models=
 
         elapsed_seconds = end - start
         _write_log(logs_file, f" use time:{elapsed_seconds:.3f}s")
-        logger.debug(f'分离背景声和人声成功[{uvr_models}],耗时 {elapsed_seconds:.3f}s')
+        logger.debug(f'Background sound separation and voice successful [{uvr_models}] took time {elapsed_seconds:.3f}s')
         return True, None
     except Exception as e:
         msg = traceback.format_exc()
-        logger.exception(f"人声背景声分离失败{e}:{msg}", exc_info=True)
+        logger.exception(f"Background sound and voice separation failed{e}:{msg}", exc_info=True)
         return False, f'{e}{msg}'
 
 
@@ -133,9 +133,9 @@ def vocal_bgm_spleeter(*, input_file, vocal_file, instr_file, logs_file=None,**k
 
         elapsed_seconds = end - start
         _write_log(logs_file, f" use time:{elapsed_seconds:.3f}s")
-        logger.debug(f"分离背景声和人声成功[spleeter],耗时: {elapsed_seconds:.3f}s")
+        logger.debug(f"Background sound and voice separation successful [spleeter], took time: {elapsed_seconds:.3f}s")
         return True, None
     except Exception as e:
         msg = traceback.format_exc()
-        logger.exception(f"人声背景声分离失败{e}:{msg}", exc_info=True)
+        logger.exception(f"Background sound and voice separation failed{e}:{msg}", exc_info=True)
         return False, f'{e}{msg}'

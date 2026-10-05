@@ -39,7 +39,7 @@ def pipe_asr(
         )
         msg = f"running on {p.model.device}"
         _write_log(logs_file, json.dumps({"type": "logs", "text": msg}))
-        logger.debug(f'huggingface_asr渠道使用模型: {local_dir},{msg}')
+        logger.debug(f'Hugging Face ASR provider using model: {local_dir},{msg}')
 
         generate_kwargs = {}
         # 仅 openai官方模型加 generate_kwargs 参数，其他微调可能不兼容，暂不加

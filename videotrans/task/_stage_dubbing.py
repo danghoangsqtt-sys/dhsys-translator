@@ -24,7 +24,7 @@ class DubbingMixin:
         self._tts()
         
         if  Path(self.cfg.source_sub).exists():
-            logger.debug('配音结束后，移除原始字幕中所有标点')
+            logger.debug('Remove all punctuation from the original subtitles after voiceover ends.')
             subs = get_subtitle_from_srt(self.cfg.source_sub)
             for it in subs:
                 if self.cfg.fix_punc==2:
@@ -33,7 +33,7 @@ class DubbingMixin:
             self._save_srt_target(subs, self.cfg.source_sub)
         if self.should_dubbing:
             self.signal(text=tr('The dubbing is finished'))
-            logger.debug(f'[语音合成阶段结束耗时]:{time.time()-_st}s')
+            logger.debug(f'[Speech synthesis elapsed time]: {time.time()-_st}s')
 
     def _tts(self) -> None:
         if not self.should_dubbing:
@@ -93,7 +93,7 @@ class DubbingMixin:
         self.queue_tts = copy.deepcopy(queue_tts)
 
         if not self.queue_tts or len(self.queue_tts) < 1:
-            raise RuntimeError(f'字幕长度为0，无法继续配音')
+            raise RuntimeError(f'Subtitle text is empty; dubbing cannot continue')
 
         if len([it.get("ref_wav") for it in self.queue_tts if it.get("ref_wav")]) > 0:
             self._create_ref_from_vocal()

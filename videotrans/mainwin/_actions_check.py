@@ -215,7 +215,7 @@ class WinActionCheckMixin:
                     get_win(name)
                     return
             except Exception as e:
-                logger.exception(f'校验LLM纠错设置时出错:{e}',exc_info=True)
+                logger.exception(f'LLM re-correcting settings validation failed:{e}',exc_info=True)
 
         if self.check_name_length() is not True:
             self.main.startbtn.setDisabled(False)

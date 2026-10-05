@@ -93,7 +93,7 @@ def get_subtitle_code(*, show_target=None):
         code = get_code(show_target)
         return SUBTITLE_CODE.get(code, 'zho')
     except Exception as e:
-        logger.error(f'获取字幕嵌入3为语言代码错误:{e}')
+        logger.error(f'Subtitle Embedding 3 Language Code Error:{e}')
     return 'eng'
 
 

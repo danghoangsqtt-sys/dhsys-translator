@@ -76,7 +76,7 @@ def get_elevenlabs_role(force=False, raise_exception=False):
         params['elevenlabstts_role'] = namelist
         return namelist
     except Exception as e:
-        logger.exception(f'获取 elevenlabs 角色失败:{e}', exc_info=True)
+        logger.exception(f'Failed to fetch ElevenLabs voices: {e}', exc_info=True)
         if raise_exception:
             raise
     return []

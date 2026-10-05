@@ -105,7 +105,7 @@ def check_and_down_hf(model_id, repo_id, local_dir, callback=None, allow_list=No
     from .help_misc import is_connect_hf
     ishf = is_connect_hf()
     if model_id and model_id in FASTER_MODELS_DICT and not ishf:
-        logger.debug(f'从 modelscope.cn 下载模型 {model_id=}')
+        logger.debug(f'Download model from modelscope.cn {model_id=}')
         return check_and_down_ms(FASTER_MODELS_DICT[
                                      model_id] if model_id != 'distil-large-v3.5' else 'iBoostAI/distil-whisper-distil-large-v3.5-ct2',
                                  callback=callback, local_dir=local_dir)
@@ -142,7 +142,7 @@ def check_and_down_hf(model_id, repo_id, local_dir, callback=None, allow_list=No
             with download_lock:
                 if callback:
                     callback(f'starting downloading {model_id}...')
-                logger.debug(f'获取到下载锁，开始从 hf 下载 {repo_id}')
+                logger.debug(f'Acquired download lock, starting to download from hf. {repo_id}')
                 for attempt in range(1, max_retries + 1):
                     try:
                         huggingface_hub.snapshot_download(
@@ -158,13 +158,13 @@ def check_and_down_hf(model_id, repo_id, local_dir, callback=None, allow_list=No
                         )
                         break  # 下载成功，跳出循环
                     except Exception as e:
-                        logger.exception(f"下载中断{attempt=}: {e}", exc_info=True)
+                        logger.exception(f"Download interrupted{attempt=}: {e}", exc_info=True)
                         if attempt < max_retries:
                             if callback:
                                 callback(f"{tr('Please wait')}{retry_delay}s  {tr('Retry failed')}[{attempt}]...")
                             time.sleep(retry_delay)
                         else:
-                            logger.error(f'重试下载 {attempt} 次仍失败')
+                            logger.error(f'Retry download {attempt} attempts still failed')
                             raise
 
         junk_paths = [
@@ -184,7 +184,7 @@ def check_and_down_hf(model_id, repo_id, local_dir, callback=None, allow_list=No
                     else:
                         os.remove(full_path)
                 except OSError as e:
-                    logger.exception(f"清理临时文件失败：{junk} {e}", exc_info=True)
+                    logger.exception(f"Failed to clean up temporary files:{junk} {e}", exc_info=True)
     except Exception as e:
         from videotrans.configure.excepts import DownloadModelsError
         raise DownloadModelsError(tr("hf_model error", local_dir, f'https://huggingface.co/{repo_id}/tree/main')) from e
@@ -233,7 +233,7 @@ def down_file_from_hf(local_dir, urls=None, callback=None, expected_hashes=None,
         if final_file_path.exists():
             temp_file_path.unlink(missing_ok=True)
 
-        logger.debug(f'开始下载[{filename}]: {url}')
+        logger.debug(f'Starting download[{filename}]: {url}')
 
         retries = 0
         while retries < max_retries:
@@ -287,7 +287,7 @@ def down_file_from_hf(local_dir, urls=None, callback=None, expected_hashes=None,
                         raise ValueError(f'Missing size/hash metadata for {filename}')
                     verified_size = expected_size if expected_size is not None else total_length
                     if verified_size is not None and downloaded_size != verified_size:
-                        raise ConnectionError(f"文件大小不符：预期 {verified_size} 字节，实际 {downloaded_size} 字节")
+                        raise ConnectionError(f"File size mismatch: expected {verified_size} bytes, actual {downloaded_size} bytes")
                     if final_file_path.suffix.lower() in _MODEL_EXTENSIONS and downloaded_size < _MIN_MODEL_BYTES:
                         raise ValueError(f'Model file is too small: {filename} ({downloaded_size} bytes)')
                     digest = _sha256_file(temp_file_path)
@@ -298,14 +298,14 @@ def down_file_from_hf(local_dir, urls=None, callback=None, expected_hashes=None,
                     # 使用 replace 跨平台覆盖
                     temp_file_path.replace(final_file_path)
                     _save_hash_sidecar(final_file_path, digest)
-                    logger.debug(f'下载完成 {filename}')
+                    logger.debug(f'Download complete {filename}')
                     break
             except Exception as e:
                 retries += 1
-                logger.warning(f'下载[{filename}]异常: {e}，正在进行重试 ({retries}/{max_retries})')
+                logger.warning(f'Download [{filename}] Exception: {e}, retrying ({retries}/{max_retries})')
                 if retries >= max_retries:
                     raise DownloadModelsError(
-                        tr("downloading all files", local_dir) + f'\n[{url}]\n\n多次重试后仍然失败: {e}')
+                        tr("downloading all files", local_dir) + f'\n[{url}]\n\nStill failed after multiple retries: {e}')
 
                 time.sleep(min(2 ** retries, 30))
     return True
@@ -375,16 +375,16 @@ def down_zip(local_dir, zip_url, callback=None) -> bool:
 
                 # 确保 Zip 文件已被完全接收
                 if total_length is not None and downloaded_size < total_length:
-                    raise ConnectionError(f"Zip下载不完整：预期 {total_length} 字节，实际收到 {downloaded_size} 字节")
+                    raise ConnectionError(f"ZIP download incomplete: expected {total_length} bytes, received {downloaded_size} bytes")
                 break
         except Exception as e:
             retries += 1
-            logger.warning(f'Zip下载[{filename}]发生异常: {e}，正在进行第 ({retries}/{max_retries}) 次重试...')
+            logger.warning(f'ZIP download [{filename}] failed: {e}; retrying ({retries}/{max_retries})...')
             if retries >= max_retries:
                 msg = tr('model is missing. Please download it', local_dir)
                 if callback:
                     callback(f'Error:{msg}')
-                raise DownloadModelsError(f"{msg}\n[{zip_url}]\n多次重试后仍然失败: {e}")
+                raise DownloadModelsError(f"{msg}\n[{zip_url}]\nStill failed after multiple retries: {e}")
 
             # 指数退避
             time.sleep(min(2 ** retries, 30))
@@ -397,7 +397,7 @@ def down_zip(local_dir, zip_url, callback=None) -> bool:
             zf.extractall(path=local_dir)
         if callback:
             callback('Downloaded end')
-        logger.debug(f'下载并解压完毕:{filename}')
+        logger.debug(f'Download and extraction complete: {filename}')
 
         if temp_zip_path.exists():
             temp_zip_path.unlink()
@@ -481,7 +481,7 @@ def check_and_down_ms(model_id, callback=None, local_dir=None, allow_patterns=No
             with download_lock:
                 if callback:
                     callback(f'starting downloading {model_id}...')
-                logger.debug(f'获取到下载锁，开始从 modelscope.cn 下载 {model_id}')
+                logger.debug(f'Got download lock, starting download from modelscope.cn {model_id}')
             snapshot_download(model_id=model_id, progress_callbacks=[Pro], local_dir=local_dir,
                               allow_patterns=allow_patterns)
         else:

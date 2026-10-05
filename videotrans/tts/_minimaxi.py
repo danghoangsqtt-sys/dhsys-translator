@@ -62,7 +62,7 @@ class MinimaxiTTS(BaseTTS):
             raise StopTask(response.text)
         response.raise_for_status()
         res=response.json()
-        logger.debug(f'返回数据 {res["base_resp"]=}')
+        logger.debug(f'Return Data {res["base_resp"]=}')
         if res['base_resp']['status_code'] in [1004,1008,2042,2049,2056]:
             raise StopTask(res['base_resp']['status_msg'])
         if res['base_resp']['status_code'] != 0:

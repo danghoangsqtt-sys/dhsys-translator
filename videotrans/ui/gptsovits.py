@@ -46,7 +46,7 @@ class Ui_gptsovits(QDialog):
         self.label_4 = QLabel()
         self.label_4.setObjectName("label_4")
         self.label_4.setMinimumSize(QSize(301, 16))
-        self.label_4.setText('参考音频#音频文字内容#语言代码 (必须是wav音频，时长在3-10秒，否则报400错误)')
+        self.label_4.setText(tr('gptsovits_reference_format'))
 
         self.role = QPlainTextEdit()
         self.role.setObjectName("role")
@@ -58,7 +58,7 @@ class Ui_gptsovits(QDialog):
         h3 = QHBoxLayout()
         self.is_v2 = QCheckBox()
         self.is_v2.setText("api_v2?")
-        self.is_v2.setToolTip("如果是api_v2.py,则必须选中")
+        self.is_v2.setToolTip(tr('gptsovits_api_v2_hint'))
         self.save = QPushButton()
         self.save.setObjectName("save")
         self.save.setMinimumSize(QSize(0, 35))
@@ -89,10 +89,9 @@ class Ui_gptsovits(QDialog):
 
     def retranslateUi(self, gptsovitsform):
         gptsovitsform.setWindowTitle("GPT-SoVITS API "+tr('This channel needs deployed and started before available'))
-        self.role.setPlaceholderText(
-            "在此填写参考音频信息,一行一组，音频必须是wav格式，时长必须在3-10秒之内，否则会报400错误\n音频放在GPT-SoVITS项目根目录下，在此填写带后缀wav名称\n填写示例格式如下\n\n123.wav#你好啊我的朋友#zh\n\n示例解释:123.wav 是wav格式的音频文件，放在GPT-SoVITS根下，时长在3-10秒内，中间文字是该音频对应文本，zh代表该文本语言代码")
+        self.role.setPlaceholderText(tr('gptsovits_reference_hint'))
         self.save.setText(tr("Save"))
-        self.api_url.setPlaceholderText("填写API地址,非webui地址，启动api.py或api_v2.py，默认http://127.0.0.1:9880")
+        self.api_url.setPlaceholderText(tr('gptsovits_api_url_hint'))
         self.label.setText("API URL")
         self.test.setText(tr("Test"))
     # retranslateUi

@@ -28,7 +28,7 @@ class BaseWorker(QThread):
             except Empty:
                 continue
             if trk.uuid in app_cfg.stoped_uuid_set:
-                logger.debug(f'[job] {trk.uuid=}已停止，跳过阶段 {self.name} {trk.cfg=}')
+                logger.debug(f'[job] {trk.uuid=}Stopped; skipping stage {self.name} {trk.cfg=}')
                 continue
             try:
                 # 执行具体的业务逻辑和队列路由

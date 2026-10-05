@@ -13,7 +13,7 @@ class AiLoaderThread(QThread):
             _st = time.time()
             from . import gpus
             _count = gpus.getset_gpu()
-            logger.debug(f"找到 {_count} 个 Nvidia GPUs, 耗时: {int(time.time() - _st)}s")
+            logger.debug(f"found {_count} Nvidia GPUs, elapsed time: {int(time.time() - _st)}s")
             self.gpu_io.emit("end")
         except Exception as e:
             err = traceback.format_exc()

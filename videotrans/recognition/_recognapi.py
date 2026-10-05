@@ -131,10 +131,10 @@ class APIRecogn(BaseRecogn):
         if "data" not in res or len(res['data']) < 1:
             testdata={
                 "code":0,
-                "data":"SRT格式字符串"
+                "data":"SRT format string"
             }
             testdata=json.dumps(testdata,ensure_ascii=False)
-            raise SpeechToTextError(f'识别出错,应返回类似数据:\n{testdata}\n\n但实际返回: {res}')
+            raise SpeechToTextError(f'{tr("recognapi_invalid_response")}\n{testdata}\n\n{tr("actual_response")}: {res}')
         self.signal(
             text=get_srt_from_list(res['data']),
             type='replace_subtitle'
@@ -340,6 +340,6 @@ class APIRecogn(BaseRecogn):
                     Path(f'{self.cache_folder}/speaker.json').write_text(json.dumps(final_speaker_list),
                                                                          encoding='utf-8')
             except Exception as e:
-                logger.exception(f'说话人重排序出错，忽略{e}', exc_info=True)
+                logger.exception(f'Speaker reordering failed, ignore it:{e}', exc_info=True)
 
         return final_raws

@@ -81,8 +81,8 @@ def _map_speakers(diarizations):
     spk_map = {spk: f'spk{i}' for i, spk in enumerate(speaker_list)}
     for d in diarizations:
         d['speaker'] = spk_map.get(d['speaker'], 'spk0')
-    logger.debug(f'原始说话人排序后：{speaker_list=}')
-    logger.debug(f'映射为新说话人标识：{spk_map=}')
+    logger.debug(f'Original speaker sorted as:{speaker_list=}')
+    logger.debug(f'Mapped to new speaker identifier:{spk_map=}')
     return diarizations
 
 
@@ -100,8 +100,8 @@ def _normalize_diarizations(raw_output):
     spk_map = {spk: f'spk{i}' for i, spk in enumerate(speaker_list)}
     for d in output:
         d['speaker'] = spk_map.get(d['speaker'], 'spk0')
-    logger.debug(f'原始说话人排序后：{speaker_list=}')
-    logger.debug(f'映射为新说话人标识：{spk_map=}')
+    logger.debug(f'Original speaker sorted as:{speaker_list=}')
+    logger.debug(f'Mapped to new speaker identifier:{spk_map=}')
     return output
 
 
@@ -122,7 +122,7 @@ def cam_speakers(*, input_file, subtitles_file: str, speak_file: str, num_speake
     if device=='auto':
         device = f"cuda:{device_index}" if is_cuda else "cpu"
     _st = time.time()
-    logger.debug(f'开始说话人分离:使用阿里cam++模型')
+    logger.debug(f'Starting speaker separation: Using Alibaba cam++ model')
 
     try:
         subtitles = json.loads(Path(subtitles_file).read_text(encoding='utf-8'))
@@ -136,20 +136,20 @@ def cam_speakers(*, input_file, subtitles_file: str, speak_file: str, num_speake
         )
         result = ans(input_file, oracle_num=num_speakers, ignore_errors=True) if num_speakers > 1 else ans(input_file,
                                                                                                            ignore_errors=True)
-        logger.debug(f'说话人分离原始返回结果:{result=}')
+        logger.debug(f'Original return result of speaker separation:{result=}')
         diarizations = _normalize_diarizations(
             [{'start': it[0], 'end': it[1], 'speaker': f'spk{int(it[2])}'} for it in result['text']]
         )
         diar_list = [[d['times'], d['speaker']] for d in diarizations]
         output = _assign_speakers(subtitles, diar_list)
-        logger.debug(f'说话人分离成功结束,识别出 {len(set(output))} 个说话人,耗时:{int(time.time() - _st)}s')
+        logger.debug(f'Speaker separation successful. Identified {len(set(output))} speaker(s), took:{int(time.time() - _st)}s')
         if output:
             Path(speak_file).write_text(json.dumps(output), encoding='utf-8')
             return True, None
         return False, "0 speakers"
     except Exception as e:
         msg = traceback.format_exc()
-        logger.exception(f'说话人分离失败{e}:{msg}', exc_info=True)
+        logger.exception(f'Speaker separation failed{e}:{msg}', exc_info=True)
         return False, f'{e}{msg}'
 
 
@@ -218,21 +218,21 @@ def pyannote_speakers(*, input_file, subtitles_file: str, speak_file: str, num_s
 
     try:
         _st = time.time()
-        logger.debug(f'开始说话人分离,使用 pyannote/speaker-diarization-3.1 模型')
+        logger.debug(f'Starting speaker separation using pyannote/speaker-diarization-3.1 model')
         subtitles = json.loads(Path(subtitles_file).read_text(encoding='utf-8'))
         diarizations = _get_diariz()
         if not diarizations:
             return False, "Unkonw error"
         diar_list = [[d['times'], d['speaker']] for d in diarizations]
         output = _assign_speakers(subtitles, diar_list)
-        logger.debug(f'说话人分离成功结束,识别出个 {len(set(output))} 说话人,耗时:{int(time.time() - _st)}s')
+        logger.debug(f'Speaker separation successful. Identified {len(set(output))} speaker(s), took:{int(time.time() - _st)}s')
         if output:
             Path(speak_file).write_text(json.dumps(output), encoding='utf-8')
             return True, None
         return False, "0 speakers"
     except Exception as e:
         msg = traceback.format_exc()
-        logger.exception(f'说话人分离出错{e}:{msg}', exc_info=True)
+        logger.exception(f'Speaker separation error{e}:{msg}', exc_info=True)
         return False, f'{e}{msg}'
 
 
@@ -308,19 +308,19 @@ def built_speakers(*, input_file, subtitles_file: str, speak_file: str, num_spea
 
     try:
         _st = time.time()
-        logger.debug(f'开始说话人分离,使用内置模型 {language=},{num_speakers=}')
+        logger.debug(f'Starting speaker separation using built-in model {language=},{num_speakers=}')
         subtitles = json.loads(Path(subtitles_file).read_text(encoding='utf-8'))
         diarizations = _get_diariz()
         if not diarizations:
             return False, 'Unknow error'
         diar_list = [[d['times'], d['speaker']] for d in diarizations]
         output = _assign_speakers(subtitles, diar_list)
-        logger.debug(f'说话人分离成功结束,识别出个 {len(set(output))} 说话人,耗时：{int(time.time() - _st)}s')
+        logger.debug(f'Speaker separation successful. Identified {len(set(output))} Speaker, Duration:{int(time.time() - _st)}s')
         if output:
             Path(speak_file).write_text(json.dumps(output), encoding='utf-8')
             return True, None
         return False, "0 speakers"
     except Exception as e:
         msg = traceback.format_exc()
-        logger.exception(f'分离说话人失败:{e}', exc_info=True)
+        logger.exception(f'Separate Speaker Failed:{e}', exc_info=True)
         return False, f'{e}{msg}'

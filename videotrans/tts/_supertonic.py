@@ -87,5 +87,5 @@ class SupertonicTTS(BaseTTS):
             msg = f'[{err}] errors, {ok} succeed'
 
         self.signal(text=msg)
-        logger.debug(f'supertonic-3 配音结束：{msg}')
+        logger.debug(f'supertonic-3 TTS ends:{msg}')
 

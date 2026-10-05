@@ -125,4 +125,4 @@ class MossTTS(BaseTTS):
 
 
         self.signal(text=msg)
-        logger.debug(f'MossTTS 配音结束：{msg}')
+        logger.debug(f'MossTTS TTS ends:{msg}')

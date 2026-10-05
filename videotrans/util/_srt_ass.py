@@ -32,14 +32,14 @@ def set_ass_font(srtfile: str) -> str:
 
     JSON_FILE = f'{ROOT_DIR}/videotrans/ass.json'
     if not os.path.exists(JSON_FILE):
-        logger.debug(f"[set_ass_font] 未修改硬字幕样式，跳过样式替换")
+        logger.debug(f"[set_ass_font] Hard subtitle style unchanged; skipping replacement")
         return ass_file_path
 
     try:
         with open(JSON_FILE, 'r', encoding='utf-8-sig') as f:
             style = json.load(f)
     except Exception as e:
-        logger.exception(f"[set_ass_font] 错误：无法读取或解析 JSON 文件 {JSON_FILE}: {e}", exc_info=True)
+        logger.exception(f"[set_ass_font] Error: Unable to read or parse JSON file {JSON_FILE}: {e}", exc_info=True)
         return ass_file_path
 
     default_style = (
@@ -106,7 +106,7 @@ def set_ass_font(srtfile: str) -> str:
         with open(ass_file_path, 'r', encoding='utf-8-sig') as f:
             content = f.read()
     except Exception as e:
-        logger.exception(f"[set_ass_font] 错误：无法读取 ASS 文件: {e}", exc_info=True)
+        logger.exception(f"[set_ass_font] Error: Unable to read ASS file: {e}", exc_info=True)
         return ass_file_path
 
     pattern = r'(^\[V4\+ Styles\]\s*\r?\n' \
@@ -127,7 +127,7 @@ def set_ass_font(srtfile: str) -> str:
     try:
         new_content, _ = re.subn(pattern, replacer, content, flags=re.MULTILINE)
     except Exception as e:
-        logger.exception(f"[set_ass_font] 错误：正则替换样式失败: {e}", exc_info=True)
+        logger.exception(f"[set_ass_font] Error: Regex substitution for styles failed: {e}", exc_info=True)
         return ass_file_path
 
     lines = new_content.splitlines(keepends=True)
@@ -162,6 +162,6 @@ def set_ass_font(srtfile: str) -> str:
         with open(ass_file_path, 'w', encoding='utf-8', newline='') as f:
             f.writelines(processed_lines)
     except Exception as e:
-        logger.exception(f"[set_ass_font] 错误：无法写入 ASS 文件: {e}", exc_info=True)
+        logger.exception(f"[set_ass_font] Error: Unable to write ASS file: {e}", exc_info=True)
 
     return ass_file_path

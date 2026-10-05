@@ -28,7 +28,7 @@ def omnivoice_fun(
         device_map=kw.get('device_name','auto'),
         dtype='auto'
     )
-    logger.debug(f'OmniVoice-TTS本地内置渠道，running on {model.device}')
+    logger.debug(f'OmniVoice TTS built-in provider, running on {model.device}')
     try:
         if is_redubb:
             queue_tts_file = REDUBB_QUEUE_FILE
@@ -94,9 +94,9 @@ def omnivoice_fun(
                 continue
             break
         if ok < 1:
-            logger.error(f'配音全部失败：{last_error}')
+            logger.error(f'All dubbing segments failed: {last_error}')
             return False, "Dubbing failed" + last_error
-        logger.debug(f'配音成功{ok}个，失败{err}个')
+        logger.debug(f'Dubbing succeeded for {ok} segments; failed for {err} segments')
         _write_log(logs_file, json.dumps({"type": "logs", "text": f'{ok=},{err=} {last_error}'}))
         return True, None
     except BaseException as e:

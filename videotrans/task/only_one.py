@@ -167,7 +167,7 @@ class Worker(QThread):
             trk.task_done()
         except BaseException as e:
             from videotrans.configure.excepts import get_msg_from_except
-            logger.exception(f'单视频模式翻译失败{e}',exc_info=True)
+            logger.exception(f'Single video mode translation failed{e}',exc_info=True)
             except_msg = get_msg_from_except(e)
             msg=f"{except_msg}\n{traceback.format_exc()}\n"
             if trk:

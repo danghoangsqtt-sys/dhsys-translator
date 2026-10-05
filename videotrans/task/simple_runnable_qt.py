@@ -13,7 +13,7 @@ class SimpleRunnable(QRunnable):
         try:
             self.func(*self.args, **self.kwargs)
         except Exception as e:
-            logger.exception(f'后台qt线程执行任务失败:{self.args=},{self.kwargs=},{e}',exc_info=True)
+            logger.exception(f'Background Qt thread task execution failed:{self.args=},{self.kwargs=},{e}',exc_info=True)
 
 # 通用的线程池运行函数
 def run_in_threadpool(func, *args, **kwargs):

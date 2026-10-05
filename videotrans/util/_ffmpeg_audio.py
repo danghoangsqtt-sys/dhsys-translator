@@ -56,7 +56,7 @@ def change_speed_rubberband(input_path:str, out_file:str, target_duration:Union[
     try:
         import pyrubberband as pyrb
     except Exception:
-        logger.warning(f'进行音频变速时失败，因为未安装  rubberband 库，使用 ffmpeg 进行变速处理\n{INSTALL_RUBBERBAND_TIPS}')
+        logger.warning(f'Rubber Band is unavailable for audio speed adjustment; using FFmpeg instead.\n{INSTALL_RUBBERBAND_TIPS}')
         return precise_speed_up_audio(file_path=input_path, out=out_file, target_duration_ms=target_duration)
 
     import soundfile as sf
@@ -64,7 +64,7 @@ def change_speed_rubberband(input_path:str, out_file:str, target_duration:Union[
     try:
         y, sr = sf.read(input_path)
         if len(y) == 0:
-            logger.warning(f"[Audio-RB] 空音频文件: {input_path}")
+            logger.warning(f"[Audio-RB] Empty audio file: {input_path}")
             return
 
         current_duration = int((len(y) / sr) * 1000)
@@ -76,7 +76,7 @@ def change_speed_rubberband(input_path:str, out_file:str, target_duration:Union[
         time_stretch_rate = max(0.2, min(time_stretch_rate, 50.0))
 
         logger.debug(
-            f"[Audio-RB] {input_path} 原长:{current_duration}ms -> 目标:{target_duration}ms 倍率:{time_stretch_rate:.2f}")
+            f"[Audio-RB] {input_path} Original length:{current_duration}ms -> Target:{target_duration}ms, speed ratio: {time_stretch_rate:.2f}")
 
         y_stretched = pyrb.time_stretch(y, sr, time_stretch_rate)
 
@@ -86,7 +86,7 @@ def change_speed_rubberband(input_path:str, out_file:str, target_duration:Union[
         sf.write(out_file, y_stretched, sr)
 
     except Exception as e:
-        logger.error(f"[Audio-RB] 音频处理失败 {input_path}: {e}")
+        logger.error(f"[Audio-RB] Audio processing failed {input_path}: {e}")
         return
 
 
@@ -130,7 +130,7 @@ def precise_speed_up_audio(*, file_path:str=None, out:str=None, target_duration_
     try:
         runffmpeg(cmd, force_cpu=True)
     except Exception as e:
-        logger.exception(f'音频加速失败:{e}')
+        logger.exception(f'Failed to accelerate audio:{e}')
 
 
 def cut_from_audio(*, ss, to, audio_file, out_file)->bool:

@@ -86,17 +86,17 @@ class EdgeTTS(BaseTTS):
                                 timeout=SIGNAL_TIMEOUT
                             )
                         except asyncio.TimeoutError:
-                            logger.warning(f"{task_id}: 发送 UI 信号超时！")
+                            logger.warning(f"{task_id}: Timed out sending a UI signal!")
 
                         return
                     except ValueError as e:
-                        logger.error(f'配音角色 {e} 错误，不存在该角色')
+                        logger.error(f'Voicing Role {e} Error, no such role exists')
                         return
                     except asyncio.TimeoutError as e:
                         if attempt < RETRY_NUMS:
                             await asyncio.sleep(RETRY_DELAY)
                         else:
-                            logger.error(f"EdgeTTS配音: 已达到最大重试次数，任务失败 (超时)。")
+                            logger.error("Edge TTS dubbing timed out after the maximum number of retries.")
                             self.error=e
                             # 失败也是一种完成，直接返回
                             return
@@ -107,14 +107,14 @@ class EdgeTTS(BaseTTS):
                         if attempt < RETRY_NUMS:
                             await asyncio.sleep(RETRY_DELAY)
                         else:
-                            logger.error(f"{task_id}: 已达到最大重试次数，任务失败。")
+                            logger.error(f"{task_id}: Maximum retry count reached, task failed.")
                             # 失败也是一种完成，直接返回
                             return
 
         except asyncio.CancelledError as e:
             self.error=e
         except Exception as e:
-            logger.exception(f"{task_id}: 发生未知严重错误，任务终止。", exc_info=True)
+            logger.exception(f"{task_id}: Unknown severe error occurred, task terminated.", exc_info=True)
             self.error=e
         finally:
             # 无论成功、失败、取消还是异常，都在这里统一增加计数
@@ -156,7 +156,7 @@ class EdgeTTS(BaseTTS):
                 self.convert_to_wav(mp3_path,self.queue_tts[0]['filename'])
             return
 
-        logger.debug(f'本次EdgeTTS配音：重试延迟:{RETRY_DELAY},出错将重试:{RETRY_NUMS},并发:{MAX_CONCURRENT_TASKS}, 代理:{self.useproxy}')
+        logger.debug(f'This Edge TTS run: retry delay: {RETRY_DELAY}, retry if error:{RETRY_NUMS}, concurrency:{MAX_CONCURRENT_TASKS}, proxy:{self.useproxy}')
 
         self._stop_event.clear()
         all_voices=set()
@@ -189,13 +189,13 @@ class EdgeTTS(BaseTTS):
                 timeout=total_tasks * SAVE_TIMEOUT * 2  # 总任务 * 每个超时 * 2（缓冲）
             )
         except asyncio.TimeoutError:
-            logger.error("整体执行超时！强制取消所有任务。")
+            logger.error("Overall execution timeout! Force cancel all tasks.")
             self._stop_event.set()
             done, pending = await asyncio.wait([all_workers_done, monitor_task], return_when=asyncio.ALL_COMPLETED)
         
         try:
             if monitor_task not in done:
-                logger.debug("所有配音任务结束。")
+                logger.debug("All voiceover tasks completed.")
                 monitor_task.cancel()
 
             watchdog_task.cancel()
@@ -207,9 +207,9 @@ class EdgeTTS(BaseTTS):
             final_count = self.ends_counter
             if final_count != total_tasks:
                 logger.error(
-                    f"!!!!!!!!!!!!!!!!!! 任务计数不匹配 !!!!!!!!!!!!!!!!!!"
-                    f"预期任务数: {total_tasks}, 实际完成数: {final_count}."
-                    f"丢失了 {total_tasks - final_count} 个任务的状态。"
+                    f"!!!!!!!!!!!!!!!!!! Task count mismatch !!!!!!!!!!!!!!!!!!"
+                    f"Expected task count: {total_tasks}, Actual completion count: {final_count}."
+                    f"lost {total_tasks - final_count} task statuses."
                     "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
                 )        
             
@@ -224,7 +224,7 @@ class EdgeTTS(BaseTTS):
                 else:
                     err += 1
             if ok==0:
-                logger.debug('本次配音全部失败')
+                logger.debug('All dubbing segments failed')
                 raise DubbingSrtError(f'{tr("Dubbing failed")}:{self.error}\n{all_voices=}')
 
             if ok>0:
@@ -238,7 +238,7 @@ class EdgeTTS(BaseTTS):
                             all_task.append(pool.submit(self.convert_to_wav, mp3_path,item['filename']))
                     if len(all_task) > 0:
                         _ = [i.result() for i in all_task]
-            logger.debug(f'本次配音 {ok} 个成功， {err} 个失败')
+            logger.debug(f'This dubbing run: {ok} succeeded, {err} failed')
             self.signal(text=f'[{err}] errors, {ok} succeed')
         finally:
             await asyncio.sleep(0.1)

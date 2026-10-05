@@ -47,7 +47,7 @@ class Google(BaseTrans):
 
         response = requests.get(url, headers=headers)
         response.raise_for_status()
-        logger.debug(f'[Google]返回code:{response.status_code=}')
+        logger.debug(f'[Google]Return Code:{response.status_code=}')
 
         re_result = re.search(r'<div\s+class=\Wresult-container\W>([^<]+?)<', response.text)
         if not re_result or len(re_result.groups()) < 1:

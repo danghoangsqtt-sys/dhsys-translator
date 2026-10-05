@@ -31,17 +31,17 @@ def get_video_codec(compat=None,force=False) -> str:
         try:
             video_codec_pref = int(settings.get('video_codec', 264))
         except (ValueError, TypeError):
-            logger.warning("配置中 'video_codec' 无效。将默认使用 H.264 (264)。")
+            logger.warning("'video_codec' in configuration is invalid. Will default to H.264 (264).")
             video_codec_pref = 264
 
     cache_key = f'{plat}-{video_codec_pref}'
     if not force and cache_key in _codec_cache:
-        logger.debug(f"返回缓存的编解码器 {cache_key}: {_codec_cache[cache_key]}")
+        logger.debug(f"Return cached codec {cache_key}: {_codec_cache[cache_key]}")
         return _codec_cache[cache_key]
 
     h_prefix, default_codec = ('hevc', 'libx265') if video_codec_pref == 265 else ('h264', 'libx264')
     if video_codec_pref not in [264, 265]:
-        logger.warning(f"未预期的 video_codec 值 '{video_codec_pref}'。将视为 H.264 处理。")
+        logger.warning(f"unexpected \'video_codec\' value \'{video_codec_pref}\'. Will treat as H.264.")
 
     ENCODER_PRIORITY = {
         'Darwin': ['videotoolbox'],
@@ -53,7 +53,7 @@ def get_video_codec(compat=None,force=False) -> str:
         test_input_file = Path(ROOT_DIR) / "videotrans/styles/no-remove.mp4"
         temp_dir = Path(config.TEMP_DIR)
     except Exception as e:
-        logger.warning(f"准备测试硬件编码器时出错: {e}。将使用软件编码 {default_codec}。")
+        logger.warning(f"Error preparing hardware encoder for testing: {e}. Software encoding will be used. {default_codec}。")
         _codec_cache[cache_key] = default_codec
         return default_codec
 
@@ -67,7 +67,7 @@ def get_video_codec(compat=None,force=False) -> str:
         ]
         creationflags = subprocess.CREATE_NO_WINDOW if sys.platform == 'win32' else 0
 
-        logger.debug(f"正在测试编码器是否可用: {encoder_to_test}...")
+        logger.debug(f"Testing if encoder is available: {encoder_to_test}...")
         success = False
         try:
 
@@ -75,22 +75,22 @@ def get_video_codec(compat=None,force=False) -> str:
                 command, check=True, capture_output=True, text=True,
                 encoding='utf-8', errors='ignore', creationflags=creationflags, timeout=timeout
             )
-            logger.debug(f"硬件编码器 '{encoder_to_test}' 可用。")
+            logger.debug(f"hardware encoder \'{encoder_to_test}\' Available.\'")
             success = True
         except FileNotFoundError:
-            logger.error("'ffmpeg' 命令在 PATH 中未找到。无法进行编码器测试。")
+            logger.error("'ffmpeg' command not found in PATH. Encoder test failed.")
             raise
         except subprocess.CalledProcessError:
-            logger.warning(f"硬件编码器 '{encoder_to_test}' 不可用")
+            logger.warning(f"hardware encoder \'{encoder_to_test}\' Unavailable\'")
             raise
         except PermissionError:
-            logger.warning(f"测试硬件编码器时失败:写入 {output_file} 时权限被拒绝。 {command=}")
+            logger.warning(f"Hardware encoder test failed: write to {output_file} was denied with permissions. {command=}")
             raise
         except subprocess.TimeoutExpired:
-            logger.warning(f"硬件编码器 '{encoder_to_test}' 测试在 {timeout} 秒后超时。{command=}")
+            logger.warning(f"hardware encoder \'{encoder_to_test}\' Test timed out after {timeout} seconds.{command=}")
             raise
         except Exception as e:
-            logger.warning(f"测试硬件编码器 {encoder_to_test} 时发生意外错误: {e} {command=}")
+            logger.warning(f"Test hardware encoder {encoder_to_test} Unexpected error occurred: {e} {command=}")
             raise
         finally:
             try:
@@ -104,34 +104,34 @@ def get_video_codec(compat=None,force=False) -> str:
 
     encoders_to_test = ENCODER_PRIORITY.get(plat, [])
     if not encoders_to_test:
-        logger.debug(f"不支持的平台: {plat}。将使用软件编码器 {default_codec}。")
+        logger.debug(f"Unsupported platform: {plat}. Software encoder will be used. {default_codec}。")
     else:
-        logger.debug(f"平台: {plat}。正在按优先级检测最佳的 '{h_prefix}' 编码器: {encoders_to_test}")
+        logger.debug(f"Platform: {plat}. Best priority codec for is being detected as \'{h_prefix}\' encoder: {encoders_to_test}")
         try:
             for encoder_suffix in encoders_to_test:
                 if encoder_suffix == 'nvenc':
                     try:
                         if not torch.cuda.is_available():
-                            logger.debug("CUDA 不可用，跳过 nvenc 测试。")
+                            logger.debug("CUDA is not available, skipping nvenc test.")
                             continue
                     except ImportError:
-                        logger.error("未找到 torch 模块，将直接尝试 nvenc 测试。")
+                        logger.error("torch module could not be found, direct nvenc test will be attempted.")
 
                 full_encoder_name = f"{h_prefix}_{encoder_suffix}"
                 if test_encoder_internal(full_encoder_name):
                     selected_codec = full_encoder_name
-                    logger.debug(f"已选择硬件编码器: {selected_codec}")
+                    logger.debug(f"Selected hardware encoder: {selected_codec}")
                     break
             else:
-                logger.debug(f"所有硬件加速器均未通过测试。将使用软件编码器: {selected_codec}")
+                logger.debug(f"All hardware accelerators failed the test. Software encoder: {selected_codec}")
 
             _codec_cache[cache_key] = selected_codec
             Path(f"{ROOT_DIR}/videotrans/codec.json").write_text(json.dumps(_codec_cache))
         except Exception as e:
-            logger.exception(f"在编码器测试期间发生意外，将使用软件编码: {e}", exc_info=True)
+            logger.exception(f"An unexpected error occurred during encoder testing. Using software encoder: {e}", exc_info=True)
             selected_codec = default_codec
 
     _codec_cache[cache_key] = selected_codec
 
-    logger.debug(f"最终确定使用的编码器: {selected_codec}")
+    logger.debug(f"Final selected encoder: {selected_codec}")
     return selected_codec

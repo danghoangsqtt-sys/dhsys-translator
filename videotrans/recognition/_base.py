@@ -123,7 +123,7 @@ class BaseRecogn(BaseCon):
                 it['line'] = len(srt_list) + 1
                 srt_list.append(it)
             else:
-                logger.warning(f'移除无效字幕行,全部由符号组成的行：{i=},{text=}')
+                logger.warning(f'Remove invalid subtitle lines, all composed of symbols:{i=},{text=}')
 
         if not srt_list:
             return []
@@ -131,7 +131,7 @@ class BaseRecogn(BaseCon):
         for i, it in enumerate(srt_list):
             if i > 0 and srt_list[i - 1]['end_time'] > it['start_time']:
                 logger.warning(
-                    f'\n前面字幕[{i-1}] end_time > 当前字幕[{i}] start_time，重叠，需修正\n前{srt_list[i - 1]=}\n当{it=}\n')
+                    f'\n before subtitle [{i-1}] end_time > current subtitle [{i}] start_time, overlap, needs correction\n before{srt_list[i - 1]=}\n when{it=}\n')
                 srt_list[i - 1]['end_time'] = it['start_time']
                 srt_list[i - 1]['endraw'] = ms_to_time_string(ms=it['start_time'])
                 srt_list[i - 1]['time'] = f"{srt_list[i - 1]['startraw']} --> {srt_list[i - 1]['endraw']}"
@@ -141,12 +141,12 @@ class BaseRecogn(BaseCon):
         for it in srt_list:
             # 移除末尾标点
             if it['end_time']<=it['start_time']:
-                logger.warning(f'结束时间小于开始时间，丢弃该字幕:{it=}')
+                logger.warning(f'End time is earlier than start time, discard this subtitle:{it=}')
                 continue
             if settings.get('del_end_punc'):
                 it['text'] = it['text'].strip('。，？！,.?!').strip()
             if not it['text'].strip():
-                logger.warning(f'无有效字符，丢弃该字幕:{it=}')
+                logger.warning(f'No valid characters, discard this subtitle:{it=}')
                 continue
             _post_fix_srt.append(it)
 
@@ -199,7 +199,7 @@ class BaseRecogn(BaseCon):
                 filename=file_name
             ))
 
-        logger.debug(f'切分为 {len(data)} 个音频片段')
+        logger.debug(f'Cut into {len(data)} audio clips')
         return data
 
     # 若需下载模型，子类需实现

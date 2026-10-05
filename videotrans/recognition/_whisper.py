@@ -140,5 +140,5 @@ class FasterAll(BaseRecogn):
         except SttTimeoutError:
             if not Path(subtitle_srt).exists():
                 raise
-            logger.debug(f'捕获到强制抛出的 SttTimeoutError, 使用已识别的文件 {subtitle_srt}')
+            logger.debug(f'Caught a SttTimeoutError that was intentionally thrown, using the recognized file {subtitle_srt}')
             return get_subtitle_from_srt(subtitle_srt, is_file=True)

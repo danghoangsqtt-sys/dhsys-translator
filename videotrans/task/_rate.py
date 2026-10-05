@@ -56,7 +56,7 @@ def _cut_video_get_duration(task, novoice_mp4_original, preset, crf, fps_mode):
     # 需要裁切的原始片段起始
     source_duration_ms = task['end'] - task['start']
     if source_duration_ms <= 0:
-        logger.error(f"[Video-Cut] 片段{task.get('tts_index')} 原始时长<=0: {task=}，跳过处理")
+        logger.error(f"[Video-Cut] Clip:{task.get('tts_index')} Original duration <= 0: {task=}, skip processing")
         return task
     source_duration_s = source_duration_ms / 1000.0
 
@@ -67,7 +67,7 @@ def _cut_video_get_duration(task, novoice_mp4_original, preset, crf, fps_mode):
     # PTS 系数
     pts_factor = task.get('pts', 1.0)
 
-    flag = f'[Video-Cut] 字幕{task.get("tts_index")}: 裁切时长={source_duration_ms}ms,  PTS={pts_factor}, 变速目标时长={target_duration_ms}ms'
+    flag = f'[Video-Cut] Subtitles{task.get("tts_index")}: Cut duration ={source_duration_ms}ms,  PTS={pts_factor}, target duration after speed adjustment={target_duration_ms}ms'
 
     # 主命令构建
     cmd = [
@@ -93,7 +93,7 @@ def _cut_video_get_duration(task, novoice_mp4_original, preset, crf, fps_mode):
         file_path = Path(task['filename'])
         # 检查是否成功，如果失败则执行兜底逻辑
         if not file_path.exists() or file_path.stat().st_size < 1024:
-            logger.error(f"{flag} 变速生成失败或文件无效，尝试无变速剪切兜底:{task=}...")
+            logger.error(f"{flag} Speed adjustment failed or output is invalid; trying a cut without speed adjustment: {task=}...")
 
             # 【修正】兜底命令也必须包含 fps_mode 和 setpts=PTS 以保证拼接兼容性
             cmd_backup = [
@@ -118,16 +118,16 @@ def _cut_video_get_duration(task, novoice_mp4_original, preset, crf, fps_mode):
             try:
                 real_time = tools.get_video_duration(task["filename"])
             except Exception as e:
-                logger.error(f"{flag} 获取视频片段时长失败，对齐可能偏差: {e}")
+                logger.error(f"{flag} Failed to get video clip duration, alignment may be off: {e}")
                 real_time = source_duration_ms
 
             task['actual_duration'] = real_time
-            logger.debug(f"{flag}, 变速后实际时长: {real_time}ms, 实际时长-目标时长={real_time - target_duration_ms}ms")
+            logger.debug(f"{flag}, actual duration after speed adjustment: {real_time}ms, actual duration - target duration={real_time - target_duration_ms}ms")
         else:
             task['actual_duration'] = 0
-            logger.error(f"{flag} 最终生成失败。")
+            logger.error(f"{flag} Final generation failed.")
     except Exception as e:
-        logger.error(f"{flag} 处理异常: {e}")
+        logger.error(f"{flag} Exception processing: {e}")
         try:
             if Path(task['filename']).exists():
                 Path(task['filename']).unlink()
@@ -144,7 +144,7 @@ def _change_speed_rubberband(input_path, target_duration):
     try:
         y, sr = sf.read(input_path)
         if len(y) == 0:
-            logger.error(f"[rubberband] 空音频文件: {input_path=},{target_duration=}")
+            logger.error(f"[rubberband] Empty audio file: {input_path=},{target_duration=}")
             return False
 
         current_duration = round((len(y) / sr) * 1000)
@@ -160,7 +160,7 @@ def _change_speed_rubberband(input_path, target_duration):
         time_stretch_rate = max(0.2, min(time_stretch_rate, 50.0))
 
         logger.debug(
-            f"[rubberband] {input_path} 配音时长:{current_duration}ms, 目标时长:{target_duration}ms 倍率:{time_stretch_rate:.2f}")
+            f"[rubberband] {input_path} dubbed duration: {current_duration}ms, target duration:{target_duration}ms, speed ratio: {time_stretch_rate:.2f}")
 
         y_stretched = pyrb.time_stretch(y, sr, time_stretch_rate)
 
@@ -171,7 +171,7 @@ def _change_speed_rubberband(input_path, target_duration):
         sf.write(input_path, y_stretched, sr)
 
     except Exception as e:
-        logger.error(f"[rubberband] 音频处理失败 {input_path}: {e}")
+        logger.error(f"[rubberband] Audio processing failed {input_path}: {e}")
         return False
     return True
 
@@ -185,7 +185,7 @@ def _precise_speed_up_audio(input_path=None, target_duration=None):
     atempo_list = []
     speed_factor = current_duration_ms / target_duration
     logger.debug(
-        f"[ffmpeg atempo] {input_path} 配音时长:{current_duration_ms}ms, 目标时长:{target_duration}ms, 倍率:{speed_factor:.2f}")
+        f"[ffmpeg atempo] {input_path} dubbed duration: {current_duration_ms}ms, target duration:{target_duration}ms, Speed Rate:{speed_factor:.2f}")
 
     # 处理加速情况 (> 2.0)
     while speed_factor > 2.0:
@@ -214,7 +214,7 @@ def _precise_speed_up_audio(input_path=None, target_duration=None):
         tools.runffmpeg(cmd)
         shutil.copy2(f'{input_path}-after.wav', input_path)
     except Exception as e:
-        logger.exception(f'音频加速atempo失败:{e}')
+        logger.exception(f'Audio Acceleration atempo failed:{e}')
         return False
     return True
 
@@ -296,15 +296,15 @@ class SpeedRate:
 
         self.audio_speed_rubberband = shutil.which("rubberband")
         logger.debug(
-            f"开始语音视频字幕对齐处理：音频加速={self.should_audiorate}, 视频慢速={self.should_videorate}")
+            f"Starting audio/video subtitle alignment processing: Audio Acceleration ={self.should_audiorate}, Video Slowdown ={self.should_videorate}")
         if not HAS_RUBBERBAND or not self.audio_speed_rubberband:
-            logger.warning(f"Rubberband 不可用，将使用 pydub+ffmpeg 处理音频加速(较粗糙不精确)。\n建议安装，加速效果更精确\n{INSTALL_RUBBERBAND_TIPS}")
+            logger.warning(f"Rubber Band is unavailable; using pydub and FFmpeg for less precise audio speedup.\nInstall Rubber Band for better accuracy.\n{INSTALL_RUBBERBAND_TIPS}")
 
     def run(self):
         if not self.queue_tts:
             return []
         if not self.should_audiorate and not self.should_videorate:
-            logger.debug("未选中任何变速，进入普通拼接模式。")
+            logger.debug("No speed adjustment selected; using normal concatenation.")
             self._run_no_rate_change_mode()
             return self.queue_tts
 
@@ -318,11 +318,11 @@ class SpeedRate:
         if self.should_videorate and self.video_for_clips:
             tools.set_process(text=tr('Slow video') + '...', uuid=self.uuid)
             self.had_processed_video_clips, _total_ms = self._video_speeddown()
-            logger.debug(f'视频慢速处理完毕，有效视频片段:{len(self.had_processed_video_clips)=}个, 片段累计时长:{_total_ms}ms')
+            logger.debug(f'Video slowdown complete; valid video clips: {len(self.had_processed_video_clips)=}, total clip duration: {_total_ms}ms')
             self._concat_video(self.had_processed_video_clips)
             try:
                 self.raw_total_time = tools.get_video_duration(self.novoice_mp4)
-                logger.debug(f"新视频连接生成完毕，实际总时长: {self.raw_total_time}ms")
+                logger.debug(f"New video connection generation complete, actual total duration: {self.raw_total_time}ms")
             except Exception:
                 pass
 
@@ -344,13 +344,13 @@ class SpeedRate:
         if self.novoice_mp4_original and tools.vail_file(self.novoice_mp4_original):
             self.raw_total_time = tools.get_video_duration(self.novoice_mp4_original)
 
-        logger.debug(f'原始视频时长：{self.raw_total_time=}ms')
+        logger.debug(f'Original video duration:{self.raw_total_time=}ms')
 
         # 强制第一条字幕开始时间为0
         if self.queue_tts[0]['start_time'] > 0:
             self.audio0_left_pad = self.queue_tts[0]['start_time']
             self.queue_tts[0]['start_time'] = 0
-            logger.debug(f'第0条字幕开始时间强制设为0，记录偏移 {self.audio0_left_pad=}ms')
+            logger.debug(f'Subtitle start time forced to 0 for index 0, record offset {self.audio0_left_pad=}ms')
 
         for i, current in enumerate(self.queue_tts):
             # 将字幕开始时间、结束时间，首尾相连
@@ -372,7 +372,7 @@ class SpeedRate:
                 AudioSegment.silent(duration=source_duration).export(dummy_wav, format="wav")
                 current['filename'] = dummy_wav
                 current['dubb_time'] = source_duration
-                logger.debug(f"[Prepare] 字幕[{current['line']}] 无配音，生成 {source_duration}ms 静音占位")
+                logger.debug(f"[Prepare] Subtitle[{current['line']}] No audio, generate {source_duration}ms Silence placeholder")
             else:
                 current['dubb_time'] = len(AudioSegment.from_file(current['filename']))
 
@@ -408,7 +408,7 @@ class SpeedRate:
                     "target_time": audio_target  # 变速结束后需达到的目标时长
                 })
                 logger.debug(
-                    f'仅音频加速: dubb_time={dubb_duration}ms, {audio_target=}ms, ratio={min(ratio, self.max_audio_speed_rate)}')
+                    f'Audio speedup only: dubb_time={dubb_duration}ms, {audio_target=}ms, ratio={min(ratio, self.max_audio_speed_rate)}')
                 continue
 
             mode_log = ""
@@ -429,7 +429,7 @@ class SpeedRate:
                     video_target = round(source_duration + (diff / 2))
 
             # 日志
-            flag = f"Mode={mode_log}, 字幕{i} 可用区间: {source_duration}ms, 当前配音时长: {dubb_duration}ms  "
+            flag = f"Mode={mode_log}, subtitle {i} available range: {source_duration}ms, current dubbed duration: {dubb_duration}ms  "
 
             # 所有片段均注册,无需视频慢速的则 PTS=1.0
             if self.should_videorate:
@@ -441,7 +441,7 @@ class SpeedRate:
                     "pts": pts,
                     "tts_index": i
                 })
-                flag += f' 视频慢速目标时长: {video_target}ms，PTS={pts}  '
+                flag += f' Video slow speed target duration: {video_target}ms，PTS={pts}  '
 
             logger.debug(flag)
 
@@ -449,7 +449,7 @@ class SpeedRate:
         if len(self.audio_data) < 1: return
         all_task = []
         _wok = min(12, len(self.audio_data), max(os.cpu_count() - 1, 1))
-        logger.debug(f"[音频加速] 使用{_wok}个进程，处理 {len(self.audio_data)} 个配音片段")
+        logger.debug(f"[Audio Acceleration] Using{_wok} processes to handle {len(self.audio_data)} dubbed segments")
         with ProcessPoolExecutor(max_workers=int(_wok)) as pool:
             for i, d in enumerate(self.audio_data):
                 if d['dubb_time'] > d['target_time']:
@@ -476,7 +476,7 @@ class SpeedRate:
         all_task = []
         processed_clips = []
         _wok = min(12, len(data), max(os.cpu_count() - 1, 1))
-        logger.debug(f'[视频慢速] 使用{_wok}个进程处理 {len(data)} 个视频片段')
+        logger.debug(f'[Video slowdown] Using {_wok} processes to handle {len(data)} video segments')
         with ProcessPoolExecutor(max_workers=int(_wok)) as pool:
             for i, d in enumerate(data):
                 all_task.append(
@@ -490,7 +490,7 @@ class SpeedRate:
                     if res:
                         processed_clips.append(res)
                 except Exception as e:
-                    logger.error(f"[视频慢速] 任务异常: {e}")
+                    logger.error(f"[Video slowdown] Task failed: {e}")
 
         processed_clips.sort(key=lambda x: x.get('tts_index', 0))
         _total_ms = sum([it.get('actual_duration', 0) for it in processed_clips])
@@ -500,7 +500,7 @@ class SpeedRate:
 
         if len(processed_clips) != len(self.queue_tts):
             logger.warning(
-                f'共 {len(processed_clips)} 个视频切片数量，与原始字幕数量 {len(self.queue_tts)} 不等，可能存在对齐或双字幕嵌入匹配错误, 放弃音频加速处理')
+                f'Total {len(processed_clips)} video clips versus {len(self.queue_tts)} original subtitles; counts differ, so alignment or bilingual subtitle matching may be wrong. Skipping audio speedup')
             return processed_clips, _total_ms
 
         # 根据 process_clips 实际时长，更新队列
@@ -523,7 +523,7 @@ class SpeedRate:
                 "dubb_time": it['dubb_time'],  # 变速前实际配音时长
                 "target_time": it['source_duration']
             }
-            logger.debug(f'该片段配音待处理数据: {tmp=}')
+            logger.debug(f'Pending dubbing data for this segment: {tmp=}')
             self.audio_data.append(tmp)
 
         return processed_clips, _total_ms
@@ -537,10 +537,10 @@ class SpeedRate:
                 txt_content.append(f"file '{path}'")
                 valid_cnt += 1
             else:
-                logger.error(f"[Video-Concat] 忽略无效片段: {clip=}")
+                logger.error(f"[Video-Concat] Ignoring invalid clip: {clip=}")
 
         if valid_cnt == 0:
-            logger.error("[Video-Concat] 没有有效片段，跳过拼接")
+            logger.error("[Video-Concat] No valid clips; skipping concatenation")
             return
 
         concat_list = Path(self.cache_folder, "video_concat.txt").as_posix()
@@ -549,7 +549,7 @@ class SpeedRate:
 
         tools.set_process(text=tr('Concat videos'), uuid=self.uuid)
         output_path = Path(self.cache_folder, "merged_video.mp4").as_posix()
-        logger.debug(f"[Video-Concat] 合并 {valid_cnt} 个视频片段 -> {output_path}")
+        logger.debug(f"[Video-Concat] Merging {valid_cnt} video clips -> {output_path}")
 
         protxt = f'{self.cache_folder}/concatvideo-{time.time()}.txt'
         self.concat_video_is_end=False
@@ -595,19 +595,19 @@ class SpeedRate:
                 f.unlink()
                 deleted_count += 1
             except OSError as e:
-                logger.exception(f"无法删除文件 {f.name}: {e}", exc_info=True)
-        logger.debug(f'共删除了 {deleted_count} 个临时视频切片')
+                logger.exception(f"Could not delete file {f.name}: {e}", exc_info=True)
+        logger.debug(f'Deleted {deleted_count} temporary video clips')
 
     def _concat_audio_aligned(self):
         audio_list = []
         # 对 第0条 配音 特殊处理
         if self.audio0_left_pad > 0:  # 需左侧填充空白
-            logger.debug(f'第0条字幕原始左偏移值: {self.audio0_left_pad=}')
+            logger.debug(f'Original left offset of subtitle 0: {self.audio0_left_pad=}')
             _audio0_ms = len(AudioSegment.from_file(self.queue_tts[0]['filename']))
             _sub_ms = self.queue_tts[0]['end_time']
             if _sub_ms > _audio0_ms:  # 大于音频片段，第0条字幕开始时间应右移
                 _start_time = min(_sub_ms - _audio0_ms, self.audio0_left_pad)
-                logger.debug(f'第0条字幕需恢复偏移值:{_start_time=}')
+                logger.debug(f'Offset to restore for subtitle 0: {_start_time=}')
                 self.queue_tts[0]['start_time'] = _start_time
                 self.queue_tts[0]['source_duration'] = self.queue_tts[0]['end_time'] - _start_time
 
@@ -638,7 +638,7 @@ class SpeedRate:
                 audio_list.append(self._create_silen_file(f"tail_{i}", it['source_duration'] - _len))
                 _total_ms += it['source_duration'] - _len
 
-        logger.debug(f'连接音频前，配音音频总时长累计: {_total_ms=}ms , {self.raw_total_time=}ms')
+        logger.debug(f'Total dubbing duration before audio concatenation: {_total_ms=}ms , {self.raw_total_time=}ms')
         # 如果音频时长小于视频时长，末尾加静音
         if _total_ms < self.raw_total_time:
             audio_list.append(self._create_silen_file(f"append_video_end", self.raw_total_time - _total_ms))
@@ -651,7 +651,7 @@ class SpeedRate:
                 audio_list.append(self._create_silen_file(f"append_video_end", self.raw_total_time - _total_ms))
                 _total_ms+=self.raw_total_time - _total_ms
 
-        logger.debug(f'变速处理后，音频片段连接前， 配音总时长: {_total_ms}ms, 视频总时长: {self.raw_total_time}ms')
+        logger.debug(f'Post-speed processing, audio clip concatenation before, total duration of voice clips: {_total_ms}ms, Total video duration: {self.raw_total_time}ms')
         self._exec_concat_audio(audio_list)
 
 
@@ -671,7 +671,7 @@ class SpeedRate:
 
         shutil.copy2(final_video_path, self.novoice_mp4)
         self.raw_total_time = tools.get_video_duration(final_video_path)
-        logger.debug(f"视频延长后实际时长 {self.raw_total_time=}ms")
+        logger.debug(f"Actual extended video duration after {self.raw_total_time=}ms")
         return self.raw_total_time
 
     def _run_no_rate_change_mode(self):
@@ -744,9 +744,9 @@ class SpeedRate:
         if Path(temp_wav).exists():
             _last_len = len(AudioSegment.from_file(temp_wav, format="wav"))
             shutil.move(temp_wav, self.target_audio)
-            logger.debug(f"音频片段连接后，实际时长 {_last_len}ms, 已生成到: {self.target_audio}")
+            logger.debug(f"After joining audio clips, actual duration: {_last_len}ms, output: {self.target_audio}")
         else:
-            logger.error("音频片段连接失败")
+            logger.error("Audio clip concatenation failed")
             _last_len = 0
         return _last_len  # 返回音频长度 ms
 
@@ -760,12 +760,12 @@ class TtsSpeedRate(SpeedRate):
 
     def run(self):
         if not self.should_audiorate:
-            logger.debug("[SpeedRate] 未启用变速，进入普通拼接模式。")
+            logger.debug("[SpeedRate] Not enabled for speed adjustment, entering standard stitching mode.")
             self._run_no_rate_change_mode()
             return self.queue_tts
         # 删除时间轴不合法的
         self.queue_tts = [it for it in self.queue_tts if it['end_time'] - it['start_time'] > 0]
-        logger.debug("[SpeedRate] 启用变速，进入对齐模式。")
+        logger.debug("[SpeedRate] Enabled for speed adjustment, entering alignment mode.")
         # 1. 预处理
         self._prepare_data()
         # 2. 计算
@@ -799,7 +799,7 @@ class TtsSpeedRate(SpeedRate):
                 AudioSegment.silent(duration=current['source_duration']).export(dummy_wav, format="wav")
                 current['filename'] = dummy_wav
                 current['dubb_time'] = current['source_duration']
-                logger.debug(f"[Prepare] 字幕[{current['line']}] 无配音，生成 {current['source_duration']}ms 静音占位")
+                logger.debug(f"[Prepare] Subtitle[{current['line']}] No audio, generate {current['source_duration']}ms Silence placeholder")
             else:
                 current['dubb_time'] = len(AudioSegment.from_file(current['filename']))
 
@@ -814,7 +814,7 @@ class TtsSpeedRate(SpeedRate):
                 continue
             audio_target = dubb_dur
 
-            mode_log = f"[为字幕配音] {i=}"
+            mode_log = f"[Subtitle Dubbing] {i=}"
             if dubb_dur > source_dur:
                 self.audio_data.append({
                     "filename": it['filename'],
@@ -826,7 +826,7 @@ class TtsSpeedRate(SpeedRate):
                 f"[Calc] Mode={mode_log} Line={it['line']} | Source_duration={source_dur} Dubb_duration={dubb_dur} -> TargetA={audio_target}")
 
     def _concat_audio_aligned(self):
-        logger.debug("[Audio] 开始对齐拼接...")
+        logger.debug("[Audio] Start Alignment Merging...")
 
         audio_concat_list = []
 

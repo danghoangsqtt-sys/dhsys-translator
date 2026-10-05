@@ -31,7 +31,7 @@ def paraformer(
         device = f'cuda:{device_index}' if is_cuda else 'cpu'
     msg = f'Load {model_name} running on {device}'
     _write_log(logs_file, json.dumps({"type": "logs", "text":msg}))
-    logger.debug(f'阿里FunASR渠道使用 {msg}')
+    logger.debug(f'Alibaba FunASR provider using {msg}')
 
     raw_subtitles = []
     try:

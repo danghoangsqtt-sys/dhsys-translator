@@ -1,4 +1,5 @@
 import uuid as _uuid
+import re
 
 from videotrans.task.taskcfg import (
     InputFile,
@@ -10,6 +11,29 @@ from videotrans.task.taskcfg import (
     TaskCfgSTS,
     TaskCfgVTT,
 )
+
+
+def test_video_task_summary_localizes_status_without_changing_chinese_media_code(monkeypatch):
+    from videotrans.configure import _i18n
+
+    task = TaskCfgVTT(
+        name='sample.mp4', target_dir='out', cache_folder='tmp',
+        source_language='English', target_language_code='zh-cn',
+        recogn_type=0, translate_type=0, tts_type=0, model_name='tiny',
+        voice_role='zh-CN-XiaoxiaoNeural', subtitle_type=4,
+        output_srt=2, only_out_mp4=True, is_cuda=False,
+    )
+    for locale, expected in (
+        ('en_US', ('Source File:', 'CUDA Acceleration: Disabled', 'Target Language:')),
+        ('vi_VN', ('Tệp nguồn:', 'Tăng tốc CUDA: Chưa bật', 'Ngôn ngữ đích:')),
+    ):
+        monkeypatch.setattr(_i18n, '_transobj', _i18n._get_transobj(locale))
+        task.target_language = _i18n.tr('zh-cn')
+        summary = repr(task)
+        assert all(label in summary for label in expected)
+        assert task.target_language_code == 'zh-cn'
+        assert 'zh-CN-XiaoxiaoNeural' in summary
+        assert not re.search(r'[\u4e00-\u9fff]', summary)
 
 
 class TestInputFile:

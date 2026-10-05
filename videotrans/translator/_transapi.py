@@ -29,7 +29,7 @@ class TransAPI(BaseTrans):
         requrl = f"{self.api_url}target_language={self.target_code}&source_language={self.source_code.split('-')[0] if self.source_code else ''}&text={text}&secret={params.get('trans_secret','')}"
 
         response = requests.get(url=requrl)
-        logger.debug(f'[TransAPI]返回:{response=}')
+        logger.debug(f'[TransAPI] Return:{response=}')
         response.raise_for_status()
         jsdata = response.json()
         if jsdata['code'] != 0:

@@ -4,7 +4,7 @@ from PySide6.QtCore import QMetaObject, QSize, Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QLabel, QLineEdit, QPushButton, QSizePolicy, QDialog
 
-from videotrans.configure.config import tr, defaulelang, ROOT_DIR
+from videotrans.configure.config import tr, ROOT_DIR
 from videotrans.util.help_misc import open_url
 
 
@@ -83,34 +83,11 @@ class Ui_transapi(QDialog):
     # setupUi
 
     def retranslateUi(self, transapiform):
-        if defaulelang == 'zh_CN':
-            tips = """
-将以GET请求向填写的API地址发送application/www-urlencode数据：
-text:需要翻译的文本/字符串
-source_language:原始文字语言代码zh,en,ja,ko,ru,de,fr,tr,th,vi,ar,hi,hu,es,pt,it/字符串
-target_language:目标文字语言代码zh,en,ja,ko,ru,de,fr,tr,th,vi,ar,hi,hu,es,pt,it/字符串
-期待从接口返回json格式数据：
-{
-    code:0=成功时，>0的数字代表失败 , msg:ok=成功时，其他为失败原因, text:翻译后的文本
-}
-基于cloudflare和m2m100实现的免费翻译API见: github.com/jianchang512/translate-api
-"""
-        else:
-            tips = """
-The application/www-urlencode data will be sent as a GET request to the filled API address:
-text:text/string to be translated
-source_language:original text language code zh,en,ja,ko,ru,de,fr,tr,th,vi,ar,hi,hu,es,pt,it/string
-target_language:target_language code zh,en,ja,ko,ru,de,fr,tr,th,vi,ar,hi,hu,es,pt,it/string
-Expect data to be returned from the interface in json format:
-{
-    code:0=on success  numbers >0 represent failures, msg:ok=success  others are failure reasons,text:Translated text
-}
-Usage: github.com/jianchang512/translate-api
-"""
+        tips = tr('transapi_help')
         transapiform.setWindowTitle(
             tr("Customizing the Translate API"))
         self.label_3.setText(tr("Secret"))
-        self.miyue.setPlaceholderText("填写密钥")
+        self.miyue.setPlaceholderText(tr('Enter API key'))
 
         self.tips.setPlainText(tips)
 

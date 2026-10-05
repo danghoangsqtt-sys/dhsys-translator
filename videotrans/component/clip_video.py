@@ -255,10 +255,10 @@ class CLIP_VIDEO(QWidget):
             self.subtitles = get_subtitle_from_srt(self.subtitle_path)  # Reload if needed
             for i, it in enumerate(self.subtitles):
                 item = QListWidgetItem()
-                check = QCheckBox(f"第{i+1}行 [{(it['end_time']-it['start_time'])/1000.0}s] {it['startraw']}->{it['endraw']}  {it['text']}")
+                check = QCheckBox(f"{tr('subtitle_line', i+1, (it['end_time']-it['start_time'])/1000.0, it['startraw'], it['endraw'], it['text'])}")
                 self.subtitle_list.addItem(item)
                 self.subtitle_list.setItemWidget(item, check)
-                item.setSizeHint(check.sizeHint() + QSize(0, 10))  # 增加垂直间距
+                item.setSizeHint(check.sizeHint() + QSize(0, 10))  # Increase vertical spacing
             self.progress_label.setPlainText(f"{tr('renderCompleteOutputTo')}:{output_folder}/{self.subtitle_name}-clip")
             self.select_all_btn.setVisible(True)
             self.deselect_all_btn.setVisible(True)

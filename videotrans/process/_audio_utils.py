@@ -9,4 +9,4 @@ def _write_log(file=None, msg=None, type='logs'):
     try:
         Path(file).write_text(json.dumps({"text": msg, "type": type}), encoding='utf-8')
     except Exception as e:
-        logger.exception(f'写入新进程日志时出错{e}', exc_info=True)
+        logger.exception(f'Failed Writing New Process Log{e}', exc_info=True)

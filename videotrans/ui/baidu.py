@@ -104,7 +104,7 @@ class Ui_baidu(QDialog):
         QtCore.QMetaObject.connectSlotsByName(baiduform)
 
     def retranslateUi(self, baiduform):
-        baiduform.setWindowTitle("百度")
+        baiduform.setWindowTitle("Baidu Translate")
         self.label.setText("Baidu Appid")
         self.label_2.setText("Baidu Secret")
         self.set_badiu.setText(tr("Save"))

@@ -83,7 +83,7 @@ def openai_whisper(
                 "words": [{'word': it['word'], 'start': it['start'], 'end': it['end']} for it in segment['words']]
             })
             _write_log(logs_file, json.dumps({"type": "subtitle", "text": f'[{i}] {segment["text"]}\n'}))
-        logger.debug(f'openai-whisper模式下，传递完整音频由模型{model_name} 输出字级时间戳')
+        logger.debug(f'In OpenAI Whisper mode, passing the full audio to model {model_name} to produce word timestamps')
         if not texts:
             _kw=dict(no_speech_threshold=no_speech_threshold,
             initial_prompt=prompt,
@@ -98,7 +98,7 @@ def openai_whisper(
         if jianfan and raws:
             for it in raws:
                 it['text'] = zhconv.convert(it['text'], 'zh-hans')
-        logger.debug(f'断句完毕，返回结果:{max_speech_ms=},{min_speech_ms=}')
+        logger.debug(f'Segmentation complete; returning results: {max_speech_ms=},{min_speech_ms=}')
         return raws, None
     except BaseException as e:
         msg = traceback.format_exc()

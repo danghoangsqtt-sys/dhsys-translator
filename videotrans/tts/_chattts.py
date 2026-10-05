@@ -34,7 +34,7 @@ class ChatTTS(BaseTTS):
                 raise StopTask(f"[ChatTTS] {tr('This channel needs deployed and started before available')}\n{self.api_url=}\n[https://pyvideotrans.com/chattts]") from e
         res = res.json()
         if res is None:
-            return 'ChatTTS端出错，请查看其控制台终端'+f"\n{self.api_url=}"
+            return 'ChatTTS Error Occurred, Please Check Its Console Terminal'+f"\n{self.api_url=}"
 
         if "code" not in res or res['code'] != 0:
             if "msg" in res:

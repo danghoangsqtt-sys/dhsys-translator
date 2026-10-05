@@ -57,7 +57,7 @@ class PrepareMixin:
             try:
                 self._split_audio_byraw(True)
             except Exception as e:
-                logger.exception(f'分离人声背景声失败，跳过 {e}', exc_info=True)
+                logger.exception(f'Failed to separate voice and background sound, skipping. {e}', exc_info=True)
             finally:
                 if not vail_file(self.cfg.vocal) or not vail_file(self.cfg.instrument):
                     self.cfg.is_separate = False
@@ -76,10 +76,10 @@ class PrepareMixin:
                 self.cfg.source_wav
             ]
             try:
-                logger.debug(f'存在单独的人声文件 vocal.wav, 使用此作为语音识别原始音频')
+                logger.debug(f'There is a separate vocal file, vocal.wav, to be used as the original audio for speech recognition.')
                 runffmpeg(cmd)
             except Exception as e:
-                logger.exception(f'将 人声文件 转为 16000 source_wav 时失败 {e}', exc_info=True)
+                logger.exception(f'Failed to convert the vocal file to 16000 source_wav {e}', exc_info=True)
 
         if audio_stream_len > 0 and not vail_file(self.cfg.source_wav):
             self._split_audio_byraw()
@@ -109,11 +109,11 @@ class PrepareMixin:
                         with open(self.cfg.source_sub, "w", encoding="utf-8", errors="ignore") as f:
                             f.write(txt)
             except Exception as e:
-                logger.exception(f'从原始字幕中提取出说话人并删除标识后保存失败:{e}',exc_info=True)
+                logger.exception(f'Failed to extract speakers from the original subtitles and remove identifiers before saving them:{e}',exc_info=True)
         # 从字幕中提取说话人 end
             
         self.signal(text=tr('endfenliyinpin'))
-        logger.debug(f'[预处理阶段结束耗时]:{time.time()-_st}s')
+        logger.debug(f'[Pre-processing took]:{time.time()-_st}s')
 
     def _split_novoice_byraw(self):
         import os
@@ -153,7 +153,7 @@ class PrepareMixin:
             self._subprocess(cmd)
             app_cfg.queue_novice[self.uuid] = 'end'
         except Exception as e:
-            logger.exception(f'硬件分离无声视频失败,尝试软分离 {e}', exc_info=True)
+            logger.exception(f'Hardware-separated silent video failed, trying software separation. {e}', exc_info=True)
             return runffmpeg([
                 "-y",
                 "-fflags",
@@ -242,4 +242,4 @@ class PrepareMixin:
                 shutil.copy2(self.cfg.vocal, f'{self.cfg.target_dir}/vocal.wav')
                 shutil.copy2(self.cfg.instrument, f'{self.cfg.target_dir}/instrument.wav')
         except Exception as e:
-            logger.exception(f'人声背景声分离失败，静默跳过 {e}', exc_info=True)
+            logger.exception(f'Vocal/background separation failed; skipping: {e}', exc_info=True)

@@ -37,7 +37,7 @@ class AssembleMixin:
         self.precent = self.precent + 3 if self.precent < 95 else self.precent
         self.signal(text=tr('kaishihebing'))
         self._join_video_audio_srt()
-        logger.debug(f'[音频+字幕+画面合成阶段结束耗时]:{time.time()-_st}s')
+        logger.debug(f'[Audio/subtitle/video assembly elapsed time]: {time.time()-_st}s')
 
     def task_done(self) -> None:
         if self._exit(): return
@@ -50,7 +50,7 @@ class AssembleMixin:
                 Path(f"{self.cfg.target_dir}/{self.cfg.target_language_code}.srt").unlink(
                     missing_ok=True)
             except OSError:
-                logger.warning('仅提取模式时，清理中间文件失败，跳过')
+                logger.warning('Failed to clean intermediate files when only extracting mode, skipping')
             return self.set_end(True)
 
         if self.is_audio_trans and vail_file(self.cfg.target_wav):
@@ -65,10 +65,10 @@ class AssembleMixin:
                 destination = _unused_video_path(Path(self.cfg.target_dir).parent / Path(self.cfg.targetdir_mp4).name)
                 shutil.move(self.cfg.targetdir_mp4, destination)
         except OSError as e:
-            logger.exception(f'仅输出mp4时清理临时文件移动视频位置出错，跳过 {e}', exc_info=True)
+            logger.exception(f'Failed to move temporary files and adjust video position when outputting mp4 only, skipping {e}', exc_info=True)
 
         self.set_end(True)
-        logger.debug(f'[{self.cfg.name}视频翻译任务结束，总耗时]:{time.time()-self.cost_duration}s')
+        logger.debug(f'[{self.cfg.name}[Video translation total elapsed time]: {time.time()-self.cost_duration}s')
 
 
     def _join_video_audio_srt(self) -> None:
@@ -77,7 +77,7 @@ class AssembleMixin:
         self.signal(text="Checking novoice.mp4...")
         is_novoice_mp4(self.cfg.novoice_mp4, self.uuid)
         if not Path(self.cfg.novoice_mp4).exists():
-            raise VideoTransError(f'{self.cfg.novoice_mp4} 不存在')
+            raise VideoTransError(f'{self.cfg.novoice_mp4} does not exist')
 
         if self.should_dubbing and not vail_file(self.cfg.target_wav):
             raise VideoTransError(f"{tr('Dubbing')}{tr('anerror')}:{self.cfg.target_wav}")
@@ -109,7 +109,7 @@ class AssembleMixin:
                 try:
                     runffmpeg(cmd)
                 except Exception as e:
-                    logger.exception(f'单独输出原始视频中音频文件到目标文件夹失败，跳过{e}', exc_info=True)
+                    logger.exception(f'Failed to output the original video\'s audio file separately to the target folder, skipping.{e}', exc_info=True)
                 finally:
                     output_source_output = True
             threading.Thread(target=_output, daemon=True).start()
@@ -141,12 +141,12 @@ class AssembleMixin:
             subtitle_langcode=translator.get_mkv_code(subtitle_langcode)
 
         audio_ms = get_audio_time(target_m4a)
-        logger.debug(f'当前音频时长 {audio_ms}ms, 视频时长: {duration_ms}ms')
+        logger.debug(f'Current audio duration {audio_ms}ms, Video duration: {duration_ms}ms')
         is_copy_mode = str(self.video_codec_num) == '264'
         is_lossless=self.is_copy_video and is_copy_mode and not self.cfg.video_autorate and self.cfg.subtitle_type not in [1, 3]
         if is_lossless:
             a_v_offset=audio_ms-duration_ms
-            logger.debug(f'当前原始视频是标准264,输出也是264，未视频慢速，未嵌入硬字幕，放弃视频末尾处理，实现无损输出。音频时长-视频时长={a_v_offset}ms'+(f'，\n音频时长大于视频时长{a_v_offset}ms，理论上视频末尾应定格等待音频播放完毕，但不同播放器可能有不同处理方式，如音频截断，视频末尾黑屏等' if a_v_offset>0 else ''))
+            logger.debug(f'The current raw video is in standard 264 format and so will be output as 264. No slow motion applied, no hard subtitles embedded, no post-video processing for the end of the video, resulting in lossless output. Audio duration - Video duration ={a_v_offset}ms'+(f',\naudio duration exceeds video duration{a_v_offset}ms, Theoretically, the video should freeze at the end to wait for audio playback completion, but different players may handle this differently, such as by truncating the audio or blackening the video\'s end.' if a_v_offset>0 else ''))
 
 
         tmp_target_mp4 = self.cfg.cache_folder + f"/laste_target{_video_output_ext}"
@@ -219,10 +219,10 @@ class AssembleMixin:
 
                 cmd2.extend([tmp_target_mp4_basename])
                 if is_copy_mode:
-                    logger.debug(f'[最终视频合成]copy模式，无需重新编码:\n{cmd0 + cmd1 + cmd2}')
+                    logger.debug(f'[Final video] Copy mode; no reencoding needed:\n{cmd0 + cmd1 + cmd2}')
                     runffmpeg(cmd0 + cmd1 + cmd2, cmd_dir=self.cfg.cache_folder, force_cpu=True)
                 elif app_cfg.video_codec.startswith('libx') or settings.get('force_lib'):
-                    logger.debug(f'[最终视频合成]不支持硬件编码或指定了强制软编解码:\n{cmd0 + cmd1 + cmd2}')
+                    logger.debug(f'[Final video] Hardware encoding is unavailable or software encoding was forced:\n{cmd0 + cmd1 + cmd2}')
                     runffmpeg(cmd0 + cmd1 + enc_qua + cmd2, cmd_dir=self.cfg.cache_folder, force_cpu=True)
                 else:
                     hw_decode_args, _, vcodec, enc_args = self._get_hard_cfg()
@@ -231,7 +231,7 @@ class AssembleMixin:
                         self._subprocess(cmd0 + hw_decode_args + cmd1 + enc_args + cmd2)
                     except Exception as e:
                         cmd1[cmd1.index('-c:v') + 1] = f'libx{self.video_codec_num}'
-                        logger.exception(f'硬件处理视频合成失败，回退软编 {e}', exc_info=True)
+                        logger.exception(f'Hardware video synthesis failed; retrying with software encoding: {e}', exc_info=True)
                         runffmpeg(cmd0 + cmd1 + enc_qua + cmd2, cmd_dir=self.cfg.cache_folder, force_cpu=True)
 
             else:
@@ -253,7 +253,7 @@ class AssembleMixin:
                     cmd3.extend(fps_mode)
                 cmd3.extend(['-shortest', tmp_target_mp4_basename])
                 if app_cfg.video_codec.startswith('libx') or settings.get('force_lib'):
-                    logger.debug(f'[最终视频合成]不支持硬件编解码或指定了强制软编解码:\n{cmd0 + cmd1 + cmd2}')
+                    logger.debug(f'[Final video] Hardware codecs are unavailable or software encoding was forced:\n{cmd0 + cmd1 + cmd2}')
                     runffmpeg(cmd0 + cmd1 + subtitle_filter + cmd2 + enc_qua + cmd3,
                                     cmd_dir=self.cfg.cache_folder, force_cpu=True)
                 else:
@@ -263,7 +263,7 @@ class AssembleMixin:
                         self._subprocess(cmd0 + hw_decode_args + cmd1 + [vf_string] + cmd2 + enc_args + cmd3)
                     except Exception as e:
                         cmd2[cmd2.index('-c:v') + 1] = f'libx{self.video_codec_num}'
-                        logger.exception(f'硬件处理视频合成失败，回退软编 {e}', exc_info=True)
+                        logger.exception(f'Hardware video synthesis failed; retrying with software encoding: {e}', exc_info=True)
                         runffmpeg(cmd0 + cmd1 + subtitle_filter + cmd2 + enc_qua + cmd3,
                                         cmd_dir=self.cfg.cache_folder, force_cpu=True)
         except Exception as e:
@@ -277,7 +277,7 @@ class AssembleMixin:
                 try:
                     shutil.move(tmp_target_mp4, f'{self.cfg.target_dir}/0{_video_output_ext}')
                 except Exception as e:
-                    logger.exception(f'再次复制到目标文件夹内 0{_video_output_ext}也失败 {e}', exc_info=True)
+                    logger.exception(f'Copying to the target folder again also failed: {_video_output_ext}also failed: {e}', exc_info=True)
                     raise VideoTransError(tr('Translation successful but transfer failed.', tmp_target_mp4)) from e
 
         while output_source_output is not True:
@@ -326,7 +326,7 @@ class AssembleMixin:
         if not app_cfg.video_codec:
             app_cfg.video_codec = get_video_codec()
         hw_type = app_cfg.video_codec
-        logger.debug(f'原始{hw_type=}')
+        logger.debug(f'Original{hw_type=}')
 
         if '_' in hw_type:
             _hw_type_list = hw_type.lower().split('_')
@@ -335,7 +335,7 @@ class AssembleMixin:
             else:
                 hw_type = _hw_type_list[1]
 
-        logger.debug(f'整理后{hw_type=}')
+        logger.debug(f'Organized{hw_type=}')
 
         codec = f'{self.video_codec_num}' if not codec else codec
         vcodec = f"libx{codec}"
@@ -406,7 +406,7 @@ class AssembleMixin:
         return global_args, vf_string, vcodec, enc_args
 
     def _subprocess(self, cmd):
-        logger.debug(f'[尝试硬件编解码执行命令]\n{" ".join(cmd)}\n')
+        logger.debug(f'[Attempt hardware decoding with command]\n{" ".join(cmd)}\n')
         try:
             if app_cfg.exit_soft: return
             cmd = ["ffmpeg", '-nostdin'] + cmd
@@ -422,4 +422,4 @@ class AssembleMixin:
             )
             return True
         except subprocess.CalledProcessError as e:
-            raise FFmpegError(f"尝试使用硬件执行命令出错[CalledProcessError]:{e.stderr}\n{e.stdout},{e}") from e
+            raise FFmpegError(f"Failed to execute command using hardware [CalledProcessError]:{e.stderr}\n{e.stdout},{e}") from e

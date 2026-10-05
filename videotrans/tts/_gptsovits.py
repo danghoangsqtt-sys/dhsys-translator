@@ -46,10 +46,10 @@ class GPTSoVITS(BaseTTS):
                 ref_wav_audio=AudioSegment.from_file(ref_wav,format="wav")
                 ms_ref=len(ref_wav_audio)
                 if ms_ref>9990:#大于10s截断
-                    logger.warning(f'参考音频大于10s，需截断:{ref_wav=}')
+                    logger.warning(f'Reference audio is longer than 10s, needs to be truncated:{ref_wav=}')
                     ref_wav_audio[:9990].export(ref_wav,format="wav")
                 elif ms_ref<3000:#大于3s合法
-                    logger.warning(f'参考音频小于3s，无法克隆，跳过:{ref_wav=}')
+                    logger.warning(f'Reference audio is shorter than 3s, cannot clone and skipped:{ref_wav=}')
                     return tr('the reference audio duration is less than 3 seconds')
             else:
                 return 'No reference audio available for voice cloning'+f"\n{self.api_url=}"
@@ -73,7 +73,7 @@ class GPTSoVITS(BaseTTS):
                 self.api_url += '/tts'
         else:
             data['speed']=1.0+self.speed
-        logger.debug(f'GPT-SoVITS 当前需要发送的配音数据:{data=}\n{self.api_url=}')
+        logger.debug(f'GPT-SoVITS dubbing request data: {data=}\n{self.api_url=}')
         # 克隆声音
         try:
             response = requests.post(f"{self.api_url}", json=data,  timeout=3600,proxies={"https":"","http":""})
@@ -89,5 +89,5 @@ class GPTSoVITS(BaseTTS):
             self.convert_to_wav(data_item['filename'] + ".wav", data_item['filename'])
         else:
             error_data=response.text+f"\n{self.api_url=}"
-            logger.error(f'GPT-SoVITS {ref_wav=}\n返回错误:{error_data=}\n')
+            logger.error(f'GPT-SoVITS {ref_wav=}\nReturned error: {error_data=}\n')
             return error_data

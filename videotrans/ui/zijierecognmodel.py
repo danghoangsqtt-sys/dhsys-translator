@@ -30,11 +30,7 @@ class Ui_zijierecognmodel(QDialog):
         self.verticalLayout = QtWidgets.QVBoxLayout(zijierecognform)
         self.verticalLayout.setObjectName("verticalLayout")
 
-        labetips=QtWidgets.QLabel(
-            "字节火山有太多名称类似的语音识别产品，只有【语音识别大模型】下【大模型录音文件极速版识别API】才可在此使用"
-            "\n其他字节大模型语音识别产品，或无法直接上传本地文件，或有其他限制，目前极速版最适合。"
-            "\n这和【字节火山字幕生成】也非同个产品，本API支持语言更多效果更好，并且支持说话人识别"
-            "\n使用前请务必 "+tr("Fill out the tutorial"))
+        labetips=QtWidgets.QLabel(tr('volcengine_asr_model_hint') + '\n' + tr('Fill out the tutorial'))
         self.verticalLayout.addWidget(labetips)
 
         self.formLayout_2 = QtWidgets.QFormLayout()

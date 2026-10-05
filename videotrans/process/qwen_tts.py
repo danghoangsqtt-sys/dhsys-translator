@@ -37,7 +37,7 @@ def qwen3tts_fun(
 
     atten = None
     dtype = 'auto'
-    logger.debug(f'Qwen-TTS本地内置渠道使用 {model_name} 模型')
+    logger.debug(f'Qwen TTS built-in provider loading {model_name} model')
     BASE_OBJ = None
     CUSTOM_OBJ = None
     if is_redubb:
@@ -57,7 +57,7 @@ def qwen3tts_fun(
                     quantization_config=quant,
                     attn_implementation=atten
                 )
-                logger.debug(f'存在内置自定义音色，加载 {model_name} 模型,running on {CUSTOM_OBJ.device}')
+                logger.debug(f'Built-in custom voice is available; loading {model_name} model, running on {CUSTOM_OBJ.device}')
             if ("clone" in all_roles or all_roles - CUSTOM_VOICE) and not BASE_OBJ:
                 # 存在克隆音色
                 BASE_OBJ = Qwen3TTSModel.from_pretrained(
@@ -67,7 +67,7 @@ def qwen3tts_fun(
                     quantization_config=quant,
                     attn_implementation=atten
                 )
-                logger.debug(f'需要克隆音色，加载 {model_name} 模型, running on {BASE_OBJ.device}')
+                logger.debug(f'Voice cloning is required; loading {model_name} model, running on {BASE_OBJ.device}')
 
             _len = len(queue_tts)
             ok, err = 0, 0
@@ -137,9 +137,9 @@ def qwen3tts_fun(
                 continue
             break
         if ok < 1:
-            logger.error(f'配音全部失败：{last_error}')
+            logger.error(f'All dubbing segments failed: {last_error}')
             return False, "Dubbing failed" + last_error
-        logger.debug(f'配音成功{ok}个，失败{err}个')
+        logger.debug(f'Dubbing succeeded for {ok} segments; failed for {err} segments')
         _write_log(logs_file, json.dumps({"type": "logs", "text": f'{ok=},{err=} {last_error}'}))
         return True, None
     except BaseException as e:

@@ -11,7 +11,7 @@ def remove_noise(*, input_file, output_file, **kw):
     import soundfile as sf
 
     _st = time.time()
-    logger.debug(f'开始降噪，使用模型 dpdfnet4')
+    logger.debug(f'Start Denoising, using model dpdfnet4')
 
     def load_audio(filename: str):
         samples, sample_rate = sf.read(
@@ -43,11 +43,11 @@ def remove_noise(*, input_file, output_file, **kw):
         tmp_name = Path(output_file).parent.as_posix() + f'/noise-{time.time()}.wav'
         sf.write(tmp_name, denoised.samples, denoised.sample_rate)
         runffmpeg(['-y', '-i', tmp_name, '-af', "volume=1.5", output_file])
-        logger.debug(f'降噪成功完成，耗时:{int(time.time() - _st)}s')
+        logger.debug(f'Denoising completed successfully, took:{int(time.time() - _st)}s')
         return output_file, None
     except Exception as e:
         msg = traceback.format_exc()
-        logger.exception(f'降噪失败{e}:{msg}', exc_info=True)
+        logger.exception(f'Denoising failed{e}:{msg}', exc_info=True)
         return False, f'{e}{msg}'
 
 
@@ -58,7 +58,7 @@ def fix_punc(*, text_dict_file: str, **kw):
         if not Path(model).is_file():
             raise ValueError(f"{model} does not exist")
         _st = time.time()
-        logger.debug(f'开始标点恢复')
+        logger.debug(f'Start Punctuation Restoration')
         text_dict_obj = json.loads(Path(text_dict_file).read_text(encoding='utf-8'))
 
         config = sherpa_onnx.OfflinePunctuationConfig(
@@ -72,9 +72,9 @@ def fix_punc(*, text_dict_file: str, **kw):
             text_with_punct = punct.add_punctuation(text)
             _text_dict_obj[line] = text_with_punct
         Path(text_dict_file).write_text(json.dumps(_text_dict_obj), encoding="utf-8")
-        logger.debug(f'标点恢复完成，耗时:{int(time.time() - _st)}s')
+        logger.debug(f'Punctuation restoration completed successfully, took:{int(time.time() - _st)}s')
         return True, None
     except Exception as e:
         msg = traceback.format_exc()
-        logger.exception(f'恢复标点失败{e}:{msg}', exc_info=True)
+        logger.exception(f'Punctuation restoration failed{e}:{msg}', exc_info=True)
         return False, f'{e}{msg}'

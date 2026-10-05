@@ -67,7 +67,7 @@ class BaseTTS(BaseCon):
         if self._exit(): return
         from videotrans.configure.excepts import DubbingSrtError
         _tts_name=get_tts_type(self.tts_type)
-        logger.debug(f'当前使用配音渠道：{_tts_name}')
+        logger.debug(f'Current TTS channel in use:{_tts_name}')
         self.signal(text=f"{_tts_name} starting: [len={self.len}]")
         loop = None
         try:
@@ -103,9 +103,9 @@ class BaseTTS(BaseCon):
                raise  DownloadModelsError(tr('model incomplete error',self.local_dir,tr('Help document'))+f'\n{self=}')
             raise
         except RuntimeError as e:
-            logger.warning(f'TTS 线程运行时发生错误: {e}')
+            logger.warning(f'TTS thread encountered an error: {e}')
             if 'Event loop' in str(e):
-                logger.warning("捕获到 'Event loop is closed' 错误，这通常是关闭时序问题。")
+                logger.warning("'Event loop is closed' error captured, usually indicative of a timing issue when closing.")
             else:
                 raise
 
@@ -115,7 +115,7 @@ class BaseTTS(BaseCon):
             if vail_file(self.queue_tts[0]['filename']):
                 return pygameaudio(self.queue_tts[0]['filename'])
 
-            logger.error(f'试听配音时发生错误{self.error}')
+            logger.error(f'Error during auditioning of voice:{self.error}')
             if isinstance(self.error, RetryError):
                 raise self.error.last_attempt.exception()
             if not self.error:
@@ -131,12 +131,12 @@ class BaseTTS(BaseCon):
         # 只有全部配音都失败，才视为失败
         if succeed_nums < 1:
             if self._exit(): return
-            logger.error(f'本次配音全部失败：{self.error}\n{self=}')
+            logger.error(f'All voice recordings failed for this session:{self.error}\n{self=}')
             if isinstance(self.error, Exception):
                 raise self.error.last_attempt.exception() if isinstance(self.error, RetryError) else self.error
 
             raise DubbingSrtError(tr("Dubbing failed") + str(self.error)+f'\n{self.model_name=}\n{self=}')
-        logger.debug(f'本次 {_tts_name} 配音成功 {succeed_nums} 个，失败 {self.len - succeed_nums} 个')
+        logger.debug(f'This run: {_tts_name} dubbing segments succeeded; {succeed_nums} voice recording(s) failed {self.len - succeed_nums} segments')
         self.signal(text=tr("Dubbing succeeded {}，failed {}", succeed_nums, self.len - succeed_nums))
 
     # 若子类未重写  _exec(), 则默认调用该方法
@@ -146,7 +146,7 @@ class BaseTTS(BaseCon):
         from videotrans.configure.excepts import StopTask
         # 单个字幕行，无需多线程
         if len(self.queue_tts) == 1 or self.dub_nums == 1:
-            logger.debug(f'设定最大配音线程: {self.dub_nums},实际 单线程配音, 待配音字幕长度: {self.len}, 配音后暂停{self.wait_sec}s')
+            logger.debug(f'Max Voices Threads: {self.dub_nums}, actual single-thread voice synthesis, subtitle length to be synthesized: {self.len}, after voice synthesis pause time:{self.wait_sec}s')
             for k, item in enumerate(self.queue_tts):
                 if self._exit(): return
                 if not item.get('text').strip() or vail_file(item['filename']):
@@ -166,7 +166,7 @@ class BaseTTS(BaseCon):
         all_task = []
         _wok=max(min(self.dub_nums, len(self.queue_tts)),2)
         pool = ThreadPoolExecutor(max_workers=_wok)
-        logger.debug(f'设定配音最大线程数: {self.dub_nums},实际 {_wok} 线程配音, 待配音字幕长度: {self.len}')
+        logger.debug(f'Max Voice Synthesis Threads: {self.dub_nums}, actual {_wok} threads for voice synthesis, subtitle length to be synthesized: {self.len}')
         try:
             completed_tasks = 0
             for k, item in enumerate(self.queue_tts):
@@ -213,10 +213,10 @@ class BaseTTS(BaseCon):
             self.signal(text=f'{tr("Dubbing")} {idx}/{self.len}')
             return self._run(data_item,idx)
         except RetryError as e:
-            logger.exception(f'\n第{idx}条字幕配音失败,字幕文本:{data_item}\n{e}', exc_info=True)
+            logger.exception(f'\nSubtitle dubbing segment {idx} failed; subtitle text: {data_item}\n{e}', exc_info=True)
             return e.last_attempt.exception()
         except Exception as e:
-            logger.exception(f'\n第{idx}条字幕配音失败,字幕文本:{data_item}\n{e}', exc_info=True)
+            logger.exception(f'\nSubtitle dubbing segment {idx} failed; subtitle text: {data_item}\n{e}', exc_info=True)
             return e
 
     # 子类未重写 _exec 方法时，则必须实现该方法
@@ -240,7 +240,7 @@ class BaseTTS(BaseCon):
                 try:
                     self.queue_tts[i]['text'] = normalizer(it['text'])
                 except Exception as e:
-                    logger.exception(f'文本规范化失败，忽略:{it["text"]=},{e}', exc_info=True)
+                    logger.exception(f'Text Normalization Failed, Ignored:{it["text"]=},{e}', exc_info=True)
 
         volume = self.queue_tts[0].get('volume', '+0%')
         volume = f'+{volume}' if re.match(r'^\d+(\.\d+)?%$', volume) else volume

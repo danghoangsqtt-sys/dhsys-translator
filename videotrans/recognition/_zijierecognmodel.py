@@ -17,14 +17,14 @@ from videotrans.util.help_ffmpeg import runffmpeg,get_audio_time
 from videotrans.util._srt_parse import ms_to_time_string
 
 _error = {
-    "20000003": "静音音频",
+    "20000003": "Silent audio",
 
-    "45000001": "请求参数缺失必需字段 / 字段值无效",
-    "45000002": "空音频",
-    "45000151": "音频格式不正确",
+    "45000001": "Missing required fields in request parameters / Invalid field value",
+    "45000002": "Empty audio",
+    "45000151": "Incorrect audio format",
 
-    "550XXXX": "服务内部处理错误",
-    "55000031": "服务器繁忙"
+    "550XXXX": "Internal service error",
+    "55000031": "Server Busy"
 }
 
 @dataclass
@@ -61,7 +61,7 @@ class ZijieRecogn(BaseRecogn):
                 else:
                     audio_data[_start_ms:_start_ms+_chunk_ms].export(_chunk_mp3,format="mp3")
                 mp3_list.append({"offset":_start_ms,"filename":_chunk_mp3})
-            logger.debug(f'字节语音大模型极速版：当前待识别音频时长超过2个小时({audio_ms/1000}s)，按每小时切分为 {_total} 片\n{mp3_list=}')
+            logger.debug(f'Volcengine fast ASR: input audio is longer than two hours ({audio_ms/1000}s), split into {_total} hourly clips\n{mp3_list=}')
 
 
         submit_url = "https://openspeech.bytedance.com/api/v3/auc/bigmodel/recognize/flash"
@@ -104,14 +104,14 @@ class ZijieRecogn(BaseRecogn):
             response.raise_for_status()
             code = response.headers.get('X-Api-Status-Code')
             if not code:
-                raise SpeechToTextError(f"未知错误:{response.text=},{response.headers=}")
+                raise SpeechToTextError(f"Unknown Error:{response.text=},{response.headers=}")
             if str(code) != "20000000":
-                raise SpeechToTextError(_error.get(str(code), '未知错误'))
+                raise SpeechToTextError(_error.get(str(code), 'Unknown Error'))
 
             res = response.json()
             seg_list = res.get('result', {}).get('utterances')
             if not seg_list:
-                raise SpeechToTextError(f'返回数据中无识别结果:{response=}')
+                raise SpeechToTextError(f'No recognition results in returned data:{response=}')
 
 
             srt_strings = ""

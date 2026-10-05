@@ -54,7 +54,7 @@ class Gemini(BaseTrans):
                 generation_config=generation_config
             )
             if not result:
-                logger.warning(f'[gemini]请求失败')
+                logger.warning(f'[gemini]Request Failed')
                 raise TranslateSrtError(f"[Gemini]result is empty")
 
             match = re.search(r'<TRANSLATE_TEXT>(.*?)(?:</TRANSLATE_TEXT>|$)',

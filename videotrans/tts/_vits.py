@@ -196,4 +196,4 @@ class VitsCNEN(BaseTTS):
 
 
         self.signal(text=msg)
-        logger.debug(f'vits配音结束：{msg}')
+        logger.debug(f'VITS voice finished:{msg}')

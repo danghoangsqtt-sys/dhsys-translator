@@ -13,7 +13,7 @@ from videotrans.util.help_srt import get_subtitle_from_srt, simple_wrap, set_ass
 class SubtitleMixin:
 
     def _process_subtitles(self) -> Union[tuple[str, str], None]:
-        logger.debug(f"\n======准备要嵌入的字幕:{self.cfg.subtitle_type=}===={self.cfg.target_sub=}=")
+        logger.debug(f"\n======Subtitle to be Embedded Preparation:{self.cfg.subtitle_type=}===={self.cfg.target_sub=}=")
         if not Path(self.cfg.target_sub).exists() :
             raise VideoTransError(tr("No valid subtitle file exists")+self.cfg.target_sub)
 
@@ -62,7 +62,7 @@ class SubtitleMixin:
 
         subtitle_langcode = translator.get_subtitle_code(show_target=self.cfg.target_language)
         logger.debug(
-            f'最终确定字幕嵌入类型:{self.cfg.subtitle_type} ,目标字幕语言:{subtitle_langcode}, 字幕文件:{process_end_subtitle}\n')
+            f'Finalize Subtitle Embedding Type:{self.cfg.subtitle_type} , Target Subtitle Language:{subtitle_langcode}, Subtitle File:{process_end_subtitle}\n')
         if self.cfg.subtitle_type in [2, 4]:
             return os.path.basename(process_end_subtitle), subtitle_langcode
 
@@ -77,7 +77,7 @@ class SubtitleMixin:
         try:
             assjson = json.loads(Path(f'{ROOT_DIR}/videotrans/ass.json').read_text(encoding='utf-8'))
         except Exception:
-            logger.warning(f'未自定义样式 ass.json ，忽略')
+            logger.warning(f'No Customized Style ass.json, Ignored')
             return _join_flag
         else:
             for k, v in assjson.items():

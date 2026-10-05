@@ -91,7 +91,7 @@ def openwin():
                 app_cfg.video_codec = get_video_codec()
 
             hw_type = app_cfg.video_codec
-            logger.debug(f'原始{hw_type=}')
+            logger.debug(f'Original{hw_type=}')
 
             if '_' in hw_type:
                 _hw_type_list = hw_type.lower().split('_')
@@ -100,7 +100,7 @@ def openwin():
                 else:
                     hw_type = _hw_type_list[1]
 
-            logger.debug(f'整理后{hw_type=}')
+            logger.debug(f'Organized{hw_type=}')
             vcodec = f"libx264"
             _crf = f'{settings.get("crf", 23)}'
 
@@ -298,7 +298,7 @@ def openwin():
                             if app_cfg.exit_soft: return
                             novoice_mp4 = f'{novoice_mp4}-clone.mp4'
                         except Exception as e:
-                            logger.exception(f'VAS合并期间，延长视频末端失败，将保持原样:{e}')
+                            logger.exception(f'Failed to extend the video ending during VAS assembly; keeping the original: {e}')
 
                     # 视频音频合并
                     audiovideoend_mp4 = config.TEMP_DIR + f"/vad-end-{time.time()}.mp4"
@@ -391,7 +391,7 @@ def openwin():
                 self.is_end = True
 
         def _subprocess(self, cmd):
-            print(f'[尝试硬件编解码执行命令]\n{" ".join(cmd)}\n')
+            print(f'[Attempt hardware decoding with command]\n{" ".join(cmd)}\n')
 
             if app_cfg.exit_soft: return
             cmd = ["ffmpeg", '-nostdin'] + cmd

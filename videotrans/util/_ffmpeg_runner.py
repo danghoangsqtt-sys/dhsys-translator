@@ -61,13 +61,13 @@ def runffmpeg(arg, *, noextname=None, force_cpu=True, cmd_dir=None,state_dict=No
             app_cfg.queue_novice[noextname] = "end"
         return True
     except FileNotFoundError as e:
-        logger.error(f"命令未找到: {cmd[0]}。请确保 ffmpeg 已安装并在系统 PATH 中。")
+        logger.error(f"Command not found: {cmd[0]}. Please ensure that ffmpeg is installed and in your system PATH.")
         if noextname:
             app_cfg.queue_novice[noextname] = f"error:{e}"
         raise
     except subprocess.CalledProcessError as e:
         error_message = e.stderr or ""
-        logger.error(f"FFmpeg 命令执行失败 (force_cpu={force_cpu})。\n命令: {' '.join(cmd)}\n错误: {error_message} {e.stdout}")
+        logger.error(f"FFmpeg command execution failed (force_cpu={force_cpu})\nCommand: {' '.join(cmd)}\nError: {error_message} {e.stdout}")
         err = extract_concise_error(e.stderr,e.stdout)
         if noextname:
             app_cfg.queue_novice[noextname] = f"error:{err}"
@@ -79,7 +79,7 @@ def runffmpeg(arg, *, noextname=None, force_cpu=True, cmd_dir=None,state_dict=No
     except Exception as e:
         if noextname:
             app_cfg.queue_novice[noextname] = f"error:{e}"
-        logger.error(f"执行 ffmpeg 时发生未知错误,{cmd=}:\n{e}")
+        logger.error(f"An unknown error occurred while executing ffmpeg.{cmd=}:\n{e}")
         raise
 
 
