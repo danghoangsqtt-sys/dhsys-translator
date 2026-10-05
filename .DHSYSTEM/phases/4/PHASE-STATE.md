@@ -26,7 +26,7 @@
 | 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
 | 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
 
-Phase state: in_progress. Tasks 4.1–4.14 and ENH-003 are verified locally; Task 4.14 upstream persistence plus the separate Phase 3 clean-runner/release gates remain open.
+Phase state: in_progress. Tasks 4.1–4.14 and ENH-003 are verified; Task 4.14 is persisted to `origin/main` at `93497188`. The separate Phase 3 clean-runner/release gates remain open.
 
 ## Task 4.14 evidence — 2026-10-05
 
@@ -34,6 +34,7 @@ Phase state: in_progress. Tasks 4.1–4.14 and ENH-003 are verified locally; Tas
 - Completion receipts show mode, video/SRT paths, bilingual order and the instruction to enable the subtitle track for soft-subtitle video.
 - Product-pipeline FFmpeg fixtures pass: hard subtitles change decoded frame pixels; soft subtitles contain exactly one `mov_text` stream tagged `vie` by `ffprobe`. Bilingual hard/soft fixtures retain both source/target orders.
 - Python 3.12.14: 38 focused state/UI tests, 104 related UI/config/task tests, 2 media tests and 613 full tests pass; the only full-suite warning is external `pydub` use of deprecated `audioop`.
+- Commit `93497188` plus tags `pyVideoTrans-DH-p4-t4.14` and `pyVideoTrans-DH-p4-t4.14-done` are present on the GitHub remote.
 - Phase 3 clean-runner, provider-backed media and release gates remain independent and open.
 
 ## Task 4.12 evidence — 2026-10-05

@@ -74,6 +74,6 @@ Kết thúc mỗi task, báo ngắn gọn: thay đổi gì, file chính, test/ga
 ## Trạng thái tại thời điểm bàn giao
 
 - Task tiếp theo: **4.15 — sidebar theo tác vụ và provider profiles có thể đảo ngược**.
-- Tasks 4.13–4.14 đã hoàn tất code và kiểm thử local; trạng thái persistence của 4.14 được chốt sau khi commit/tag bàn giao xuất hiện trên GitHub.
+- Tasks 4.13–4.14 đã hoàn tất và được lưu trên GitHub; Task 4.14 ở commit `93497188` với hai tag start/done tương ứng.
 - Phase 3 clean-runner/full-media/release gates vẫn độc lập và chưa được phép đánh dấu hoàn tất chỉ vì Phase 4 tiếp tục.
 - Không có API key hoặc tệp cấu hình bí mật được chủ động đưa vào commit bàn giao.
