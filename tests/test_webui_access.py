@@ -7,6 +7,12 @@ from pathlib import Path
 from webui import _collect_artifacts, _webui_auth
 
 
+def test_webui_uses_supported_shared_ui_locale():
+    import webui
+
+    assert webui.WEBUI_LOCALE in {"vi_VN", "en_US"}
+
+
 @pytest.mark.parametrize('source,target', [('en', 'zh-cn'), ('English', 'Simplified Chinese')])
 def test_saved_languages_build_valid_ui_and_voice_roles(monkeypatch, source, target):
     import warnings

@@ -12,10 +12,16 @@
 | 4.8 Responsive home and core utility surfaces | verified locally; persistence pending | Home cards, core quick tools, light-table parity and compact Vietnamese navigation at 480/720/900/1280 px |
 | 4.9 Two UI locales and legacy migration | verified locally; persistence pending | `vi_VN`/`en_US` allowlist; old Chinese UI settings migrate; Chinese media codes preserved; 567 source tests pass |
 | 4.10 Application-authored runtime messages | verified locally; persistence pending | Task summary, progress, errors, settings and provider dialogs use Vietnamese/English; Chinese media text untouched |
-| 4.11 CLI/WebUI locale parity | planned | CLI/WebUI messages use Vietnamese/English; Chinese remains source/target content language |
+| 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
 | 4.12 Packaged and Chinese-media regression | planned | Full suite, frozen UI smoke, legacy-data migration and short Chinese-media flow evidenced |
 
-Phase state: in_progress. Tasks 4.1–4.10 are verified locally; ENH-003 tasks 4.11–4.12 are planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+Phase state: in_progress. Tasks 4.1–4.11 are verified locally; ENH-003 task 4.12 is planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+
+## Task 4.11 evidence — 2026-10-05
+
+- The CLI runtime catalog contains only Vietnamese and English, maps legacy Chinese UI locale aliases to English, and preserves Chinese media codes and voice identifiers in examples and task parameters.
+- WebUI no longer overrides the shared configured locale with English. The shared locale resolver restricts it to `vi_VN`/`en_US`; its interface source has no Han-character text.
+- Focused CLI/WebUI/language suite: 109 passed. Full Python 3.12 source suite: 575 passed with one external `pydub` deprecation warning. Frozen verification remains task 4.12.
 
 ## Task 4.10 evidence — 2026-10-05
 

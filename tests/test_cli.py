@@ -5,6 +5,7 @@ Uses conftest.py mocks for heavy dependencies (PySide6, torch, etc.)
 """
 
 import logging
+import re
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -53,9 +54,9 @@ class TestTEXTDB:
                      "err_tts_role_required", "err_sts_target_required", "err_vtv_missing"):
             assert key in TEXT_DB, f"Missing error key: {key}"
 
-    def test_zh_and_en_present_in_all_entries(self):
+    def test_vi_and_en_present_in_all_entries(self):
         for key, val in TEXT_DB.items():
-            assert "zh" in val, f"TEXT_DB[{key}] missing 'zh'"
+            assert "vi" in val, f"TEXT_DB[{key}] missing 'vi'"
             assert "en" in val, f"TEXT_DB[{key}] missing 'en'"
 
     def test_help_keys_exist(self):
@@ -64,13 +65,19 @@ class TestTEXTDB:
             assert key in TEXT_DB, f"Missing help key: {key}"
 
     def test_format_placeholders_consistent(self):
-        """All entries with {} in zh must also have {} in en."""
+        """All entries with {} in Vietnamese must also have {} in English."""
         for key, val in TEXT_DB.items():
-            zh_count = val.get("zh", "").count("{}")
+            vi_count = val.get("vi", "").count("{}")
             en_count = val.get("en", "").count("{}")
-            assert zh_count == en_count, (
-                f"TEXT_DB[{key}]: zh has {zh_count} placeholders, en has {en_count}"
+            assert vi_count == en_count, (
+                f"TEXT_DB[{key}]: vi has {vi_count} placeholders, en has {en_count}"
             )
+
+    def test_cli_catalog_exposes_only_vietnamese_and_english(self):
+        han = re.compile(r"[\u3400-\u9fff]")
+        for key, translations in TEXT_DB.items():
+            assert set(translations) == {"vi", "en"}, key
+            assert not any(han.search(text) for text in translations.values()), key
 
 
 # ===========================================================================
@@ -82,11 +89,16 @@ class TestTrFunction:
         result = tr("exec_stt_task")
         assert "Speech Transcription" in result
 
-    def test_tr_returns_zh_when_set(self):
-        set_lang("zh")
+    def test_tr_returns_vi_when_set(self):
+        set_lang("vi")
         result = tr("exec_stt_task")
-        assert "语音转录" in result
+        assert "Chuyển giọng nói" in result
         set_lang("en")  # restore
+
+    def test_legacy_chinese_ui_locale_uses_english(self):
+        set_lang("zh_CN")
+        assert "Speech Transcription" in tr("exec_stt_task")
+        set_lang("en")
 
     def test_tr_with_format_args(self):
         set_lang("en")
@@ -105,8 +117,8 @@ class TestTrFunction:
 
     def test_tr_fallback_to_en(self):
         """If current lang entry is missing, fall back to 'en'."""
-        set_lang("zh")
-        # All keys have zh, so test with a hypothetical missing one
+        set_lang("vi")
+        # All keys have Vietnamese, so test the English fallback path.
         # We can test the fallback logic by checking that en is used as default
         set_lang("en")
         result = tr("exec_stt_task")
@@ -118,15 +130,14 @@ class TestSetLang:
     def test_set_lang_updates_global(self):
         import cli
         original = cli._lang
-        set_lang("zh")
-        assert cli._lang == "zh"
+        set_lang("vi_VN")
+        assert cli._lang == "vi"
         set_lang(original)
 
-    def test_set_lang_rejects_invalid(self):
-        """set_lang should still accept any string (no validation in current impl)."""
+    def test_set_lang_normalizes_unsupported_locale_to_english(self):
         set_lang("fr")
         import cli
-        assert cli._lang == "fr"
+        assert cli._lang == "en"
         set_lang("en")  # restore
 
 
@@ -587,7 +598,7 @@ class TestListProviders:
     def test_list_providers_runs(self, capsys):
         list_providers()
         captured = capsys.readouterr()
-        assert "Speech Recognition" in captured.out or "语音识别" in captured.out
+        assert "Speech Recognition" in captured.out or "Nhận dạng giọng nói" in captured.out
 
     def test_list_providers_shows_indices(self, capsys):
         list_providers()
@@ -599,7 +610,7 @@ class TestListLanguages:
     def test_list_languages_runs(self, capsys):
         list_languages()
         captured = capsys.readouterr()
-        assert "Language" in captured.out or "语言" in captured.out
+        assert "Language" in captured.out or "ngôn ngữ" in captured.out
 
     def test_list_languages_shows_codes(self, capsys):
         list_languages()

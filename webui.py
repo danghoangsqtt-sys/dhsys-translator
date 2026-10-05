@@ -70,23 +70,19 @@ if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 # ---------------------------------------------------------------------------
-# Language constant
-# ---------------------------------------------------------------------------
-CLI_LANG = "en"
-os.environ['PYVIDEOTRANS_LANG'] = CLI_LANG
-
-# ---------------------------------------------------------------------------
 # Initialize videotrans environment
 # ---------------------------------------------------------------------------
 from videotrans.configure import config
 config.init_run()
 
-from videotrans.configure.config import ROOT_DIR, TEMP_DIR, app_cfg, params, settings
+from videotrans.configure.config import ROOT_DIR, TEMP_DIR, app_cfg, params, settings, defaulelang
 from videotrans.configure.constants import FASTER_MODELS_DICT, DEEPGRAM_MODEL, Openai_Whisper_Models, FUNASR_MODEL
 from videotrans import recognition, translator, tts
 from videotrans.util import tools
 from videotrans.util.gpus import getset_gpu
 from videotrans.util.help_role import role_menu
+
+WEBUI_LOCALE = defaulelang
 
 # ---------------------------------------------------------------------------
 # params / settings persistent paths
@@ -215,7 +211,7 @@ def _save_ass_style(s):
 
 
 # ---------------------------------------------------------------------------
-# 辅助函数
+# Helper functions
 # ---------------------------------------------------------------------------
 def _lang_code_from_display(d):
     for code, name in LANGNAME_DICT.items():

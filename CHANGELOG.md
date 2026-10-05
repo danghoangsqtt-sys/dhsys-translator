@@ -2,9 +2,11 @@
 
 ## Unreleased
 
-Planned for 4.15.0 (ENH-003, after the pending 4.14.1 repair release): offer Vietnamese and English as the only application UI/message locales while retaining Chinese speech recognition, translation, subtitle and voice support. Task 4.9 is verified locally; the current manifest remains 4.14.
+Planned for 4.15.0 (ENH-003, after the pending 4.14.1 repair release): offer Vietnamese and English as the only application UI/message locales while retaining Chinese speech recognition, translation, subtitle and voice support. Tasks 4.9–4.11 are verified locally; the current manifest remains 4.14.
 
 - Desktop UI now loads and packages only Vietnamese and English locales; saved Chinese UI settings migrate to English, while Chinese media languages and voices remain available.
+
+- Application-authored desktop status, errors, settings and provider dialogs now use Vietnamese or English. CLI output exposes only Vietnamese and English, and WebUI follows the shared locale allowlist without removing Chinese media language codes or voices.
 
 - The home page and four primary quick tools now fit narrow desktop windows; Multiple speakers follows the light table style, and compact Vietnamese navigation reads “Danh mục”. Existing routes and processing behavior remain unchanged.
 
