@@ -63,7 +63,7 @@ def cleanup():
 
 def show_global_error_dialog(exctype, value, tb):
     tb_str = "".join(traceback.format_exception(exctype, value, tb))
-    title = {'vi_VN': 'Lỗi', 'zh_CN': '错误'}.get(_splash_locale(), 'Error')
+    title = {'vi_VN': 'Lỗi'}.get(_splash_locale(), 'Error')
     QMessageBox.critical(None, title, tb_str)
 
 
@@ -85,14 +85,6 @@ _SPLASH_COPY = {
         'loading': 'Preparing your workspace',
         'ready': 'Ready',
     },
-    'zh_CN': {
-        'brand': '视频工作室',
-        'top': '创作空间',
-        'eyebrow': '声音 · 语言 · 画面',
-        'title': '让每种语言都能理解你的故事。',
-        'loading': '正在准备工作空间',
-        'ready': '准备就绪',
-    },
 }
 
 
@@ -105,8 +97,10 @@ def _splash_locale():
         except (OSError, ValueError, AttributeError):
             pass
     aliases = {'vi': 'vi_VN', 'vi-vn': 'vi_VN', 'en': 'en_US',
-               'zh': 'zh_CN', 'zh-cn': 'zh_CN'}
-    return aliases.get(str(lang).lower(), lang) if lang in _SPLASH_COPY or str(lang).lower() in aliases else 'vi_VN'
+               'en-us': 'en_US', 'zh': 'en_US', 'zh-cn': 'en_US',
+               'zh-tw': 'en_US'}
+    selected = aliases.get(str(lang).strip().lower().replace('_', '-'), lang)
+    return selected if selected in _SPLASH_COPY else 'vi_VN'
 
 
 class SplashArtwork(QWidget):
@@ -331,10 +325,9 @@ if __name__ == "__main__":
             Path(tempfile.gettempdir()).as_posix()):
         msg_box = QMessageBox()
         msg_box.setIcon(QMessageBox.Critical)
-        msg_box.setWindowTitle({'vi_VN': 'Lỗi', 'zh_CN': '错误'}.get(_splash_locale(), 'Error'))
+        msg_box.setWindowTitle({'vi_VN': 'Lỗi'}.get(_splash_locale(), 'Error'))
         msg_box.setText({
             'vi_VN': 'Hãy giải nén toàn bộ gói rồi mở sp.exe. Không chạy trực tiếp từ tệp nén.',
-            'zh_CN': '请先完整解压，然后运行 sp.exe。不要直接从压缩包启动。',
         }.get(_splash_locale(), 'Extract the complete archive before opening sp.exe.'))
         msg_box.setWindowFlags(msg_box.windowFlags() | Qt.WindowStaysOnTopHint)
         msg_box.exec()

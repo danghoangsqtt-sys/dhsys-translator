@@ -91,6 +91,8 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
             action.trigger()
 
     def _set_home_locale(self, locale):
+        if locale not in ('vi_VN', 'en_US'):
+            return
         if locale == config.defaulelang:
             return
         reply = QMessageBox.question(

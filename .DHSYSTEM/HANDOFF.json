@@ -23,7 +23,7 @@
       "4.7",
       "4.8"
     ],
-    "status": "tasks 4.1-4.8 verified locally; ENH-003 localization tasks 4.9-4.12 planned; persistence pending",
+    "status": "tasks 4.1-4.9 verified locally; ENH-003 localization tasks 4.10-4.12 planned; persistence pending",
     "planned_request": "ENH-003",
     "planned_tasks": ["4.9", "4.10", "4.11", "4.12"],
     "planned_target_version": "4.15.0 after pending 4.14.1 repair release",

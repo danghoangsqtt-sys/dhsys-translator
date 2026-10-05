@@ -27,6 +27,7 @@ def test_home_routes_to_existing_tools_and_workspace():
 
 def test_home_language_choice_emits_locale():
     page = HomePage('vi_VN')
+    assert [page.language.itemData(i) for i in range(page.language.count())] == ['vi_VN', 'en_US']
     selected = []
     page.locale_requested.connect(selected.append)
     page.language.setCurrentIndex(page.language.findData('en_US'))

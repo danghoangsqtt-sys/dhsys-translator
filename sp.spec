@@ -85,7 +85,10 @@ def collect_data_files():
     # Language JSON files
     lang_dir = PROJECT_ROOT / "videotrans" / "language"
     if lang_dir.exists():
-        for f in lang_dir.rglob("*.json"):
+        for name in ("vi_VN.json", "en_US.json"):
+            f = lang_dir / name
+            if not f.is_file():
+                continue
             rel = f.relative_to(PROJECT_ROOT)
             data_files.append((str(f), str(rel.parent)))
 

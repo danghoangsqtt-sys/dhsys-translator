@@ -4,13 +4,12 @@ import os
 from functools import lru_cache
 from pathlib import Path
 
-from PySide6.QtCore import QLocale
-
 from videotrans.configure._paths import ROOT_DIR
 
 # Module-level state, set via _init_language()
 defaulelang = None
 _transobj = None
+UI_LOCALES = ('vi_VN', 'en_US')
 
 
 @lru_cache(maxsize=None)
@@ -18,9 +17,10 @@ def _get_langjson_list():
     lang_dir = Path(f'{ROOT_DIR}/videotrans/language')
     _SUPPORT_LANG = {}
     if lang_dir.exists():
-        for it in lang_dir.glob('*.json'):
-            if it.stat().st_size > 0:
-                _SUPPORT_LANG[it.stem] = it.as_posix()
+        for locale in UI_LOCALES:
+            it = lang_dir / f'{locale}.json'
+            if it.is_file() and it.stat().st_size > 0:
+                _SUPPORT_LANG[locale] = it.as_posix()
     return _SUPPORT_LANG
 
 
@@ -40,29 +40,29 @@ def _get_transobj(lang:str=None):
     return _tobj
 
 def _normalize_ui_locale(value):
-    """Resolve documented short CLI aliases without changing other locale names."""
+    """Resolve UI aliases; legacy Chinese UI settings migrate to English."""
     if not isinstance(value, str):
         return value
-    aliases = {'en': 'en_US', 'zh': 'zh_CN', 'zh-cn': 'zh_CN',
-               'vi': 'vi_VN', 'vi-vn': 'vi_VN'}
-    return aliases.get(value.lower(), value)
+    aliases = {'en': 'en_US', 'en-us': 'en_US', 'zh': 'en_US',
+               'zh-cn': 'en_US', 'zh-tw': 'en_US', 'vi': 'vi_VN',
+               'vi-vn': 'vi_VN'}
+    return aliases.get(value.strip().lower().replace('_', '-'), value)
 
 
 def _init_language(settings):
     global defaulelang, _transobj
     SUPPORT_LANG = _get_langjson_list()
-    try:
-        requested = os.environ.get('PYVIDEOTRANS_LANG') or settings.lang
-        _lang = _normalize_ui_locale(requested) if requested else 'vi_VN'
-        if not _lang or not SUPPORT_LANG.get(_lang) or not Path(SUPPORT_LANG.get(_lang)).exists():
-            _lang = QLocale.system().name()
-    except Exception:
-        _lang = "vi_VN"
-
-    if _lang not in SUPPORT_LANG:
-        _lang = "vi_VN" if 'vi_VN' in SUPPORT_LANG else "en_US"
-    if not settings.lang:
-        settings.lang = _lang
+    original = settings.lang
+    saved = _normalize_ui_locale(original) if original else 'vi_VN'
+    if saved not in SUPPORT_LANG:
+        saved = 'vi_VN' if 'vi_VN' in SUPPORT_LANG else 'en_US'
+    requested = os.environ.get('PYVIDEOTRANS_LANG')
+    selected = _normalize_ui_locale(requested) if requested else saved
+    _lang = selected if selected in SUPPORT_LANG else saved
+    if not original:
+        saved = _lang
+    if settings.lang != saved:
+        settings.lang = saved
         settings.save()
     defaulelang = _lang
     _transobj = _get_transobj(defaulelang)

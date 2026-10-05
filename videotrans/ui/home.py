@@ -79,7 +79,7 @@ class HomePage(QWidget):
         language_label.setObjectName("muted")
         language_area.addWidget(language_label)
         self.language = QComboBox()
-        for label, code in (("Tiếng Việt", "vi_VN"), ("English", "en_US"), ("中文", "zh_CN")):
+        for label, code in (("Tiếng Việt", "vi_VN"), ("English", "en_US")):
             self.language.addItem(label, code)
         self.reset_locale(locale)
         self.language.currentIndexChanged.connect(self._request_locale)

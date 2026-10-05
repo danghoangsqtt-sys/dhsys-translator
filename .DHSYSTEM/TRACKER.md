@@ -1,10 +1,10 @@
 # Tracker
 
-- Backlog: [ENH-003](requests/ENH-003.md) — chỉ hỗ trợ giao diện/thông báo tiếng Việt và tiếng Anh; giữ đầy đủ chức năng xử lý nội dung tiếng Trung (P1, triaged; Phase 4 tasks 4.9–4.12 planned from `feaf5fe7`).
+- Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; task 4.9 verified locally, 4.10–4.12 pending).
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
-- Parallel UI task: 4.8 responsive home and core utility surfaces deployed and verified locally; tasks 4.1–4.8 verified locally; persistence pending
+- Parallel UI task: 4.9 two UI locales and legacy Chinese setting migration verified locally (567 Python 3.12 tests); tasks 4.1–4.9 verified locally; persistence pending
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress with the frozen startup contention repair verified locally; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)

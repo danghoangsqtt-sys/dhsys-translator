@@ -1,6 +1,6 @@
 import platform
 
-from videotrans.configure.config import tr, defaulelang
+from videotrans.configure.config import tr
 from videotrans.recognition import ALLOW_CHANGE_MODEL
 
 class WinActionBaseModeMixin:
@@ -30,8 +30,7 @@ class WinActionBaseModeMixin:
         self.main.label_3.show()
         self.main.target_language.show()
         self.main.label.show()
-        if defaulelang == 'zh_CN':
-            self.main.proxy.show()
+        self.main.proxy.show()
 
         self.main.tts_text.show()
         self.main.tts_type.show()
@@ -93,8 +92,7 @@ class WinActionBaseModeMixin:
         self.main.label_3.show()
         self.main.target_language.show()
         self.main.label.show()
-        if defaulelang == 'zh_CN':
-            self.main.proxy.show()
+        self.main.proxy.show()
 
         self.main.recogn2pass.hide()
         self.main.only_out_mp4.hide()
