@@ -6,7 +6,7 @@
 | --- | --- | --- |
 | 4.13 Subtitle correction operability and contrast | PASS | 9 focused, 20 related UI and 585 full Python 3.12 tests pass; implementation and handoff persisted to `dhsys/main` |
 | 4.14 Explicit subtitle output | PASS | 38 focused, 104 related UI, 2 real pipeline media and 613 full Python 3.12 tests pass |
-| 4.15 Basic navigation and provider profiles | in_progress | Basic tasks are compact; legacy actions/configuration remain compatible |
+| 4.15 Basic navigation and provider profiles | PASS | 11 focused, 35 related UI/config and 621 full Python 3.12 tests pass; reversible legacy-ID profiles verified |
 | 4.16 VieNeu pilot and En–Vi pronunciation control | planned | Local opt-in pilot and benchmark pass without modifying displayed SRT |
 | 4.17 Controlled provider reduction | planned | Migration, privacy and local-only behavior are proven before any removal |
 | 4.18 End-to-end handoff | planned | Source/frozen Windows evidence and documentation cover 4.13–4.17 |
@@ -26,7 +26,15 @@
 | 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
 | 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
 
-Phase state: in_progress. Tasks 4.1–4.14 and ENH-003 are verified; Task 4.14 is persisted to `origin/main` at `93497188`. The separate Phase 3 clean-runner/release gates remain open.
+Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 is locally complete and awaiting the persistence checkpoint. The separate Phase 3 clean-runner/release gates remain open.
+
+## Task 4.15 evidence — 2026-10-05
+
+- The basic workspace exposes five media jobs plus the advanced entry; every pre-existing QAction remains reachable through the advanced catalog or provider settings.
+- Provider profiles use existing numeric IDs only, preserve stored credentials, snapshot/restore the prior custom selection, and keep provider configuration outside “All tools”.
+- The remote Gemini profile confirms data-policy/privacy, quota and fallback information before apply. The local/basic path does not require cloud credentials.
+- Python 3.12.14: 11 focused tests, 35 related UI/config tests and 621 full tests pass; the only full-suite warning is external `pydub` use of deprecated `audioop`.
+- Phase 3 clean-runner, provider-backed media and release gates remain independent and open.
 
 ## Task 4.14 evidence — 2026-10-05
 

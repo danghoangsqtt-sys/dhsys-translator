@@ -53,7 +53,7 @@ uv run --python 3.12.13 --locked --group dev pytest -q tests/test_cli.py tests/t
 uv run --python 3.12.13 --locked --group dev pytest -q tests/test_light_workspace.py tests/test_responsive_surfaces.py
 ```
 
-Kết quả mong đợi là pytest thoát với mã `0` và dòng `... passed`. Trên môi trường Python 3.12.14 của checkout này, ngày **05/10/2026**, lệnh tương đương chạy trực tiếp qua `.venv\Scripts\python.exe -m pytest` cho **613 passed, 1 warning** (cảnh báo `audioop` của `pydub`). Run này đặt `PYVIDEOTRANS_LANG=en_US` vì một số test WebUI cũ khẳng định nhãn tiếng Anh; regression phụ đề kiểm tra riêng cả `vi_VN` và `en_US`. Số lượng test có thể thay đổi khi mã được sửa. Các test này dùng mock ở một số nơi; chúng **chưa chứng minh** API thật, tải mô hình, GPU hoặc bản đóng gói hoạt động hoàn chỉnh.
+Kết quả mong đợi là pytest thoát với mã `0` và dòng `... passed`. Trên môi trường Python 3.12.14 của checkout này, ngày **05/10/2026**, lệnh tương đương chạy trực tiếp qua `.venv\Scripts\python.exe -m pytest` cho **621 passed, 1 warning** (cảnh báo `audioop` của `pydub`). Run này đặt `PYVIDEOTRANS_LANG=en_US` vì một số test WebUI cũ khẳng định nhãn tiếng Anh; regression phụ đề kiểm tra riêng cả `vi_VN` và `en_US`. Số lượng test có thể thay đổi khi mã được sửa. Các test này dùng mock ở một số nơi; chúng **chưa chứng minh** API thật, tải mô hình, GPU hoặc bản đóng gói hoạt động hoàn chỉnh.
 
 ## 4. Kiểm tra nhanh công cụ media và CLI
 
@@ -143,6 +143,8 @@ uv run --python 3.12.13 --locked sp.py
 ```
 
 Hoặc giải nén toàn bộ bản Windows ứng viên rồi mở `sp.exe`; không chạy ngay trong file ZIP. Trên **trang chủ Xưởng Video**, ngôn ngữ giao diện chỉ có **Tiếng Việt** và **English**; đổi ngôn ngữ sẽ hỏi khởi động lại. `Mở không gian video` dẫn đến màn hình chính. Bốn công cụ nhanh là **Chép lời**, **Dịch SRT**, **Nhiều người nói** và **Ghép video/âm thanh/SRT**. Menu và danh mục công cụ trong không gian làm việc vẫn có các mục nâng cao.
+
+Trong không gian làm việc, phần cơ bản chỉ đưa ra năm tác vụ media và một lối vào **Tất cả công cụ**; cấu hình provider nằm riêng trong **Cài đặt provider**. Ba profile là **Miễn phí trên máy**, **Gemini API (quota miễn phí)** và **Tùy chỉnh nâng cao**. Profile local không cần cloud API key nhưng vẫn cần các thành phần/model hoặc endpoint local tương ứng; profile Gemini là remote nên hộp xác nhận nêu chính sách dữ liệu, quota không phải SLA và phương án dự phòng trước khi áp dụng. Khi quay lại **Tùy chỉnh nâng cao**, ứng dụng khôi phục chính xác lựa chọn provider tùy chỉnh trước đó và không tự xóa các khóa API đã lưu.
 
 Cài đặt cũ lưu `zh`, `zh_CN`, `zh-cn` hoặc `zh-tw` cho **giao diện** được tự động chuyển sang `en_US` ở lần khởi động tiếp theo; proxy và các cài đặt khác được giữ lại. File giao diện `zh_CN.json` cũ trong dữ liệu người dùng bị bỏ qua. Việc chuyển đổi này không đổi ngôn ngữ nguồn/đích của tác vụ media.
 

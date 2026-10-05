@@ -1,12 +1,14 @@
 # Tracker
 
-- Active implementation: ENH-004 task 4.15 — task-first navigation and reversible provider profiles (`in_progress`; compatibility contract recorded, code survey pending).
+- Next implementation: ENH-004 task 4.16 — VieNeu localhost pilot and non-destructive Vietnamese–English pronunciation control. Task 4.15 is locally `PASS` and is being persisted before 4.16 code work begins.
+
+- Complete locally: ENH-004 task 4.15 — the basic workspace has five media jobs plus advanced tools; provider settings are separate from “All tools”; reversible local/Gemini/custom profiles keep legacy provider IDs and credentials intact and restore prior custom selections. Tests: 11 focused, 35 related UI/config and 621 full Python 3.12 with one external warning. Persistence to `origin/main` is the remaining checkpoint.
 
 - Complete: ENH-004 task 4.14 — fresh translated-video tasks default to always-visible hard subtitles without changing legacy enum values; no-subtitle output is explicit, completion receipts report paths/mode, and hard/soft media contracts are verified. Tests: 38 focused, 104 related UI, 2 real pipeline media and 613 full Python 3.12 with one external warning. Commit `93497188` and both 4.14 tags are persisted to GitHub; Task 4.15 is next.
 
 - Complete: ENH-004 task 4.13 — both subtitle correction dialogs are focusable, selectable and editable; countdown auto-close is removed; light contrast and explicit unsaved state are applied. Tests: 9 focused, 20 related UI, 585 full Python 3.12 with one external warning. Commits are persisted to `dhsys/main`.
 
-- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.14 are complete and 4.15 is in progress; this work does not supersede the active Phase 3 release gate.
+- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.15 are complete locally and 4.16 is next after the 4.15 persistence checkpoint; this work does not supersede the active Phase 3 release gate.
 
 - Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.12 verified locally; persistence pending).
 
