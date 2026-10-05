@@ -26,7 +26,7 @@
 | 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
 | 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
 
-Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 is locally complete and awaiting the persistence checkpoint. The separate Phase 3 clean-runner/release gates remain open.
+Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 is persisted to `origin/main` at `a9aee380`, and Task 4.16 is now in progress. The separate Phase 3 clean-runner/release gates remain open.
 
 ## Task 4.15 evidence — 2026-10-05
 
@@ -34,6 +34,7 @@ Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 i
 - Provider profiles use existing numeric IDs only, preserve stored credentials, snapshot/restore the prior custom selection, and keep provider configuration outside “All tools”.
 - The remote Gemini profile confirms data-policy/privacy, quota and fallback information before apply. The local/basic path does not require cloud credentials.
 - Python 3.12.14: 11 focused tests, 35 related UI/config tests and 621 full tests pass; the only full-suite warning is external `pydub` use of deprecated `audioop`.
+- Completion checkpoint `a9aee380` plus tags `pyVideoTrans-DH-p4-t4.15` and `pyVideoTrans-DH-p4-t4.15-done` are present on the GitHub remote.
 - Phase 3 clean-runner, provider-backed media and release gates remain independent and open.
 
 ## Task 4.14 evidence — 2026-10-05
