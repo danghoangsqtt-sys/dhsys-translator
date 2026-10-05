@@ -1,5 +1,7 @@
 # Tracker
 
+- Backlog: [ENH-003](requests/ENH-003.md) — chỉ hỗ trợ giao diện/thông báo tiếng Việt và tiếng Anh; giữ đầy đủ chức năng xử lý nội dung tiếng Trung (P1, new, Phase 4 đề xuất).
+
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
 - Parallel UI task: 4.8 responsive home and core utility surfaces deployed and verified locally; tasks 4.1–4.8 verified locally; persistence pending
