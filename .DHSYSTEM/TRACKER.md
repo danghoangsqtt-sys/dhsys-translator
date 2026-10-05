@@ -1,6 +1,6 @@
 # Tracker
 
-- Complete locally, persistence pending: ENH-004 task 4.17 — compatibility-first provider/data-plane policy is implemented. No provider is deleted, renumbered or hidden; Advanced/Custom and exact saved IDs are preserved. Local-only status requires a loopback Local LLM endpoint; invalid/non-loopback Local activation is rejected without changing prior provider indexes. Gemini/OpenRouter are disclosed as remote/off-device with quota/rate-limit and non-destructive fallback guidance. Chinese media-language support remains unchanged. Evidence: 17 focused, 151 related and 658 full Python 3.12 tests pass; implementation checkpoint `26a24591`.
+- Complete and persisted: ENH-004 task 4.17 — compatibility-first provider/data-plane policy is implemented. No provider is deleted, renumbered or hidden; Advanced/Custom and exact saved IDs are preserved. Local-only status requires a loopback Local LLM endpoint; invalid/non-loopback Local activation is rejected without changing prior provider indexes. Gemini/OpenRouter are disclosed as remote/off-device with quota/rate-limit and non-destructive fallback guidance. Chinese media-language support remains unchanged. Evidence: 17 focused, 151 related and 658 full Python 3.12 tests pass; implementation checkpoint `26a24591`, closeout `ada51c14` persisted to `origin/main`.
 
 - Complete and persisted: ENH-004 task 4.16 — non-destructive Vietnamese–English pronunciation control is implemented; local VieNeu voice discovery fills the existing selector without changing the OpenAI TTS provider ID or saved role mapping, and Multiple speakers can assign distinct voices per line/speaker. The 25/25 audition is complete, `Hải Đăng` is the preferred pilot voice, and its 12/12 benchmark has 12/12 hashes rechecked, mean duration ratio `0.502` and `1/12` within ±20%. On 2026-10-06 the user accepted pronunciation accuracy, naturalness and voice continuity for that pilot fixture set. Closeout revalidation passed 44 core focused, 94 related TTS/config/UI and 642 full Python 3.12 tests (one external `pydub` warning). Closeout commit `0b4f270b` is persisted to `origin/main`; VieNeu remains opt-in and OmniVoice absence remains a supported-hardware skip.
 
@@ -10,7 +10,7 @@
 
 - Complete: ENH-004 task 4.13 — both subtitle correction dialogs are focusable, selectable and editable; countdown auto-close is removed; light contrast and explicit unsaved state are applied. Tests: 9 focused, 20 related UI, 585 full Python 3.12 with one external warning. Commits are persisted to `dhsys/main`.
 
-- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.16 are PASS and persisted; 4.17 is PASS locally and awaiting closeout persistence; 4.18 is next. This work does not supersede the active Phase 3 release gate.
+- Active: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.17 are PASS and persisted; 4.18 is next. This work does not supersede the active Phase 3 release gate.
 
 - Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.12 verified locally; persistence pending).
 
