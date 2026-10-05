@@ -62,3 +62,43 @@ def test_set_mode_updates_real_controls(app, mode, expected_role):
     if mode == 'tiqu':
         assert action.cfg['subtitle_type'] == 0
         assert action.cfg['copysrt_rawvideo'] is True
+
+
+def test_standard_mode_does_not_silently_turn_no_subtitles_into_extract_mode(app):
+    subtitle_type = QComboBox()
+    subtitle_type.addItems(['No subtitles', 'Always visible'])
+    subtitle_type.setCurrentIndex(0)
+    voice_role = QComboBox()
+    voice_role.addItems(['No', 'voice'])
+    main = SimpleNamespace(
+        app_mode='biaozhun', subtitle_type=subtitle_type, voice_role=voice_role,
+        copysrt_rawvideo=QCheckBox(),
+    )
+    action = SimpleNamespace(main=main, cfg={'subtitle_type': 0, 'voice_role': 'No'})
+
+    WinActionBaseModeMixin.set_mode(action)
+
+    assert main.app_mode == 'biaozhun'
+    assert action.cfg['subtitle_type'] == 0
+
+
+def test_no_subtitle_video_requires_explicit_confirmation(app, monkeypatch):
+    from PySide6.QtWidgets import QMessageBox
+
+    subtitle_type = QComboBox()
+    subtitle_type.addItems(['No subtitles', 'Always visible'])
+    subtitle_type.setCurrentIndex(0)
+    action = SimpleNamespace(main=SimpleNamespace(
+        app_mode='biaozhun', subtitle_type=subtitle_type,
+    ))
+    answers = iter([
+        QMessageBox.StandardButton.No,
+        QMessageBox.StandardButton.Yes,
+    ])
+    monkeypatch.setattr(QMessageBox, 'question', lambda *args, **kwargs: next(answers))
+
+    assert WinActionCheckMixin.confirm_no_subtitle_output(action) is False
+    assert WinActionCheckMixin.confirm_no_subtitle_output(action) is True
+
+    action.main.app_mode = 'tiqu'
+    assert WinActionCheckMixin.confirm_no_subtitle_output(action) is True
