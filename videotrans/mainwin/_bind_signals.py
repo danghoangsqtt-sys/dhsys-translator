@@ -36,6 +36,9 @@ class BindSignalsMixin:
         self.btn_get_video.clicked.connect(self.win_action.get_mp4)
         self.listen_btn.clicked.connect(self.win_action.listen_voice_fun)
         self.recogn_type.currentIndexChanged.connect(self.win_action.recogn_type_change)
+        self.recogn_type.currentIndexChanged.connect(self.mark_provider_profile_custom)
+        self.translate_type.currentIndexChanged.connect(self.mark_provider_profile_custom)
+        self.tts_type.currentIndexChanged.connect(self.mark_provider_profile_custom)
         self.model_name.currentIndexChanged.connect(self.win_action.model_type_change)
 
         self.label.clicked.connect(lambda: QMessageBox.information(

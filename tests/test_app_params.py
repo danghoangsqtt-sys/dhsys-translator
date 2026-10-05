@@ -13,6 +13,14 @@ def test_fresh_main_workflow_defaults_to_existing_hard_subtitle_enum(tmp_path):
     assert params.subtitle_type == 1
 
 
+def test_provider_profile_defaults_preserve_legacy_provider_ids(tmp_path):
+    params = AppParams(_json_path=str(tmp_path / "params.json"))
+
+    assert params.provider_profile == "custom"
+    assert params.provider_profile_custom == {}
+    assert (params.recogn_type, params.translate_type, params.tts_type) == (0, 0, 0)
+
+
 @pytest.mark.parametrize("saved_value", [0, 1, 2, 3, 4])
 def test_legacy_subtitle_enum_values_are_preserved(tmp_path, saved_value):
     config_path = tmp_path / "params.json"

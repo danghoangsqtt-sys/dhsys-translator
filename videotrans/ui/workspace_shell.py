@@ -6,11 +6,12 @@ The shell deliberately reuses the actions and central widget created by
 
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import (
-    QFrame, QHBoxLayout, QLabel, QMenu, QPushButton, QToolButton,
+    QComboBox, QFrame, QHBoxLayout, QLabel, QMenu, QMessageBox, QPushButton, QToolButton,
     QVBoxLayout, QWidget,
 )
 
 from videotrans.configure.config import tr
+from videotrans.ui.provider_profiles import PROFILE_BY_KEY, PROFILE_CUSTOM, PROFILES
 
 
 class WorkspaceShell(QWidget):
@@ -18,11 +19,12 @@ class WorkspaceShell(QWidget):
 
     COMPACT_BREAKPOINT = 980
 
-    QUICK_ACTIONS = (
-        ("fn_recogn", "Speech Recognition Text"),
-        ("fn_fanyisrt", "Text  Or Srt  Translation"),
-        ("fn_peiyinrole", "Multi voice dubbing for SRT"),
-        ("fn_vas", "Video Subtitles Merging"),
+    BASIC_JOBS = (
+        ("action_biaozhun", "Create translated video"),
+        ("fn_recogn", "Transcribe to SRT"),
+        ("fn_fanyisrt", "Translate SRT"),
+        ("fn_peiyin", "Create voice audio"),
+        ("fn_vas", "Merge/export video"),
     )
 
     def __init__(self, main_window, workspace, parent=None):
@@ -52,26 +54,49 @@ class WorkspaceShell(QWidget):
         credit.setObjectName("workspaceCredit")
         layout.addWidget(credit)
         layout.addSpacing(14)
-        home = QPushButton(tr("Home"))
-        home.setObjectName("workspaceHome")
-        home.clicked.connect(self.main_window.show_home)
-        layout.addWidget(home)
-        tools_label = QLabel(tr("Quick tools"))
+        tools_label = QLabel(tr("Media jobs"))
         tools_label.setObjectName("workspaceGroup")
         layout.addWidget(tools_label)
-        for action_name, label in self.QUICK_ACTIONS:
+        for action_name, label in self.BASIC_JOBS:
             button = QPushButton(tr(label))
             button.setObjectName("workspaceQuickAction")
             button.setAccessibleName(tr(label))
             action = getattr(self.main_window, action_name)
             button.clicked.connect(action.trigger)
             layout.addWidget(button)
-        catalog_label = QLabel(tr("All tools"))
+        profile_label = QLabel(tr("Provider profile"))
+        profile_label.setObjectName("workspaceGroup")
+        layout.addWidget(profile_label)
+        self.provider_profile = QComboBox(sidebar)
+        self.provider_profile.setObjectName("workspaceProviderProfile")
+        for profile in PROFILES:
+            self.provider_profile.addItem(tr(profile.label_key), profile.key)
+        active_profile = (
+            self.main_window.current_provider_profile()
+            if hasattr(self.main_window, "current_provider_profile") else PROFILE_CUSTOM
+        )
+        self.set_provider_profile(active_profile)
+        self.provider_profile.currentIndexChanged.connect(self._request_provider_profile)
+        self.provider_profile.setEnabled(hasattr(self.main_window, "apply_provider_profile"))
+        layout.addWidget(self.provider_profile)
+        self.profile_hint = QLabel()
+        self.profile_hint.setObjectName("workspaceProfileHint")
+        self.profile_hint.setWordWrap(True)
+        layout.addWidget(self.profile_hint)
+        self._update_profile_hint(active_profile)
+        self.provider_settings = QToolButton(sidebar)
+        self.provider_settings.setObjectName("workspaceProviderSettings")
+        self.provider_settings.setText(tr("Provider settings"))
+        self.provider_settings.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+        self.provider_settings.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+        self.provider_settings.setMenu(self._build_provider_settings())
+        layout.addWidget(self.provider_settings)
+        catalog_label = QLabel(tr("Advanced tools"))
         catalog_label.setObjectName("workspaceGroup")
         layout.addWidget(catalog_label)
         self.all_tools = QToolButton()
         self.all_tools.setObjectName("workspaceAllTools")
-        self.all_tools.setText(tr("Open tool catalog"))
+        self.all_tools.setText(tr("Open advanced tools"))
         self.all_tools.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
         self.all_tools.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         self.all_tools.setMenu(self._build_action_catalog())
@@ -124,13 +149,14 @@ class WorkspaceShell(QWidget):
         menu = QMenu(self)
         home = menu.addAction(tr("Home"))
         home.triggered.connect(self.main_window.show_home)
-        menu.addSection(tr("Quick tools"))
-        for action_name, _ in self.QUICK_ACTIONS:
+        menu.addSection(tr("Media jobs"))
+        for action_name, _ in self.BASIC_JOBS:
             menu.addAction(getattr(self.main_window, action_name))
         menu.addSeparator()
-        menu.addSection(tr("All tools"))
-        for action in self.main_window.toolBar.actions():
-            menu.addAction(action)
+        advanced = menu.addMenu(tr("Advanced tools"))
+        self._populate_action_catalog(advanced)
+        providers = menu.addMenu(tr("Provider settings"))
+        self._populate_provider_settings(providers)
         return menu
 
     def resizeEvent(self, event):
@@ -140,22 +166,88 @@ class WorkspaceShell(QWidget):
         super().resizeEvent(event)
 
     def _build_action_catalog(self):
-        """Expose existing menu actions again without assigning new handlers."""
+        """Expose media/help actions without mixing in provider configuration."""
         catalog = QMenu(self)
         self._catalog_sections = []
+        self._populate_action_catalog(catalog, self._catalog_sections)
+        return catalog
+
+    def _populate_action_catalog(self, catalog, tracked_sections=None):
         workspace_actions = self.main_window.toolBar.actions()
         if workspace_actions:
             section = catalog.addMenu(tr("Workspace actions"))
-            self._catalog_sections.append(section)
+            if tracked_sections is not None:
+                tracked_sections.append(section)
             section.addActions(workspace_actions)
         menu_bar = self.main_window.menuBar
         if callable(menu_bar):
             menu_bar = menu_bar()
+        provider_menus = {
+            getattr(self.main_window, name, None)
+            for name in ("menu_Key", "menu_TTS", "menu_RECOGN")
+        }
         for menu_action in menu_bar.actions():
             source_menu = menu_action.menu()
-            if source_menu is None:
+            if source_menu is None or source_menu in provider_menus:
                 continue
             section = catalog.addMenu(menu_action.text())
-            self._catalog_sections.append(section)
+            if tracked_sections is not None:
+                tracked_sections.append(section)
             section.addActions(source_menu.actions())
-        return catalog
+
+    def _build_provider_settings(self):
+        menu = QMenu(self)
+        self._provider_sections = []
+        self._populate_provider_settings(menu, self._provider_sections)
+        return menu
+
+    def _populate_provider_settings(self, menu, tracked_sections=None):
+        if not hasattr(self, "_provider_menu_data"):
+            self._provider_menu_data = []
+            for name in ("menu_RECOGN", "menu_Key", "menu_TTS"):
+                source = getattr(self.main_window, name, None)
+                if source is not None:
+                    self._provider_menu_data.append((source.title(), tuple(source.actions())))
+        for title, actions in self._provider_menu_data:
+            section = menu.addMenu(title)
+            if tracked_sections is not None:
+                tracked_sections.append(section)
+            section.addActions(actions)
+
+    def set_provider_profile(self, profile_key):
+        if profile_key not in PROFILE_BY_KEY:
+            profile_key = PROFILE_CUSTOM
+        if not hasattr(self, "provider_profile"):
+            return
+        index = self.provider_profile.findData(profile_key)
+        self.provider_profile.blockSignals(True)
+        self.provider_profile.setCurrentIndex(index)
+        self.provider_profile.blockSignals(False)
+        self._update_profile_hint(profile_key)
+
+    def _update_profile_hint(self, profile_key):
+        if not hasattr(self, "profile_hint"):
+            return
+        profile = PROFILE_BY_KEY.get(profile_key, PROFILE_BY_KEY[PROFILE_CUSTOM])
+        self.profile_hint.setText(tr(profile.hint_key))
+
+    def _request_provider_profile(self):
+        profile_key = self.provider_profile.currentData()
+        profile = PROFILE_BY_KEY.get(profile_key)
+        if profile is None:
+            return
+        previous = self.main_window.current_provider_profile()
+        if profile_key == previous:
+            self._update_profile_hint(profile_key)
+            return
+        reply = QMessageBox.question(
+            self,
+            tr("Change provider profile?"),
+            tr(profile.hint_key) + "\n\n" + tr("Apply this profile now?"),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            self.set_provider_profile(previous)
+            return
+        self.main_window.apply_provider_profile(profile_key)

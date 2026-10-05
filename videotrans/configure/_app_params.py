@@ -92,6 +92,8 @@ class AppParams:
             "source_language": "en",
             "target_language": "zh-cn",
             "translate_type": 0,
+            "provider_profile": "custom",
+            "provider_profile_custom": {},
             # Persisted values stay frozen: 1 is the existing hard-subtitle mode.
             "subtitle_type": 1,
             "tts_type": 0,

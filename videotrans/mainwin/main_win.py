@@ -19,6 +19,9 @@ from videotrans.ui.en import Ui_MainWindow
 from videotrans.ui.home import HomePage
 from videotrans.ui.workspace_shell import WorkspaceShell
 from videotrans.ui.workflow_state import WorkflowStatePresenter
+from videotrans.ui.provider_profiles import (
+    PROFILE_BY_KEY, PROFILE_CUSTOM, ProviderSelection, resolve_profile_transition,
+)
 from videotrans.task.simple_runnable_qt import run_in_threadpool
 from videotrans.task.subtitle_output import SUBTITLE_TYPE_KEYS
 
@@ -63,6 +66,53 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.startbtn.setText(tr('Checking GPUs...'))
         s.start()
         self._set_default()
+
+    def current_provider_profile(self):
+        key = params.get('provider_profile', PROFILE_CUSTOM)
+        return key if key in PROFILE_BY_KEY else PROFILE_CUSTOM
+
+    def apply_provider_profile(self, profile_key):
+        current = ProviderSelection(
+            self.recogn_type.currentIndex(),
+            self.translate_type.currentIndex(),
+            self.tts_type.currentIndex(),
+        )
+        transition = resolve_profile_transition(
+            profile_key,
+            current,
+            self.current_provider_profile(),
+            params.get('provider_profile_custom', {}),
+        )
+        self._applying_provider_profile = True
+        try:
+            self.recogn_type.setCurrentIndex(transition.selection.recogn_type)
+            self.translate_type.setCurrentIndex(transition.selection.translate_type)
+            self.tts_type.setCurrentIndex(transition.selection.tts_type)
+        finally:
+            self._applying_provider_profile = False
+        update = transition.selection.to_dict() | {
+            'provider_profile': transition.profile_key,
+            'provider_profile_custom': (
+                transition.custom_backup.to_dict() if transition.custom_backup else {}
+            ),
+        }
+        params.getset_params(update)
+        self.workspace_shell.set_provider_profile(transition.profile_key)
+        return transition
+
+    def mark_provider_profile_custom(self):
+        if getattr(self, '_applying_provider_profile', False):
+            return
+        selection = ProviderSelection(
+            self.recogn_type.currentIndex(),
+            self.translate_type.currentIndex(),
+            self.tts_type.currentIndex(),
+        )
+        params.getset_params({
+            'provider_profile': PROFILE_CUSTOM,
+            'provider_profile_custom': selection.to_dict(),
+        } | selection.to_dict())
+        self.workspace_shell.set_provider_profile(PROFILE_CUSTOM)
 
     def _setup_home(self):
         workspace = self.takeCentralWidget()

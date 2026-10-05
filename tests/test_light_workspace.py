@@ -20,7 +20,7 @@ class _WindowDouble(QMainWindow):
         self.menu.addAction(self.menu_action)
         self.toolBar = QToolBar(self)
         self.addToolBar(self.toolBar)
-        for name in ("fn_recogn", "fn_fanyisrt", "fn_peiyinrole", "fn_vas"):
+        for name in ("action_biaozhun", "fn_recogn", "fn_fanyisrt", "fn_peiyin", "fn_vas"):
             action = QAction(name, self)
             action.triggered.connect(lambda checked=False, item=name: self.triggered.append(item))
             setattr(self, name, action)
@@ -38,10 +38,10 @@ def test_workspace_shell_retains_original_workspace_and_actions():
 
     assert shell.findChild(QWidget, "originalWorkspace") is workspace
     buttons = shell.findChildren(QWidget, "workspaceQuickAction")
-    assert len(buttons) == 4
+    assert len(buttons) == 5
     for button in buttons:
         button.click()
-    assert window.triggered == ["fn_recogn", "fn_fanyisrt", "fn_peiyinrole", "fn_vas"]
+    assert window.triggered == ["action_biaozhun", "fn_recogn", "fn_fanyisrt", "fn_peiyin", "fn_vas"]
 
     catalog = shell.all_tools.menu()
     catalog_actions = {
@@ -93,10 +93,38 @@ def test_workspace_shell_compacts_navigation_on_narrow_desktop_width():
     assert shell.compact_navigation.isVisible()
     assert all(
         getattr(window, name) in shell.compact_navigation.menu().actions()
-        for name in ("fn_recogn", "fn_fanyisrt", "fn_peiyinrole", "fn_vas")
+        for name in ("action_biaozhun", "fn_recogn", "fn_fanyisrt", "fn_peiyin", "fn_vas")
     )
 
     shell.resize(1200, 700)
     app.processEvents()
     assert shell.sidebar.isVisible()
     assert shell.compact_navigation.isHidden()
+
+
+def test_provider_actions_are_reachable_from_settings_but_absent_from_media_catalog():
+    window = _WindowDouble()
+    window.menu_Key = window.menuBar().addMenu("Translation providers")
+    window.menu_TTS = window.menuBar().addMenu("TTS providers")
+    window.menu_RECOGN = window.menuBar().addMenu("STT providers")
+    provider_actions = []
+    for menu, label in (
+        (window.menu_Key, "Gemini"),
+        (window.menu_TTS, "Edge TTS"),
+        (window.menu_RECOGN, "faster-whisper"),
+    ):
+        action = QAction(label, window)
+        menu.addAction(action)
+        provider_actions.append(action)
+
+    shell = WorkspaceShell(window, QWidget())
+    catalog_actions = {
+        action for section in shell._catalog_sections for action in section.actions()
+    }
+    settings_actions = {
+        action for section in shell._provider_sections for action in section.actions()
+    }
+
+    assert not set(provider_actions) & catalog_actions
+    assert set(provider_actions) <= settings_actions
+    assert set(window.toolBar.actions()) <= catalog_actions
