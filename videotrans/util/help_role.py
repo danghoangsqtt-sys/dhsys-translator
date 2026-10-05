@@ -1,6 +1,7 @@
 import json
 import re
 from typing import List
+from urllib.parse import urlparse
 from videotrans.configure.config import ROOT_DIR, tr, settings, params, logger
 from pathlib import Path
 from functools import lru_cache
@@ -309,6 +310,53 @@ def get_openrouter_role(model_name):
     rolelist.extend(_r.split(','))
     return rolelist
 
+
+def _split_openaitts_roles(value) -> List[str]:
+    return [item.strip() for item in str(value or '').split(',') if item.strip()]
+
+
+def get_openaitts_roles() -> List[str]:
+    """Return saved OpenAI-compatible voices plus local VieNeu voices when available.
+
+    VieNeu discovery is deliberately restricted to loopback URLs and a VieNeu model.
+    A failed local discovery never replaces or clears the user's persisted role list.
+    """
+    saved = _split_openaitts_roles(params.get('openaitts_role'))
+    fallback = saved or _split_openaitts_roles(constants.OPENAITTS_ROLES)
+    api_url = str(params.get('openaitts_api') or '').strip()
+    model = str(params.get('openaitts_model') or '').strip().lower()
+    parsed = urlparse(api_url if '://' in api_url else f'http://{api_url}')
+    if parsed.hostname not in {'127.0.0.1', 'localhost', '::1'} or 'vieneu' not in model:
+        return ['No'] + fallback
+
+    try:
+        import requests
+
+        response = requests.get(
+            f"{api_url.rstrip('/')}/voices",
+            timeout=0.75,
+            proxies={"http": "", "https": ""},
+        )
+        response.raise_for_status()
+        payload = response.json()
+        data = payload.get('data', []) if isinstance(payload, dict) else []
+        discovered = []
+        for item in data:
+            if not isinstance(item, dict):
+                continue
+            name = str(item.get('id') or item.get('name') or '').strip()
+            if name:
+                discovered.append(name)
+    except Exception as error:
+        logger.debug(f'Local VieNeu voice discovery unavailable: {error}')
+        return ['No'] + fallback
+
+    merged = []
+    for name in [*saved, *discovered]:
+        if name not in merged:
+            merged.append(name)
+    return ['No'] + merged
+
 # 根据渠道返回角色列表 供下拉菜单使用
 def role_menu(tts_type, langcode=None) -> List:
     from videotrans import tts
@@ -320,7 +368,7 @@ def role_menu(tts_type, langcode=None) -> List:
         return ['No'] + constants.Guiji_TTS_Role.split(',')
 
     if tts_type == tts.OPENAI_TTS:
-        return ['No'] + (params.get('openaitts_role') or constants.OPENAITTS_ROLES).split(',')
+        return get_openaitts_roles()
 
     if tts_type == tts.XAI_TTS:
         return ['No'] + constants.XAITTS_ROLES.split(',')
