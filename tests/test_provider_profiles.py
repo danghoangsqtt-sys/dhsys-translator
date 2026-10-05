@@ -4,6 +4,7 @@ from videotrans.ui.provider_profiles import (
     PROFILE_CUSTOM,
     PROFILE_GEMINI,
     PROFILE_LOCAL,
+    PROFILE_BY_KEY,
     ProviderSelection,
     resolve_profile_transition,
 )
@@ -31,6 +32,11 @@ def test_profile_presets_use_existing_provider_ids_without_renumbering():
     assert gemini.selection.recogn_type in recognition.ID_NAME_DICT
     assert gemini.selection.translate_type in translator.ID_NAME_DICT
     assert gemini.selection.tts_type in tts.ID_NAME_DICT
+    assert PROFILE_BY_KEY[PROFILE_LOCAL].remote is False
+    assert PROFILE_BY_KEY[PROFILE_GEMINI].remote is True
+    assert recognition.ID_NAME_DICT[local.selection.recogn_type].key_name is None
+    assert tts.ID_NAME_DICT[local.selection.tts_type].key_name is None
+    assert translator.ID_NAME_DICT[local.selection.translate_type].key_name == "localllm_api"
 
 
 def test_profile_switch_restores_the_prior_custom_provider_selection():
@@ -87,6 +93,8 @@ def test_main_window_profile_application_persists_exact_ids_and_restores_custom(
         recogn_type=8,
         translate_type=10,
         tts_type=29,
+        gemini_key="keep-secret",
+        openrouter_key="keep-custom-secret",
     )
     monkeypatch.setattr(main_win, "params", saved)
     harness = type("Harness", (), {})()
@@ -107,6 +115,8 @@ def test_main_window_profile_application_persists_exact_ids_and_restores_custom(
         "translate_type": 10,
         "tts_type": 29,
     }
+    assert saved["gemini_key"] == "keep-secret"
+    assert saved["openrouter_key"] == "keep-custom-secret"
 
     main_win.MainWindow.apply_provider_profile(harness, PROFILE_GEMINI)
     main_win.MainWindow.apply_provider_profile(harness, PROFILE_CUSTOM)

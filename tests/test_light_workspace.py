@@ -1,9 +1,10 @@
 from pathlib import Path
 
 from PySide6.QtGui import QAction
-from PySide6.QtWidgets import QApplication, QMainWindow, QMenu, QToolBar, QWidget
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QMenu, QToolBar, QWidget
 
 from videotrans.ui.en import Ui_MainWindow
+from videotrans.ui.provider_profiles import PROFILE_CUSTOM, PROFILE_GEMINI
 from videotrans.ui.workspace_shell import WorkspaceShell
 
 
@@ -82,6 +83,31 @@ def test_workspace_shell_accepts_generated_menu_bar_attribute():
     }
 
 
+def test_generated_workspace_keeps_all_existing_actions_reachable():
+    class GeneratedWindow(QMainWindow, Ui_MainWindow):
+        def show_home(self):
+            pass
+
+    window = GeneratedWindow()
+    window.setupUi(window)
+    shell = WorkspaceShell(window, window.takeCentralWidget())
+
+    reachable = {
+        action for section in shell._catalog_sections for action in section.actions()
+    } | {
+        action for section in shell._provider_sections for action in section.actions()
+    }
+    expected = set(window.toolBar.actions())
+    for menu_action in window.menuBar.actions():
+        menu = menu_action.menu()
+        if menu is not None:
+            expected.update(menu.actions())
+
+    assert expected <= reachable
+    assert len(shell.findChildren(QWidget, "workspaceQuickAction")) == 5
+    assert shell.all_tools.menu() is not None
+
+
 def test_workspace_shell_compacts_navigation_on_narrow_desktop_width():
     window = _WindowDouble()
     shell = WorkspaceShell(window, QWidget())
@@ -128,3 +154,35 @@ def test_provider_actions_are_reachable_from_settings_but_absent_from_media_cata
     assert not set(provider_actions) & catalog_actions
     assert set(provider_actions) <= settings_actions
     assert set(window.toolBar.actions()) <= catalog_actions
+
+
+def test_remote_profile_explains_privacy_quota_and_fallback_before_apply(monkeypatch):
+    class ProfileWindow(_WindowDouble):
+        def __init__(self):
+            super().__init__()
+            self.profile = PROFILE_CUSTOM
+            self.applied = []
+
+        def current_provider_profile(self):
+            return self.profile
+
+        def apply_provider_profile(self, profile):
+            self.applied.append(profile)
+            self.profile = profile
+
+    prompts = []
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args: prompts.append(args[2]) or QMessageBox.StandardButton.Yes,
+    )
+    window = ProfileWindow()
+    shell = WorkspaceShell(window, QWidget())
+
+    shell.provider_profile.setCurrentIndex(shell.provider_profile.findData(PROFILE_GEMINI))
+
+    assert window.applied == [PROFILE_GEMINI]
+    prompt = prompts[0].lower()
+    assert "quota" in prompt
+    assert "data policy" in prompt or "chính sách dữ liệu" in prompt
+    assert "fallback" in prompt or "dự phòng" in prompt
