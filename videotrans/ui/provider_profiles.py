@@ -1,7 +1,9 @@
 """Reversible provider presets layered over the frozen provider registries."""
 
 from dataclasses import dataclass
+from ipaddress import ip_address
 from typing import Mapping
+from urllib.parse import urlsplit
 
 from videotrans import recognition, translator, tts
 
@@ -9,6 +11,11 @@ from videotrans import recognition, translator, tts
 PROFILE_CUSTOM = "custom"
 PROFILE_LOCAL = "local"
 PROFILE_GEMINI = "gemini"
+
+ENDPOINT_LOOPBACK = "loopback"
+ENDPOINT_LOCAL_NETWORK = "local-network"
+ENDPOINT_PUBLIC = "public"
+ENDPOINT_UNKNOWN = "unknown"
 
 
 @dataclass(frozen=True)
@@ -41,6 +48,15 @@ class ProfileTransition:
     custom_backup: ProviderSelection | None
 
 
+@dataclass(frozen=True)
+class ProfilePolicy:
+    profile_key: str
+    endpoint_classification: str
+    off_device: bool | None
+    local_only_ready: bool
+    summary_key: str
+
+
 PROFILES = (
     ProviderProfile(
         PROFILE_LOCAL,
@@ -70,6 +86,110 @@ PROFILES = (
     ),
 )
 PROFILE_BY_KEY = {profile.key: profile for profile in PROFILES}
+
+
+def _endpoint_host(endpoint) -> str | None:
+    if not isinstance(endpoint, str):
+        return None
+    value = endpoint.strip()
+    if not value or any(char.isspace() for char in value):
+        return None
+
+    try:
+        return str(ip_address(value.strip("[]")))
+    except ValueError:
+        pass
+
+    candidate = value if "://" in value else f"//{value}"
+    try:
+        parsed = urlsplit(candidate)
+        if parsed.scheme and parsed.scheme.lower() not in {"http", "https"}:
+            return None
+        host = parsed.hostname
+    except ValueError:
+        return None
+    if not host:
+        return None
+    return host.rstrip(".").lower()
+
+
+def classify_endpoint(endpoint) -> str:
+    """Classify an endpoint without DNS lookup or any network I/O."""
+    host = _endpoint_host(endpoint)
+    if not host:
+        return ENDPOINT_UNKNOWN
+    if host == "localhost":
+        return ENDPOINT_LOOPBACK
+
+    try:
+        address = ip_address(host)
+    except ValueError:
+        if host.endswith(".local"):
+            return ENDPOINT_LOCAL_NETWORK
+        labels = host.split(".")
+        if len(labels) > 1 and all(
+            label and label[0].isalnum() and label[-1].isalnum()
+            and all(char.isalnum() or char == "-" for char in label)
+            for label in labels
+        ):
+            return ENDPOINT_PUBLIC
+        return ENDPOINT_UNKNOWN
+
+    if address.is_loopback:
+        return ENDPOINT_LOOPBACK
+    if address.is_unspecified or address.is_multicast:
+        return ENDPOINT_UNKNOWN
+    if address.is_private or address.is_link_local:
+        return ENDPOINT_LOCAL_NETWORK
+    if address.is_global:
+        return ENDPOINT_PUBLIC
+    return ENDPOINT_UNKNOWN
+
+
+def profile_policy(profile_key, localllm_api="") -> ProfilePolicy:
+    """Return privacy/readiness policy without mutating provider state."""
+    if profile_key == PROFILE_LOCAL:
+        classification = classify_endpoint(localllm_api)
+        if classification == ENDPOINT_LOOPBACK:
+            return ProfilePolicy(
+                PROFILE_LOCAL,
+                classification,
+                off_device=False,
+                local_only_ready=True,
+                summary_key="profile_local_policy_ready",
+            )
+        if classification in {ENDPOINT_LOCAL_NETWORK, ENDPOINT_PUBLIC}:
+            return ProfilePolicy(
+                PROFILE_LOCAL,
+                classification,
+                off_device=True,
+                local_only_ready=False,
+                summary_key="profile_local_policy_off_device",
+            )
+        return ProfilePolicy(
+            PROFILE_LOCAL,
+            classification,
+            off_device=None,
+            local_only_ready=False,
+            summary_key="profile_local_policy_unknown",
+        )
+
+    if profile_key == PROFILE_GEMINI:
+        return ProfilePolicy(
+            PROFILE_GEMINI,
+            ENDPOINT_PUBLIC,
+            off_device=True,
+            local_only_ready=False,
+            summary_key="profile_gemini_policy_remote",
+        )
+
+    return ProfilePolicy(
+        PROFILE_CUSTOM,
+        ENDPOINT_UNKNOWN,
+        off_device=None,
+        local_only_ready=False,
+        summary_key="profile_custom_policy_unknown",
+    )
 
 
 def _valid_selection(value) -> ProviderSelection | None:

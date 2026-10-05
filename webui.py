@@ -77,6 +77,7 @@ config.init_run()
 
 from videotrans.configure.config import ROOT_DIR, TEMP_DIR, app_cfg, params, settings, defaulelang
 from videotrans.configure.constants import FASTER_MODELS_DICT, DEEPGRAM_MODEL, Openai_Whisper_Models, FUNASR_MODEL
+from videotrans.configure._languages_dict import EDGET_LANGUAGES_NAME2CODE_EN
 from videotrans import recognition, translator, tts
 from videotrans.util import tools
 from videotrans.util.gpus import getset_gpu
@@ -227,7 +228,10 @@ def _lang_display_from_saved(value, default):
     if value in LANG_DISPLAY_NAMES:
         return value
     if isinstance(value, str):
-        return LANGNAME_DICT.get(value.lower(), default)
+        code = value.lower()
+        if code not in LANGNAME_DICT:
+            code = EDGET_LANGUAGES_NAME2CODE_EN.get(value, code)
+        return LANGNAME_DICT.get(code, default)
     return default
 
 

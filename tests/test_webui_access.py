@@ -36,8 +36,8 @@ def test_saved_languages_build_valid_ui_and_voice_roles(monkeypatch, source, tar
     controls = {component['props'].get('label'): component['props']
                 for component in app.config['components']
                 if component['props'].get('label') in ('Source Language', 'Target Language', 'Voice Role')}
-    assert controls['Source Language']['value'] == 'English'
-    assert controls['Target Language']['value'] == 'Simplified Chinese'
+    assert controls['Source Language']['value'] == webui.LANGNAME_DICT['en']
+    assert controls['Target Language']['value'] == webui.LANGNAME_DICT['zh-cn']
     assert controls['Voice Role']['value'] == 'test-role'
     assert 'zh-cn' in selected_locales
     assert not [w for w in recorded if 'not in the list of choices' in str(w.message)]

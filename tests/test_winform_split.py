@@ -16,13 +16,16 @@ def test_get_win_loads_window_on_demand_and_reuses_it(monkeypatch):
     window = SimpleNamespace(show=Mock(), activateWindow=Mock())
     module = SimpleNamespace(openwin=Mock(return_value=window))
     importer = Mock(return_value=module)
+    localizer = Mock()
     monkeypatch.setattr(winform.app_cfg, "child_forms", {})
     monkeypatch.setattr(winform.importlib, "import_module", importer)
+    monkeypatch.setattr(winform, "localize_widget_tree", localizer)
 
     assert winform.get_win("example") is window
     assert winform.get_win("example") is None
     importer.assert_called_once_with(".example", package=winform.__package__)
     module.openwin.assert_called_once_with()
+    localizer.assert_called_once_with(window)
     assert window.show.call_count == 2
     window.activateWindow.assert_called_once_with()
 

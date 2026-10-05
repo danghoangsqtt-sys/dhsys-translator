@@ -1,10 +1,13 @@
 from pathlib import Path
 
+import pytest
+
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QMenu, QToolBar, QWidget
 
 from videotrans.ui.en import Ui_MainWindow
-from videotrans.ui.provider_profiles import PROFILE_CUSTOM, PROFILE_GEMINI
+from videotrans.ui.provider_profiles import PROFILE_CUSTOM, PROFILE_GEMINI, PROFILE_LOCAL
+from videotrans.ui import workspace_shell
 from videotrans.ui.workspace_shell import WorkspaceShell
 
 
@@ -186,3 +189,46 @@ def test_remote_profile_explains_privacy_quota_and_fallback_before_apply(monkeyp
     assert "quota" in prompt
     assert "data policy" in prompt or "chính sách dữ liệu" in prompt
     assert "fallback" in prompt or "dự phòng" in prompt
+
+
+@pytest.mark.parametrize("endpoint", ("", "https://api.example.com/v1", "http://192.168.1.20:8000/v1"))
+def test_local_profile_rejects_non_loopback_endpoint_without_changing_saved_selection(monkeypatch, endpoint):
+    class ProfileWindow(_WindowDouble):
+        def __init__(self):
+            super().__init__()
+            self.profile = PROFILE_CUSTOM
+            self.applied = []
+            self.provider_indexes = (8, 10, 29)
+
+        def current_provider_profile(self):
+            return self.profile
+
+        def apply_provider_profile(self, profile):
+            self.applied.append(profile)
+            self.profile = profile
+            self.provider_indexes = (0, 0, 0)
+
+    warnings = []
+    monkeypatch.setattr(workspace_shell, "params", {"localllm_api": endpoint})
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda *args: warnings.append(args[2]) or QMessageBox.StandardButton.Ok,
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args: (_ for _ in ()).throw(AssertionError("invalid Local profile must not reach confirmation")),
+    )
+    window = ProfileWindow()
+    shell = WorkspaceShell(window, QWidget())
+
+    shell.provider_profile.setCurrentIndex(shell.provider_profile.findData(PROFILE_LOCAL))
+
+    assert window.applied == []
+    assert window.profile == PROFILE_CUSTOM
+    assert window.provider_indexes == (8, 10, 29)
+    assert shell.provider_profile.currentData() == PROFILE_CUSTOM
+    assert warnings
+    warning = warnings[0].lower()
+    assert "localhost" in warning or "127.0.0.1" in warning

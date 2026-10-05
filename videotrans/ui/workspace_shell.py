@@ -10,8 +10,14 @@ from PySide6.QtWidgets import (
     QVBoxLayout, QWidget,
 )
 
-from videotrans.configure.config import tr
-from videotrans.ui.provider_profiles import PROFILE_BY_KEY, PROFILE_CUSTOM, PROFILES
+from videotrans.configure.config import params, tr
+from videotrans.ui.provider_profiles import (
+    PROFILE_BY_KEY,
+    PROFILE_CUSTOM,
+    PROFILE_LOCAL,
+    PROFILES,
+    profile_policy,
+)
 
 
 class WorkspaceShell(QWidget):
@@ -229,7 +235,8 @@ class WorkspaceShell(QWidget):
         if not hasattr(self, "profile_hint"):
             return
         profile = PROFILE_BY_KEY.get(profile_key, PROFILE_BY_KEY[PROFILE_CUSTOM])
-        self.profile_hint.setText(tr(profile.hint_key))
+        policy = profile_policy(profile.key, params.get("localllm_api", ""))
+        self.profile_hint.setText(tr(profile.hint_key) + "\n" + tr(policy.summary_key))
 
     def _request_provider_profile(self):
         profile_key = self.provider_profile.currentData()
@@ -240,10 +247,19 @@ class WorkspaceShell(QWidget):
         if profile_key == previous:
             self._update_profile_hint(profile_key)
             return
+        policy = profile_policy(profile_key, params.get("localllm_api", ""))
+        if profile_key == PROFILE_LOCAL and not policy.local_only_ready:
+            QMessageBox.warning(
+                self,
+                tr("Local profile not ready"),
+                tr(policy.summary_key) + "\n\n" + tr("Configure a loopback Local LLM endpoint first."),
+            )
+            self.set_provider_profile(previous)
+            return
         reply = QMessageBox.question(
             self,
             tr("Change provider profile?"),
-            tr(profile.hint_key) + "\n\n" + tr("Apply this profile now?"),
+            tr(profile.hint_key) + "\n" + tr(policy.summary_key) + "\n\n" + tr("Apply this profile now?"),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             QMessageBox.StandardButton.No,
         )
