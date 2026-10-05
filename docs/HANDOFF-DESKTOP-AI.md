@@ -73,7 +73,8 @@ Kết thúc mỗi task, báo ngắn gọn: thay đổi gì, file chính, test/ga
 
 ## Trạng thái tại thời điểm bàn giao
 
-- Task tiếp theo: **4.16 — VieNeu localhost opt-in và lớp phát âm Việt–Anh không phá SRT**.
+- Task đang tiếp tục: **4.16 — VieNeu localhost opt-in và lớp phát âm Việt–Anh không phá SRT**. `tts_text`/project glossary và benchmark harness đã được triển khai; 36 focused, 130 related và 634 full Python 3.12 tests pass (chỉ một cảnh báo ngoài dự án từ `pydub`). Edge live benchmark đã tạo 12/12 WAV và evidence gọn nằm ở `.DHSYSTEM/phases/4/evidence/4.16-edge-benchmark.json`.
+- Gate 4.16 vẫn mở: chưa có VieNeu model/service chạy trên loopback để benchmark, OmniVoice model chưa cài và ba tiêu chí nghe (phát âm, tự nhiên, continuity) chưa được chấm. Không bắt đầu 4.17 và không chọn VieNeu làm mặc định khi các blocker này còn tồn tại.
 - Tasks 4.13–4.15 đã hoàn tất và được lưu trên GitHub; Task 4.15 kết thúc ở commit `a9aee380` với tags `pyVideoTrans-DH-p4-t4.15` và `pyVideoTrans-DH-p4-t4.15-done`. Bằng chứng: 11 focused, 35 related UI/config và 621 full Python 3.12 tests pass.
 - Phase 3 clean-runner/full-media/release gates vẫn độc lập và chưa được phép đánh dấu hoàn tất chỉ vì Phase 4 tiếp tục.
 - Không có API key hoặc tệp cấu hình bí mật được chủ động đưa vào commit bàn giao.

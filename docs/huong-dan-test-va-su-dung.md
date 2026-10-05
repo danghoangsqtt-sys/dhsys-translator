@@ -114,6 +114,16 @@ uv run --python 3.12.13 --locked cli.py --task tts --name ".\tmp\manual-smoke\he
 
 `--voice_role` là bắt buộc. Mã giọng phải thuộc kênh TTS đang chọn; kiểm tra trong giao diện hoặc danh sách provider trước khi thay giọng. Kênh Edge TTS thường cần mạng. Mở file audio trong thư mục đầu ra để nghe và đối chiếu thời lượng với SRT.
 
+Khi ngôn ngữ đích là tiếng Việt, pipeline hiện có một lớp phát âm nội bộ `tts_text` cho các tên kỹ thuật Anh–Việt thường gặp. Lớp này chỉ thay chuỗi gửi sang TTS; **không sửa SRT hiển thị hoặc SRT đã lưu**. Có thể ghi đè phát âm theo từng project bằng file UTF-8 `tts-glossary.txt` đặt trong thư mục đầu ra của tác vụ, mỗi dòng theo dạng `từ_gốc=cách_đọc`, ví dụ `GitHub=Gít Hấp`. File project ưu tiên hơn bảng mặc định và các cụm dài được xử lý trước cụm ngắn.
+
+Task 4.16 có harness benchmark riêng cho AI, API, ChatGPT, GitHub, Docker, Python, OpenRouter, Gemini, NVIDIA, URL, e-mail và số phiên bản:
+
+```powershell
+.\.venv\Scripts\python.exe scripts\benchmark_tts_pronunciation.py --providers edge,vieneu,omnivoice
+```
+
+VieNeu ở giai đoạn này chỉ là pilot local qua endpoint tương thích OpenAI trên loopback, không phải dependency hay provider mặc định. Muốn thử, chạy VieNeu riêng trên máy, đặt tên model mà server thật sự expose vào `PYVIDEOTRANS_VIENEU_MODEL`, rồi chạy lại harness; endpoint mặc định là `http://127.0.0.1:8000/v1`. Harness cố ý trả mã khác `0` nếu một provider được yêu cầu bị skip/failed, vì vậy không được coi kết quả chỉ có Edge là gate PASS. `pronunciation_accuracy`, `naturalness` và `voice_continuity` cần nghe thủ công; script chỉ tự tính duration alignment và không tuyên bố chất lượng phổ quát.
+
 ### 5.4. CLI: dịch video trọn quy trình (`vtv`)
 
 Chỉ chạy sau khi STT, dịch và TTS riêng lẻ đã hoạt động với các kênh mong muốn:

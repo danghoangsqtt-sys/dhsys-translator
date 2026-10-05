@@ -1,0 +1,44 @@
+{
+  "task": "4.16",
+  "captured_at": "2026-10-05",
+  "language": "vi",
+  "gate_status": "blocked",
+  "provider_results": [
+    {
+      "provider": "edge",
+      "status": "pass",
+      "voice": "vi-VN-HoaiMyNeural",
+      "generated_audio_count": 12,
+      "expected_audio_count": 12,
+      "pronunciation_accuracy": "pending_human_review",
+      "naturalness": "pending_human_review",
+      "voice_continuity": "pending_human_review",
+      "duration_alignment": {
+        "within_20_percent_count": 2,
+        "fixture_count": 12,
+        "mean_duration_ratio": 0.575
+      },
+      "audio": [
+        {"fixture": "AI", "file": "01-ai.wav", "sha256": "47913d6ca97c7b1d8bb7327f36c886c18485075790f4fff23b012d945768325d", "duration_seconds": 0.66},
+        {"fixture": "API", "file": "02-api.wav", "sha256": "b384a04c05d80620177440e679129b978a8b22ba622fcafb03142ba0c8acdbba", "duration_seconds": 0.94},
+        {"fixture": "ChatGPT", "file": "03-chatgpt.wav", "sha256": "ebdb9d43fecdff088bb91bf81d334e5bc7e7ce6600fab68d42a4267ddb5f2743", "duration_seconds": 1.17},
+        {"fixture": "GitHub", "file": "04-github.wav", "sha256": "53e4ba0efa44103f1d6d0fb1d4ba21503ea924020357da2a5023a7fc6abd6f3c", "duration_seconds": 0.61},
+        {"fixture": "Docker", "file": "05-docker.wav", "sha256": "ceea98ddc44e549859191b13f182079afbfd355dd94485d5824bc8d49f64b3cc", "duration_seconds": 0.73},
+        {"fixture": "Python", "file": "06-python.wav", "sha256": "98e95600e8351a8c1f2e41d89dbfdcdbe072d0905775577965a2964c26c8e4af", "duration_seconds": 0.74},
+        {"fixture": "OpenRouter", "file": "07-openrouter.wav", "sha256": "0ea1485fd432489e5663290ca586c49d14e7eabeff73458899cac297431c98c3", "duration_seconds": 1.21},
+        {"fixture": "Gemini", "file": "08-gemini.wav", "sha256": "513392e9890e799c0386847995604877379fed6d544c3e0c38fd8e0c693583bf", "duration_seconds": 0.93},
+        {"fixture": "NVIDIA", "file": "09-nvidia.wav", "sha256": "f8b9b6a626d305d5964777f42733440faee152506c600ae60408e4e654fced51", "duration_seconds": 1.21},
+        {"fixture": "https://github.com/openai", "file": "10-https-github-com-openai.wav", "sha256": "e2f63151e3163677a15599801a6c5a97545d780ece7420a568a474fce3e388b7", "duration_seconds": 4.1},
+        {"fixture": "support@example.com", "file": "11-support-example-com.wav", "sha256": "728f82124d1259b463d97bc74c68f50e9e248dcbd401c2f56aa0a2cbd6f39fe5", "duration_seconds": 2.34},
+        {"fixture": "version 3.12.14", "file": "12-version-3-12-14.wav", "sha256": "753374eeb51095714b6c78d6e5d21025b858c764340a38b0240a185caee64896", "duration_seconds": 2.53}
+      ]
+    },
+    {"provider": "vieneu", "status": "skipped", "reason": "vieneu_model_not_configured"},
+    {"provider": "omnivoice", "status": "skipped", "reason": "omnivoice_model_not_installed"}
+  ],
+  "notes": [
+    "No API key, reference-audio path or absolute local path is stored here.",
+    "Local WAV evidence is intentionally not committed.",
+    "This evidence does not establish universal provider quality."
+  ]
+}
