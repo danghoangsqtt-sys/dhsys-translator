@@ -7,7 +7,7 @@
 | 4.13 Subtitle correction operability and contrast | PASS | 9 focused, 20 related UI and 585 full Python 3.12 tests pass; implementation and handoff persisted to `dhsys/main` |
 | 4.14 Explicit subtitle output | PASS | 38 focused, 104 related UI, 2 real pipeline media and 613 full Python 3.12 tests pass |
 | 4.15 Basic navigation and provider profiles | PASS | 11 focused, 35 related UI/config and 621 full Python 3.12 tests pass; reversible legacy-ID profiles verified |
-| 4.16 VieNeu pilot and En–Vi pronunciation control | in_progress | Non-destructive pronunciation layer, local voice discovery, 25-voice audition set and Edge/VieNeu 12-fixture live benchmarks verified; human listening gate remains open |
+| 4.16 VieNeu pilot and En–Vi pronunciation control | in_progress | Local product/test/media/listening gate met; user accepted the Hải Đăng pilot listening gate on 2026-10-06; persistence verification remains |
 | 4.17 Controlled provider reduction | planned | Migration, privacy and local-only behavior are proven before any removal |
 | 4.18 End-to-end handoff | planned | Source/frozen Windows evidence and documentation cover 4.13–4.17 |
 
@@ -26,7 +26,7 @@
 | 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
 | 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
 
-Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 is persisted to `origin/main` at `a9aee380`, and Task 4.16 is now in progress. The separate Phase 3 clean-runner/release gates remain open.
+Phase state: in_progress. Tasks 4.1–4.16 and ENH-003 are verified; Task 4.16 has met its product/test/media/listening gate locally and is awaiting persistence verification before Task 4.17 advances. The separate Phase 3 clean-runner/release gates remain open.
 
 ## Task 4.16 evidence — 2026-10-05
 
@@ -40,7 +40,8 @@ Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 i
 - VieNeu v3 Turbo ONNX/CPU ran successfully on loopback through the existing OpenAI-compatible adapter and generated all 12 required fixtures. Compact hashes/metrics are stored in `.DHSYSTEM/phases/4/evidence/4.16-vieneu-benchmark.json`; the 12 WAV hashes were rechecked with zero mismatches.
 - The preferred voice `Hải Đăng` was then benchmarked separately on the same 12 fixtures: 12/12 generated, mean duration ratio `0.502`, `1/12` within ±20%, and zero SHA-256 mismatches. Evidence is `.DHSYSTEM/phases/4/evidence/4.16-vieneu-hai-dang-benchmark.json`; the earlier `Mai Anh` evidence is retained.
 - The benchmark script now runs directly from the repository root without a manual `PYTHONPATH`, matching the documented command. OmniVoice's local model remains absent and is a supported-hardware skip.
-- The preferred main VieNeu voice is now `Hải Đăng`; pronunciation accuracy, naturalness and voice continuity are still pending human listening review for the 12 preferred-voice outputs, so Task 4.16 is not PASS and Task 4.17 must not start.
+- On 2026-10-06 the user explicitly accepted pronunciation accuracy, naturalness and voice continuity for the 12 preferred-voice `Hải Đăng` outputs. The approval is scoped to this pilot fixture set, does not claim universal quality, and does not change any provider/model/voice default. OmniVoice remains a supported-hardware skip because its local model is absent.
+- Closeout revalidation on Python 3.12.14 with `QT_QPA_PLATFORM=offscreen`: 44 core focused tests, 94 related TTS/config/UI tests and 642 full tests pass; the full run has one external `pydub`/`audioop` deprecation warning.
 
 ## Task 4.15 evidence — 2026-10-05
 

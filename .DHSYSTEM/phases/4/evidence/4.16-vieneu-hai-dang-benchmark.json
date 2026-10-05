@@ -11,9 +11,9 @@
   "status": "pass",
   "generated_audio_count": 12,
   "expected_audio_count": 12,
-  "pronunciation_accuracy": "pending_human_review",
-  "naturalness": "pending_human_review",
-  "voice_continuity": "pending_human_review",
+  "pronunciation_accuracy": "accepted_for_pilot_by_user",
+  "naturalness": "accepted_for_pilot_by_user",
+  "voice_continuity": "accepted_for_pilot_by_user",
   "duration_alignment": {
     "within_20_percent_count": 1,
     "fixture_count": 12,
@@ -39,7 +39,7 @@
   },
   "notes": [
     "The user selected Hải Đăng as the preferred primary VieNeu pilot voice after the 25-voice audition.",
-    "Pronunciation accuracy, naturalness and voice continuity still require human listening review of these 12 benchmark fixtures.",
+    "On 2026-10-06 the user explicitly accepted the Hải Đăng pilot listening gate for pronunciation accuracy, naturalness and voice continuity on this 12-fixture set; this is pilot acceptance, not a universal quality claim.",
     "The VieNeu runtime/model remains an opt-in local pilot and is not bundled into pyVideoTrans-DH.",
     "No persisted provider/model ID, saved user role or displayed/persisted SRT is changed by this selection.",
     "No API key, reference-audio path or absolute local path is stored in this evidence file."

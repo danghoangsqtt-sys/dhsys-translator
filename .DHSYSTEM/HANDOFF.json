@@ -17,7 +17,7 @@
     "request": "ENH-004",
     "phase": 4,
     "tasks": ["4.13", "4.14", "4.15", "4.16", "4.17", "4.18"],
-    "status": "tasks 4.13-4.15 PASS and are persisted to origin/main; task 4.16 is in_progress with non-destructive tts_text/glossary, loopback VieNeu voice discovery, 25/25 local voice auditions, Hải Đăng selected as the preferred pilot voice, per-speaker role support, and Edge plus local VieNeu 12/12 live benchmark evidence; 53 focused, 185 related and 642 full Python 3.12 tests pass; pronunciation/naturalness/continuity listening review remains open",
+    "status": "tasks 4.13-4.15 PASS and are persisted to origin/main; task 4.16 has met its local product/test/media/listening gate with non-destructive tts_text/glossary, loopback VieNeu voice discovery, 25/25 local voice auditions, Hải Đăng selected as the preferred pilot voice, per-speaker role support, and Edge plus local VieNeu 12/12 live benchmark evidence; user accepted the Hải Đăng pilot listening gate on 2026-10-06; closeout revalidation passed 44 core focused, 94 related and 642 full Python 3.12 tests with one external pydub warning; persistence verification is the remaining closeout step",
     "continuation_repository": "https://github.com/danghoangsqtt-sys/dhsys-translator",
     "continuation_prompt": "docs/HANDOFF-DESKTOP-AI.md",
     "source": "docs/brainstorm/session-2026-10-05-vietnamese-first-video-workflow.md",
@@ -32,9 +32,9 @@
     "task_4_16_vieneu_primary_voice_evidence": ".DHSYSTEM/phases/4/evidence/4.16-vieneu-hai-dang-benchmark.json",
     "task_4_16_voice_audition_evidence": ".DHSYSTEM/phases/4/evidence/4.16-vieneu-voice-audition.json",
     "task_4_16_primary_voice": "Hải Đăng",
-    "task_4_16_blockers": [
-      "OmniVoice local model is not installed",
-      "Pronunciation accuracy, naturalness and voice continuity require human listening review of the 12 Hải Đăng benchmark fixtures"
+    "task_4_16_blockers": [],
+    "task_4_16_supported_hardware_skips": [
+      "OmniVoice local model is not installed"
     ]
   },
   "parallel_work": {
