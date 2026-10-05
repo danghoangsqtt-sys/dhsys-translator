@@ -1,6 +1,6 @@
 # Tracker
 
-- Active implementation: ENH-004 task 4.16 — non-destructive Vietnamese–English pronunciation control is implemented; 36 focused, 130 related and 634 full Python 3.12 tests pass, and Edge live benchmark generated 12/12 fixtures. VieNeu live benchmark is blocked because no loopback model/service is configured, OmniVoice model is absent, and listening metrics remain pending. Task stays `in_progress`; do not start 4.17.
+- Active implementation: ENH-004 task 4.16 — non-destructive Vietnamese–English pronunciation control is implemented; 37 focused, 145 related TTS/config/UI and 635 full Python 3.12 tests pass (full suite has one external `pydub` warning). Edge and local VieNeu each generated 12/12 benchmark fixtures, with compact evidence for both. VieNeu used the existing OpenAI-compatible adapter on loopback and remains opt-in; OmniVoice model is absent and the human listening metrics are still pending. Task stays `in_progress`; do not start 4.17.
 
 - Complete: ENH-004 task 4.15 — the basic workspace has five media jobs plus advanced tools; provider settings are separate from “All tools”; reversible local/Gemini/custom profiles keep legacy provider IDs and credentials intact and restore prior custom selections. Tests: 11 focused, 35 related UI/config and 621 full Python 3.12 with one external warning. Completion commit `a9aee380` and both 4.15 tags are persisted to GitHub.
 

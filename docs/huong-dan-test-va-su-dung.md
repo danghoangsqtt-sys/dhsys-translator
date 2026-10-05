@@ -122,7 +122,7 @@ Task 4.16 có harness benchmark riêng cho AI, API, ChatGPT, GitHub, Docker, Pyt
 .\.venv\Scripts\python.exe scripts\benchmark_tts_pronunciation.py --providers edge,vieneu,omnivoice
 ```
 
-VieNeu ở giai đoạn này chỉ là pilot local qua endpoint tương thích OpenAI trên loopback, không phải dependency hay provider mặc định. Muốn thử, chạy VieNeu riêng trên máy, đặt tên model mà server thật sự expose vào `PYVIDEOTRANS_VIENEU_MODEL`, rồi chạy lại harness; endpoint mặc định là `http://127.0.0.1:8000/v1`. Harness cố ý trả mã khác `0` nếu một provider được yêu cầu bị skip/failed, vì vậy không được coi kết quả chỉ có Edge là gate PASS. `pronunciation_accuracy`, `naturalness` và `voice_continuity` cần nghe thủ công; script chỉ tự tính duration alignment và không tuyên bố chất lượng phổ quát.
+Lệnh trên chạy trực tiếp từ thư mục gốc repository, không cần tự thêm `PYTHONPATH`. VieNeu ở giai đoạn này chỉ là pilot local qua endpoint tương thích OpenAI trên loopback, không phải dependency hay provider mặc định. Muốn thử, chạy VieNeu riêng trên máy, đặt tên model mà server thật sự expose vào `PYVIDEOTRANS_VIENEU_MODEL`, rồi chạy lại harness; endpoint mặc định là `http://127.0.0.1:8000/v1`. Pilot Task 4.16 đã xác minh một cấu hình VieNeu v3 Turbo ONNX/CPU tạo đủ 12/12 fixture qua adapter OpenAI-compatible hiện có; điều này không làm VieNeu thành mặc định. Harness cố ý trả mã khác `0` nếu một provider được yêu cầu bị skip/failed. `pronunciation_accuracy`, `naturalness` và `voice_continuity` vẫn cần nghe thủ công; script chỉ tự tính duration alignment và không tuyên bố chất lượng phổ quát.
 
 ### 5.4. CLI: dịch video trọn quy trình (`vtv`)
 

@@ -7,7 +7,7 @@
 | 4.13 Subtitle correction operability and contrast | PASS | 9 focused, 20 related UI and 585 full Python 3.12 tests pass; implementation and handoff persisted to `dhsys/main` |
 | 4.14 Explicit subtitle output | PASS | 38 focused, 104 related UI, 2 real pipeline media and 613 full Python 3.12 tests pass |
 | 4.15 Basic navigation and provider profiles | PASS | 11 focused, 35 related UI/config and 621 full Python 3.12 tests pass; reversible legacy-ID profiles verified |
-| 4.16 VieNeu pilot and En–Vi pronunciation control | in_progress | Non-destructive pronunciation layer and Edge benchmark verified; VieNeu live benchmark/listening gate remains blocked |
+| 4.16 VieNeu pilot and En–Vi pronunciation control | in_progress | Non-destructive pronunciation layer plus Edge/VieNeu 12-fixture live benchmarks verified; human listening gate remains open |
 | 4.17 Controlled provider reduction | planned | Migration, privacy and local-only behavior are proven before any removal |
 | 4.18 End-to-end handoff | planned | Source/frozen Windows evidence and documentation cover 4.13–4.17 |
 
@@ -31,9 +31,11 @@ Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 i
 ## Task 4.16 evidence — 2026-10-05
 
 - Vietnamese-only transient `tts_text` keeps displayed/persisted SRT unchanged while provider-facing text and TTS cache keys use the prepared pronunciation form. Project glossary precedence is deterministic and legacy provider/model IDs are untouched.
-- Focused pronunciation/BaseTTS/benchmark tests: 36 passed. Related TTS/config/UI tests: 130 passed. Full Python 3.12 suite: 634 passed; the related/full runs have one external `pydub` deprecation warning.
+- Focused pronunciation/BaseTTS/benchmark tests: 37 passed. Related TTS/config/UI tests: 145 passed. Full Python 3.12 suite: 635 passed; the full run has one external `pydub` deprecation warning.
 - Edge live benchmark generated all 12 required fixtures. Compact hashes/metrics are stored in `.DHSYSTEM/phases/4/evidence/4.16-edge-benchmark.json`; listening metrics remain pending human review.
-- VieNeu is not configured/running on a usable loopback endpoint and OmniVoice's local model is absent. The harness reports both as skipped and returns a non-zero gate code, so Task 4.16 is not PASS and Task 4.17 must not start.
+- VieNeu v3 Turbo ONNX/CPU ran successfully on loopback through the existing OpenAI-compatible adapter and generated all 12 required fixtures. Compact hashes/metrics are stored in `.DHSYSTEM/phases/4/evidence/4.16-vieneu-benchmark.json`; the 12 WAV hashes were rechecked with zero mismatches.
+- The benchmark script now runs directly from the repository root without a manual `PYTHONPATH`, matching the documented command. OmniVoice's local model remains absent and is a supported-hardware skip.
+- Pronunciation accuracy, naturalness and voice continuity are still pending human listening review for the live outputs, so Task 4.16 is not PASS and Task 4.17 must not start.
 
 ## Task 4.15 evidence — 2026-10-05
 

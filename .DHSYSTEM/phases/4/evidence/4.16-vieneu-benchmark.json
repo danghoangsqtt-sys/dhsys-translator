@@ -1,0 +1,133 @@
+{
+  "task": "4.16",
+  "provider": "vieneu",
+  "date": "2026-10-05",
+  "pilot_mode": "local-loopback-only",
+  "adapter": "existing OpenAI-compatible TTS adapter",
+  "model": "vieneu-v3-turbo",
+  "voice": "Mai Anh",
+  "backend": "onnx",
+  "device": "cpu",
+  "sample_rate": 48000,
+  "status": "pass",
+  "generated_audio_count": 12,
+  "expected_audio_count": 12,
+  "pronunciation_accuracy": "pending_human_review",
+  "naturalness": "pending_human_review",
+  "voice_continuity": "pending_human_review",
+  "duration_alignment": {
+    "within_20_percent_count": 0,
+    "fixture_count": 12,
+    "mean_duration_ratio": 0.552
+  },
+  "audio": [
+    {
+      "fixture": "AI",
+      "audio_file": "01-ai.wav",
+      "sha256": "1aa4e3135de28392c65b873ef59877ded58dfb3496c96ff7f6b7451804e2772d",
+      "target_duration_seconds": 1.5,
+      "actual_duration_seconds": 0.71,
+      "duration_ratio": 0.473
+    },
+    {
+      "fixture": "API",
+      "audio_file": "02-api.wav",
+      "sha256": "314d23165f4682a591c23f4c2c8c45ed4b3fd3dd066efad29ee523ef5ffbd05d",
+      "target_duration_seconds": 1.5,
+      "actual_duration_seconds": 0.88,
+      "duration_ratio": 0.587
+    },
+    {
+      "fixture": "ChatGPT",
+      "audio_file": "03-chatgpt.wav",
+      "sha256": "a278b513d4ae82e1824de915bf48a7471bbff658001b0edcf0a9c619f97a31c3",
+      "target_duration_seconds": 2.0,
+      "actual_duration_seconds": 0.92,
+      "duration_ratio": 0.46
+    },
+    {
+      "fixture": "GitHub",
+      "audio_file": "04-github.wav",
+      "sha256": "99866aadd098b7817570a077437501ea1ef052ed3a49c92e9e7b2deaf7f63a05",
+      "target_duration_seconds": 2.0,
+      "actual_duration_seconds": 0.56,
+      "duration_ratio": 0.28
+    },
+    {
+      "fixture": "Docker",
+      "audio_file": "05-docker.wav",
+      "sha256": "b657f71847bedb54fa51608c760a80040019144861581ee68dd50daa22664049",
+      "target_duration_seconds": 2.0,
+      "actual_duration_seconds": 0.69,
+      "duration_ratio": 0.345
+    },
+    {
+      "fixture": "Python",
+      "audio_file": "06-python.wav",
+      "sha256": "b90cd459794057540392afbfa8197762ee4851c9236ed2fda0449bd3a6e2260a",
+      "target_duration_seconds": 2.0,
+      "actual_duration_seconds": 0.68,
+      "duration_ratio": 0.34
+    },
+    {
+      "fixture": "OpenRouter",
+      "audio_file": "07-openrouter.wav",
+      "sha256": "8ade0005b8f191d2a833e0de588874764c2e20b78fb27c322c604cd47c93652a",
+      "target_duration_seconds": 2.5,
+      "actual_duration_seconds": 1.16,
+      "duration_ratio": 0.464
+    },
+    {
+      "fixture": "Gemini",
+      "audio_file": "08-gemini.wav",
+      "sha256": "67b5eca902be53e5c5a9db47eb558bc9e80544b0076b094c060c4acccedc51f3",
+      "target_duration_seconds": 2.0,
+      "actual_duration_seconds": 0.87,
+      "duration_ratio": 0.435
+    },
+    {
+      "fixture": "NVIDIA",
+      "audio_file": "09-nvidia.wav",
+      "sha256": "06498b6063c3d93776160ec12015fa902aa8071bcee59491bad1619a2769f70c",
+      "target_duration_seconds": 2.0,
+      "actual_duration_seconds": 1.06,
+      "duration_ratio": 0.53
+    },
+    {
+      "fixture": "https://github.com/openai",
+      "audio_file": "10-https-github-com-openai.wav",
+      "sha256": "9148dbd640faaec1a043508085a6572d396e5a981e0cd46c39b7d0011f9542b5",
+      "target_duration_seconds": 4.0,
+      "actual_duration_seconds": 5.02,
+      "duration_ratio": 1.255
+    },
+    {
+      "fixture": "support@example.com",
+      "audio_file": "11-support-example-com.wav",
+      "sha256": "323efec16f57593c06586cc81a308d3ccfdab9385e6d2367c655cf311d4042e6",
+      "target_duration_seconds": 3.0,
+      "actual_duration_seconds": 2.23,
+      "duration_ratio": 0.743
+    },
+    {
+      "fixture": "version 3.12.14",
+      "audio_file": "12-version-3-12-14.wav",
+      "sha256": "1a568e8219833eb23753a2f00690225f0655731d403c0f8580b6860017f49aa0",
+      "target_duration_seconds": 3.0,
+      "actual_duration_seconds": 2.14,
+      "duration_ratio": 0.713
+    }
+  ],
+  "verification": {
+    "wav_hashes_rechecked": "12/12",
+    "hash_mismatches": 0,
+    "direct_cli_without_pythonpath": "pass"
+  },
+  "notes": [
+    "Pronunciation accuracy, naturalness and voice continuity still require human listening review.",
+    "The VieNeu runtime/model remains an opt-in local pilot and is not bundled into pyVideoTrans-DH.",
+    "Temporary upstream/runtime files used for the pilot stay under ignored tmp/ and are not committed.",
+    "No API key, reference-audio path or absolute local path is stored in this evidence file.",
+    "This benchmark does not establish universal provider quality."
+  ]
+}
