@@ -83,6 +83,7 @@ Kết thúc mỗi task, báo ngắn gọn: thay đổi gì, file chính, test/ga
 - Script benchmark đã được sửa để lệnh chạy trực tiếp từ repo root hoạt động mà không cần tự đặt `PYTHONPATH`; có regression test subprocess tương ứng. VieNeu vẫn chỉ là pilot local opt-in, không thêm provider ID/dependency mặc định và không sửa SRT hiển thị/lưu trữ.
 - Ngày 06/10/2026 người dùng đã chốt **OK** cho ba tiêu chí nghe (phát âm, tự nhiên, continuity) trên bộ 12 fixture **Hải Đăng**. Đây là acceptance cho pilot đã nghe, không phải tuyên bố chất lượng phổ quát. OmniVoice model chưa cài chỉ còn là supported-hardware skip, không phải blocker của 4.16. VieNeu vẫn local opt-in, không đổi provider/voice mặc định.
 - Closeout ngày 06/10/2026 trên Python 3.12.14 + Qt offscreen: 44 core focused, 94 related TTS/config/UI và 642 full tests đều pass; full suite chỉ có một cảnh báo ngoài dự án từ `pydub/audioop`.
+- Task 4.16 đã được persist lên `origin/main` tại commit `0b4f270b`; trạng thái là **PASS**. Bước tiếp theo là Task 4.17 theo đúng thứ tự kế hoạch.
 - Tasks 4.13–4.15 đã hoàn tất và được lưu trên GitHub; Task 4.15 kết thúc ở commit `a9aee380` với tags `pyVideoTrans-DH-p4-t4.15` và `pyVideoTrans-DH-p4-t4.15-done`. Bằng chứng: 11 focused, 35 related UI/config và 621 full Python 3.12 tests pass.
 - Phase 3 clean-runner/full-media/release gates vẫn độc lập và chưa được phép đánh dấu hoàn tất chỉ vì Phase 4 tiếp tục.
 - Không có API key hoặc tệp cấu hình bí mật được chủ động đưa vào commit bàn giao.
