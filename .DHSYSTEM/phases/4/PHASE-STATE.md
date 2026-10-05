@@ -8,7 +8,7 @@
 | 4.14 Explicit subtitle output | PASS | 38 focused, 104 related UI, 2 real pipeline media and 613 full Python 3.12 tests pass |
 | 4.15 Basic navigation and provider profiles | PASS | 11 focused, 35 related UI/config and 621 full Python 3.12 tests pass; reversible legacy-ID profiles verified |
 | 4.16 VieNeu pilot and En–Vi pronunciation control | PASS | Product/test/media/listening gate met; user accepted the Hải Đăng pilot listening gate on 2026-10-06; closeout commit persisted to `origin/main` |
-| 4.17 Controlled provider reduction | in_progress | Policy/inventory work started; no provider removal until migration, privacy and local-only behavior are proven |
+| 4.17 Controlled provider reduction | PASS | Compatibility-first policy proven; 17 focused, 151 related and 658 full Python 3.12 tests pass; no provider removed/renumbered |
 | 4.18 End-to-end handoff | planned | Source/frozen Windows evidence and documentation cover 4.13–4.17 |
 
 | Task | State | Gate |
@@ -26,7 +26,16 @@
 | 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
 | 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
 
-Phase state: in_progress. Tasks 4.1–4.16 and ENH-003 are verified; Task 4.16 is persisted to `origin/main` and is PASS. Task 4.17 is in progress with a compatibility-first provider/privacy policy; no provider deletion is authorized. The separate Phase 3 clean-runner/release gates remain open.
+Phase state: in_progress. Tasks 4.1–4.17 and ENH-003 are verified; Task 4.17 is PASS locally and ready for persistence. No provider deletion is authorized by 4.17; Task 4.18 remains the next ENH-004 task. The separate Phase 3 clean-runner/release gates remain open.
+
+## Task 4.17 evidence — 2026-10-06
+
+- Local-only status is accepted only for loopback Local LLM endpoints; empty, LAN/private and public endpoints cannot silently activate the Local profile.
+- Gemini/remote processing shows privacy plus quota/rate-limit/fallback guidance; OpenRouter remains available in Advanced/Custom and is documented as remote/off-device.
+- Provider registries remain frozen at translation `0..28`, recognition `0..32`, TTS `0..37`; saved provider/profile meanings and Chinese media codes `zh-cn`, `zh-tw`, `yue` are unchanged.
+- WebUI locale compatibility now resolves legacy saved English language display names into the active locale instead of falling back to the wrong language.
+- Python 3.12.14 with Qt offscreen: 17 focused, 151 related UI/config/locale/CLI and 658 full tests pass; full suite has one external `pydub/audioop` deprecation warning. `git diff --check` passes.
+- Implementation checkpoint: `26a24591`.
 
 ## Task 4.16 evidence — 2026-10-05
 

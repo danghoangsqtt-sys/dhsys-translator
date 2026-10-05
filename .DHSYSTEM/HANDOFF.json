@@ -17,7 +17,7 @@
     "request": "ENH-004",
     "phase": 4,
     "tasks": ["4.13", "4.14", "4.15", "4.16", "4.17", "4.18"],
-    "status": "tasks 4.13-4.16 PASS and are persisted to origin/main; task 4.17 is in progress with a compatibility-first provider/data-plane policy. No provider is deleted, renumbered or hidden yet; Local is local-only only with a loopback Local LLM endpoint, while Gemini/OpenRouter are remote/off-device and require quota/rate-limit plus fallback disclosure. Chinese media-language support remains unchanged.",
+    "status": "tasks 4.13-4.16 PASS and are persisted to origin/main; task 4.17 is PASS locally and ready for persistence. No provider was deleted, renumbered or hidden; Local is accepted as local-only only with a loopback Local LLM endpoint, while Gemini/OpenRouter are remote/off-device and require quota/rate-limit plus fallback disclosure. Chinese media-language support remains unchanged. Task 4.18 is next.",
     "continuation_repository": "https://github.com/danghoangsqtt-sys/dhsys-translator",
     "continuation_prompt": "docs/HANDOFF-DESKTOP-AI.md",
     "source": "docs/brainstorm/session-2026-10-05-vietnamese-first-video-workflow.md",
@@ -35,7 +35,10 @@
     "task_4_16_blockers": [],
     "task_4_16_supported_hardware_skips": [
       "OmniVoice local model is not installed"
-    ]
+    ],
+    "task_4_17_implementation_commit": "26a24591",
+    "task_4_17_tests": "17 focused, 151 related UI/config/locale/CLI, 658 full Python 3.12 tests; one external pydub/audioop warning",
+    "task_4_17_blockers": []
   },
   "parallel_work": {
     "phase": 4,
