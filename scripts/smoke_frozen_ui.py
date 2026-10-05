@@ -4,7 +4,9 @@ import json
 import os
 from pathlib import Path
 import sys
+import tempfile
 import traceback
+from types import SimpleNamespace
 
 
 def run_check():
@@ -14,9 +16,18 @@ def run_check():
     os.environ['QT_QPA_PLATFORM'] = 'offscreen'
     os.environ['PYVIDEOTRANS_LANG'] = requested_locale
 
-    from PySide6.QtCore import QPoint
-    from PySide6.QtWidgets import QApplication, QFrame, QMainWindow, QPushButton
-    from videotrans.configure.config import ROOT_DIR, defaulelang, settings, tr
+    from PySide6.QtCore import QPoint, Qt
+    from PySide6.QtWidgets import (
+        QAbstractItemView,
+        QApplication,
+        QCheckBox,
+        QComboBox,
+        QFrame,
+        QMainWindow,
+        QMessageBox,
+        QPushButton,
+    )
+    from videotrans.configure.config import ROOT_DIR, app_cfg, defaulelang, params, settings, tr
     from videotrans.configure._paths import resource_path
     from videotrans.ui.home import HomePage
     from videotrans.ui.info import Ui_info
@@ -137,6 +148,261 @@ def run_check():
     if (window.workflowStatus.property('workflowState') != 'running'
             or any(section.property('workflowState') != 'running' for section in workflow_sections)):
         raise AssertionError('packaged workflow view state did not reach every section')
+
+    # Task 4.13: both subtitle-review dialogs stay editable and have no
+    # countdown-driven auto-close behavior. Keep this probe offline by
+    # suppressing the delayed media-preview callback.
+    from videotrans.component import onlyone_set_recogn, onlyone_set_recogn2
+
+    class _DialogParent:
+        screen_size = (1200, 800)
+        height = 800
+
+    class _TimerStub:
+        @staticmethod
+        def singleShot(delay, callback):
+            if delay == 0:
+                callback()
+
+    editor_checks = []
+    with tempfile.TemporaryDirectory(prefix='pyvideotrans-frozen-ui-') as temporary:
+        temporary = Path(temporary)
+        for module, dialog_class, app_cfg_attr in (
+            (onlyone_set_recogn, onlyone_set_recogn.EditRecognResultDialog, 'onlyone_source_sub'),
+            (onlyone_set_recogn2, onlyone_set_recogn2.EditRecognResultDialog2, 'onlyone_target_sub'),
+        ):
+            subtitle_path = temporary / f'{app_cfg_attr}.srt'
+            subtitle_path.write_text(
+                '1\n00:00:00,000 --> 00:00:01,500\nFrozen subtitle editor\n',
+                encoding='utf-8',
+            )
+            old_timer = module.QTimer
+            old_play = dialog_class._play_segment
+            old_path = getattr(app_cfg, app_cfg_attr)
+            dialog = None
+            try:
+                module.QTimer = _TimerStub
+                dialog_class._play_segment = lambda *_args: None
+                setattr(app_cfg, app_cfg_attr, str(subtitle_path))
+                dialog = dialog_class(parent=_DialogParent())
+                dialog.load_table()
+                triggers = dialog.table.editTriggers()
+                expected_triggers = (
+                    QAbstractItemView.DoubleClicked
+                    | QAbstractItemView.SelectedClicked
+                    | QAbstractItemView.EditKeyPressed
+                    | QAbstractItemView.AnyKeyPressed
+                )
+                if dialog.table.focusPolicy() != Qt.StrongFocus:
+                    raise AssertionError(f'{dialog_class.__name__} is not keyboard focusable')
+                if dialog.table.selectionMode() != QAbstractItemView.SingleSelection:
+                    raise AssertionError(f'{dialog_class.__name__} selection mode regressed')
+                if (triggers & expected_triggers) != expected_triggers:
+                    raise AssertionError(f'{dialog_class.__name__} edit triggers regressed')
+                if not dialog.table.item(0, 5).flags() & Qt.ItemIsEditable:
+                    raise AssertionError(f'{dialog_class.__name__} subtitle text is not editable')
+                if dialog.timer is not None or dialog.stop_button is not None:
+                    raise AssertionError(f'{dialog_class.__name__} restored countdown state')
+                editor_checks.append(dialog_class.__name__)
+            finally:
+                if dialog is not None:
+                    dialog.close()
+                    dialog.deleteLater()
+                setattr(app_cfg, app_cfg_attr, old_path)
+                dialog_class._play_segment = old_play
+                module.QTimer = old_timer
+        app.processEvents()
+
+        # Task 4.14: persisted subtitle enum mapping is frozen, invalid/fresh
+        # values resolve to hard subtitles, bilingual ordering is preserved,
+        # and a soft-output receipt tells the user to enable the track.
+        from videotrans.task._stage_subtitle import SubtitleMixin
+        from videotrans.task.subtitle_output import (
+            SUBTITLE_TYPE_KEYS,
+            build_output_receipt,
+            subtitle_type_key,
+        )
+
+        expected_subtitle_keys = (
+            'nosubtitle',
+            'embedsubtitle',
+            'softsubtitle',
+            'embedsubtitle2',
+            'softsubtitle2',
+        )
+        if SUBTITLE_TYPE_KEYS != expected_subtitle_keys:
+            raise AssertionError(f'persisted subtitle mapping changed: {SUBTITLE_TYPE_KEYS}')
+        if subtitle_type_key(None) != 'embedsubtitle' or subtitle_type_key(-1) != 'embedsubtitle':
+            raise AssertionError('fresh/invalid subtitle selection no longer defaults to hard subtitles')
+
+        labels_by_locale = {
+            'en_US': [
+                'No subtitles in the video',
+                'Always visible on the video',
+                'Turn on/off in the video player',
+                'Always visible bilingual subtitles',
+                'Bilingual subtitles: turn on/off in the player',
+            ],
+            'vi_VN': [
+                'Video không có phụ đề',
+                'Luôn hiện chữ trên video',
+                'Bật/tắt phụ đề trong trình phát',
+                'Luôn hiện phụ đề song ngữ',
+                'Phụ đề song ngữ: bật/tắt trong trình phát',
+            ],
+        }
+        for locale_name, expected_labels in labels_by_locale.items():
+            catalog = json.loads(
+                resource_path('videotrans', 'language', f'{locale_name}.json').read_text(encoding='utf-8')
+            )
+            if [catalog[key] for key in SUBTITLE_TYPE_KEYS] != expected_labels:
+                raise AssertionError(f'subtitle labels regressed for {locale_name}')
+
+        source = temporary / 'source.srt'
+        target = temporary / 'target.srt'
+        source.write_text('1\n00:00:00,000 --> 00:00:01,000\nOriginal line\n', encoding='utf-8')
+        target.write_text('1\n00:00:00,000 --> 00:00:01,000\nTranslated line\n', encoding='utf-8')
+        bilingual_orders = []
+        for output_srt, expected_lines in (
+            (1, ['Original line', 'Translated line']),
+            (2, ['Translated line', 'Original line']),
+        ):
+            cache_dir = temporary / f'cache-{output_srt}'
+            output_dir = temporary / f'output-{output_srt}'
+            cache_dir.mkdir()
+            output_dir.mkdir()
+            processor = SimpleNamespace(cfg=SimpleNamespace(
+                subtitle_type=4,
+                output_srt=output_srt,
+                source_sub=str(source),
+                target_sub=str(target),
+                source_language_code='en',
+                target_language_code='vi',
+                target_language='Vietnamese',
+                cache_folder=str(cache_dir),
+                target_dir=str(output_dir),
+            ))
+            processor._get_join_flag = SubtitleMixin._get_join_flag.__get__(processor)
+            SubtitleMixin._process_subtitles(processor)
+            visible_lines = [
+                line for line in (output_dir / 'shuang.srt').read_text(encoding='utf-8').splitlines()
+                if line in {'Original line', 'Translated line'}
+            ]
+            if visible_lines != expected_lines:
+                raise AssertionError(f'bilingual subtitle order regressed: {visible_lines}')
+            bilingual_orders.append(visible_lines)
+
+        translated_video = temporary / 'translated.mp4'
+        translated_video.write_bytes(b'fixture')
+        receipt = build_output_receipt(SimpleNamespace(
+            subtitle_type=2,
+            output_srt=0,
+            targetdir_mp4=str(translated_video),
+            source_sub=str(source),
+            target_sub=str(target),
+            target_dir=str(temporary),
+        ))
+        if not receipt['soft_track_requires_player'] or receipt['video_path'] != str(translated_video):
+            raise AssertionError(f'soft subtitle output receipt regressed: {receipt}')
+
+        # No-subtitle remains an explicit standard-mode choice: mode updates
+        # must not silently switch away, and the final action requires a
+        # warning confirmation.
+        from videotrans.mainwin._actions_base_mode import WinActionBaseModeMixin
+        from videotrans.mainwin._actions_check import WinActionCheckMixin
+
+        subtitle_combo = QComboBox()
+        subtitle_combo.addItems(['No subtitles', 'Always visible'])
+        subtitle_combo.setCurrentIndex(0)
+        voice_combo = QComboBox()
+        voice_combo.addItems(['No', 'voice'])
+        main_stub = SimpleNamespace(
+            app_mode='biaozhun',
+            subtitle_type=subtitle_combo,
+            voice_role=voice_combo,
+            copysrt_rawvideo=QCheckBox(),
+        )
+        action_stub = SimpleNamespace(main=main_stub, cfg={'subtitle_type': 0, 'voice_role': 'No'})
+        WinActionBaseModeMixin.set_mode(action_stub)
+        if action_stub.cfg['subtitle_type'] != 0:
+            raise AssertionError('standard mode silently changed explicit no-subtitle selection')
+        old_warning = QMessageBox.warning
+        try:
+            QMessageBox.warning = lambda *_args, **_kwargs: QMessageBox.StandardButton.No
+            if WinActionCheckMixin.confirm_no_subtitle_output(action_stub):
+                raise AssertionError('no-subtitle output bypassed confirmation')
+            QMessageBox.warning = lambda *_args, **_kwargs: QMessageBox.StandardButton.Yes
+            if not WinActionCheckMixin.confirm_no_subtitle_output(action_stub):
+                raise AssertionError('confirmed no-subtitle output was rejected')
+        finally:
+            QMessageBox.warning = old_warning
+
+        # Tasks 4.15/4.17: provider profiles layer on top of the frozen numeric
+        # registries and Local is local-only strictly for loopback endpoints.
+        from videotrans import recognition, translator, tts
+        from videotrans.configure._languages_dict import EDGE_LANGUANGES_CODE
+        from videotrans.ui.provider_profiles import (
+            PROFILE_CUSTOM,
+            PROFILE_GEMINI,
+            PROFILE_LOCAL,
+            ProviderSelection,
+            profile_policy,
+            resolve_profile_transition,
+        )
+
+        if tuple(translator.ID_NAME_DICT) != tuple(range(29)):
+            raise AssertionError('translation provider IDs changed')
+        if tuple(recognition.ID_NAME_DICT) != tuple(range(33)):
+            raise AssertionError('recognition provider IDs changed')
+        if tuple(tts.ID_NAME_DICT) != tuple(range(38)):
+            raise AssertionError('TTS provider IDs changed')
+        if not {'zh-cn', 'zh-tw', 'yue'} <= set(EDGE_LANGUANGES_CODE):
+            raise AssertionError('Chinese media-language support regressed')
+        custom_selection = ProviderSelection(8, 10, 29)
+        local_transition = resolve_profile_transition(PROFILE_LOCAL, custom_selection, PROFILE_CUSTOM, None)
+        gemini_transition = resolve_profile_transition(
+            PROFILE_GEMINI,
+            local_transition.selection,
+            PROFILE_LOCAL,
+            local_transition.custom_backup,
+        )
+        restored_transition = resolve_profile_transition(
+            PROFILE_CUSTOM,
+            gemini_transition.selection,
+            PROFILE_GEMINI,
+            gemini_transition.custom_backup,
+        )
+        if restored_transition.selection != custom_selection:
+            raise AssertionError('custom provider selection was not restored')
+        if not profile_policy(PROFILE_LOCAL, 'http://127.0.0.1:8000/v1').local_only_ready:
+            raise AssertionError('loopback Local profile is not marked ready')
+        if profile_policy(PROFILE_LOCAL, 'https://api.example.com/v1').local_only_ready:
+            raise AssertionError('public Local endpoint was incorrectly marked local-only')
+
+        # Task 4.16: the pronunciation layer is transient, Vietnamese-only,
+        # and local VieNeu voice discovery never activates for a public URL.
+        from videotrans.tts.pronunciation import prepare_tts_text
+        from videotrans.util import help_role
+
+        displayed_text = 'ChatGPT dùng API và AI.'
+        spoken_text = prepare_tts_text(displayed_text, language='vi')
+        if displayed_text != 'ChatGPT dùng API và AI.' or spoken_text == displayed_text:
+            raise AssertionError('Vietnamese pronunciation layer did not stay transient')
+        if prepare_tts_text(displayed_text, language='en') != displayed_text:
+            raise AssertionError('pronunciation layer leaked into non-Vietnamese text')
+        saved_openaitts = {
+            key: params.get(key)
+            for key in ('openaitts_role', 'openaitts_api', 'openaitts_model')
+        }
+        try:
+            params['openaitts_role'] = 'Hải Đăng,Thục Đoan'
+            params['openaitts_api'] = 'https://api.example.com/v1'
+            params['openaitts_model'] = 'vieneu-pilot'
+            if help_role.get_openaitts_roles() != ['No', 'Hải Đăng', 'Thục Đoan']:
+                raise AssertionError('saved OpenAI-compatible voices were not preserved')
+        finally:
+            params.update(saved_openaitts)
+
     window.close()
     return {
         'requested_locale': requested_locale,
@@ -152,6 +418,20 @@ def run_check():
         'workflow_hierarchy': True,
         'responsive_layout': True,
         'responsive_quick_tools': True,
+        'subtitle_editors': editor_checks,
+        'subtitle_mapping': list(expected_subtitle_keys),
+        'bilingual_orders': bilingual_orders,
+        'soft_receipt_requires_player': receipt['soft_track_requires_player'],
+        'no_subtitle_confirmation': True,
+        'provider_registry_sizes': {
+            'translation': len(translator.ID_NAME_DICT),
+            'recognition': len(recognition.ID_NAME_DICT),
+            'tts': len(tts.ID_NAME_DICT),
+        },
+        'provider_custom_restore': True,
+        'local_profile_loopback_only': True,
+        'pronunciation_layer_transient': True,
+        'vieneu_public_discovery_blocked': True,
     }
 
 
