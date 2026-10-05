@@ -10,8 +10,12 @@
 | 4.6 Regression evidence and handoff | verified locally; persistence pending | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved |
 | 4.7 Rebuild and smoke-test light Windows candidate | verified locally; persistence pending | Python 3.12 candidate has light QSS; frozen/UI/sidebar/menu smoke pass |
 | 4.8 Responsive home and core utility surfaces | verified locally; persistence pending | Home cards, core quick tools, light-table parity and compact Vietnamese navigation at 480/720/900/1280 px |
+| 4.9 Two UI locales and legacy migration | planned | `vi_VN`/`en_US` allowlist; old Chinese UI settings migrate; Chinese media codes preserved |
+| 4.10 Application-authored runtime messages | planned | Task summary, progress and errors use Vietnamese/English; Chinese media text untouched |
+| 4.11 CLI/WebUI locale parity | planned | CLI/WebUI messages use Vietnamese/English; Chinese remains source/target content language |
+| 4.12 Packaged and Chinese-media regression | planned | Full suite, frozen UI smoke, legacy-data migration and short Chinese-media flow evidenced |
 
-Phase state: in_progress. Tasks 4.1–4.8 are verified locally. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
+Phase state: in_progress. Tasks 4.1–4.8 are verified locally; ENH-003 tasks 4.9–4.12 are planned. Phase 3 remains in progress, and its clean-runner, provider-media and upstream-persistence gates remain open.
 
 ## Task 4.8 evidence — 2026-10-04
 

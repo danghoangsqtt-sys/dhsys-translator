@@ -157,3 +157,9 @@ The Windows candidate built from tracked `sp.spec` must bundle `videotrans/style
 Trang chủ và bốn công cụ nhanh (chép lời, dịch SRT, lồng tiếng nhiều người, ghép video/âm thanh/SRT) phải dùng được khi cửa sổ chỉ rộng 480 px, 720 px, 900 px và 1280 px. Thẻ, nút và hàng cấu hình tự xuống dòng hoặc nằm trong vùng cuộn hợp lệ; không cắt nút chọn tệp, khởi chạy, dừng hay mở thư mục kết quả. Multiple speakers dùng cùng hệ màu sáng, gồm bảng và trạng thái được chọn. Điều hướng thu gọn có nhãn tiếng Việt. Mọi object name, QAction, signal, cài đặt và xử lý media giữ nguyên.
 
 **Nghiệm thu:** source và executable frozen có probe cho bốn kích thước; probe xác nhận các route cũ mở đúng cửa sổ, không có phần tử điều khiển chính vượt canvas và light QSS vẫn được nạp. Focused Qt suite cùng full suite tiếp tục đạt.
+
+### UI-10 — Hai locale giao diện, giữ năng lực dịch tiếng Trung (ENH-003)
+
+Ứng dụng chỉ hỗ trợ `vi_VN` và `en_US` cho giao diện và thông báo do ứng dụng tạo ra trên desktop, CLI và WebUI. Cấu hình UI cũ `zh_CN`/`zh` chuyển an toàn sang English; mặc định người dùng mới vẫn là Vietnamese. Tài nguyên giao diện Trung còn sót trong user data không được kích hoạt lại locale Trung. Các chuỗi đầu ra từ video, SRT, provider và tên model/voice không bị dịch hoặc xóa chỉ vì dùng chữ/mã tiếng Trung.
+
+**Nghiệm thu:** bộ chọn UI chỉ có Việt/Anh; task summary/log/lỗi mẫu không có nhãn tiếng Trung do ứng dụng tạo; cấu hình cũ khởi động và giữ các cài đặt khác; nguồn và đích media vẫn chọn được `zh`, `zh-cn`, `zh-tw` và luồng video tiếng Trung ngắn được kiểm tra trên nguồn lẫn bản đóng gói. Hợp đồng và thứ tự thực hiện chi tiết nằm ở [.DHSYSTEM/phases/4/SPEC.md](../.DHSYSTEM/phases/4/SPEC.md).

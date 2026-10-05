@@ -1,6 +1,6 @@
 # Tracker
 
-- Backlog: [ENH-003](requests/ENH-003.md) — chỉ hỗ trợ giao diện/thông báo tiếng Việt và tiếng Anh; giữ đầy đủ chức năng xử lý nội dung tiếng Trung (P1, new, Phase 4 đề xuất).
+- Backlog: [ENH-003](requests/ENH-003.md) — chỉ hỗ trợ giao diện/thông báo tiếng Việt và tiếng Anh; giữ đầy đủ chức năng xử lý nội dung tiếng Trung (P1, triaged; Phase 4 tasks 4.9–4.12 planned from `feaf5fe7`).
 
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — clean-runner release gate and documentation
@@ -8,6 +8,7 @@
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress with the frozen startup contention repair verified locally; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
 - Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
+- Planned Phase 4 localization target: 4.15.0 after the 4.14.1 repair release; current manifest remains 4.14 until implementation and release gates pass.
 - Starting commit: `8cf344fe`
 - Input artifacts: `docs/PLAN.md`, `docs/SPEC.md`, `docs/BUGFIX-PLAN.md`, `.DHSYSTEM/audit-report.md`, `.DHSYSTEM/requests/`, `docs/brainstorm/session-2026-10-03.md`
 

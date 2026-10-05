@@ -183,3 +183,11 @@ This slice changes presentation and navigation only. It keeps every existing QAc
 - Giữ nguyên widget, object name, signal và QAction của Translate SRT, Multiple speakers, Merge video/âm thanh/SRT và Speech recognition; thay các hàng cố định bằng bố cục tự xuống dòng hoặc vùng cuộn phù hợp.
 - Bỏ màu tối cục bộ ở bảng Multiple speakers, đưa trạng thái chọn và nhãn về light QSS; bổ sung bản dịch Việt cho menu điều hướng thu gọn.
 - **Gate:** source và frozen UI probe ở 480, 720, 900 và 1280 px không có điều khiển chính vượt khỏi canvas; các route cũ vẫn mở đúng cửa sổ và test hồi quy đầy đủ đạt.
+
+**4.9–4.12. Chỉ giữ giao diện/thông báo tiếng Việt và tiếng Anh — P1; ENH-003, SPEC UI-10**
+
+- **4.9 — Locale và cấu hình cũ:** lập allowlist UI `vi_VN`/`en_US`, bỏ lựa chọn giao diện Trung ở desktop/splash, chuyển `lang=zh_CN` và alias cũ sang English. File ngôn ngữ Trung còn sót trong user data không được kích hoạt lại UI Trung. Giữ nút/cài đặt trước đây chỉ hiện ở locale Trung bằng điều kiện tính năng phù hợp.
+- **4.10 — Thông báo do ứng dụng tạo ra:** dịch nhãn và log tác vụ còn tiếng Trung sang Anh/Việt, bắt đầu với `TaskCfg*` và các dòng người dùng đã gặp; giữ nguyên nội dung video/SRT và dữ liệu provider.
+- **4.11 — CLI/WebUI:** thay thông báo CLI `zh/en` bằng `vi/en`, hoàn thiện WebUI Việt/Anh và xử lý locale đã lưu. Danh sách ngôn ngữ nguồn/đích vẫn có tiếng Trung và các provider/giọng liên quan.
+- **4.12 — Hồi quy và bàn giao:** test nguồn, migration, GUI/CLI/WebUI, build Windows riêng, frozen smoke và clip tiếng Trung ngắn cho luồng nhận dạng → dịch → đầu ra. Ghi bằng chứng/giới hạn và cập nhật tài liệu.
+- **Cổng:** chỉ hai locale giao diện hoạt động trên mã nguồn và gói; cấu hình UI cũ không crash; tiếng Trung vẫn chọn được làm ngôn ngữ media nguồn/đích và vượt kiểm thử media. Chi tiết hợp đồng và task ở [.DHSYSTEM/phases/4/SPEC.md](../.DHSYSTEM/phases/4/SPEC.md). Mục tiêu phiên bản sau bản vá 4.14.1 là `4.15.0` (dự kiến, chưa đổi manifest).

@@ -10,7 +10,7 @@
   "source_spec": "docs/SPEC.md",
   "repair_plan": "docs/BUGFIX-PLAN.md",
   "planned_patch_version": "4.14.1",
-  "updated_at": "2026-10-04",
+  "updated_at": "2026-10-05",
   "parallel_work": {
     "phase": 4,
     "tasks": [
@@ -23,7 +23,10 @@
       "4.7",
       "4.8"
     ],
-    "status": "task 4.8 responsive home and core utility surfaces deployed and verified locally; tasks 4.1-4.8 verified locally; persistence pending",
+    "status": "tasks 4.1-4.8 verified locally; ENH-003 localization tasks 4.9-4.12 planned; persistence pending",
+    "planned_request": "ENH-003",
+    "planned_tasks": ["4.9", "4.10", "4.11", "4.12"],
+    "planned_target_version": "4.15.0 after pending 4.14.1 repair release",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
     "candidate_path": "dist/sp/sp.exe",
     "candidate_sha256": "2C52AF073F2A148E60C82340DFAE5A198EAF6E01F5AEC7AE0303D7684061F094",
