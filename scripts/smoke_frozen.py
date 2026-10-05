@@ -41,6 +41,14 @@ def run_check(cli_script):
     require(resource_path("videotrans", "styles", "light.qss").is_file(),
             "bundled light.qss could not be resolved")
 
+    from faster_whisper.utils import get_assets_path
+    from faster_whisper.vad import get_vad_model
+
+    vad_asset = Path(get_assets_path()) / "silero_vad_v6.onnx"
+    require(vad_asset.is_file(), "bundled faster-whisper Silero VAD model is missing")
+    vad_model = get_vad_model()
+    require(vad_model.session is not None, "bundled Silero VAD model did not load")
+
     from videotrans import get_class
     from videotrans import recognition
     from videotrans import translator
@@ -113,6 +121,7 @@ def run_check(cli_script):
         "cli_version": cli_output.getvalue().strip(),
         "srt_items": len(parsed),
         "media_streams": sorted(streams),
+        "silero_vad": str(vad_asset),
     }
 
 

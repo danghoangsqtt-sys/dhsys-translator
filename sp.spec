@@ -9,6 +9,7 @@ import sys
 sys.setrecursionlimit(20000)
 
 from pathlib import Path
+from PyInstaller.utils.hooks import collect_data_files as collect_package_data
 
 PROJECT_ROOT = Path.cwd()
 
@@ -51,6 +52,15 @@ def menu_hidden_imports():
 # Collect data files
 def collect_data_files():
     data_files = []
+
+    # faster-whisper resolves its Silero VAD model relative to utils.py.
+    # PyInstaller bundles Python modules but does not include this ONNX asset.
+    vad_assets = collect_package_data(
+        "faster_whisper", includes=["assets/silero_vad_v6.onnx"]
+    )
+    if len(vad_assets) != 1:
+        raise RuntimeError("Missing faster-whisper Silero VAD asset in build environment")
+    data_files.extend(vad_assets)
 
     license_file = PROJECT_ROOT / "LICENSE"
     if license_file.is_file():

@@ -134,7 +134,7 @@ jobs:
 
       - name: Verify candidate layout
         run: |
-          foreach ($required in @('dist/sp/sp.exe', 'dist/sp/ffmpeg/ffmpeg.exe', 'dist/sp/ffmpeg/ffprobe.exe', 'dist/sp/videotrans/styles/style.qss', 'dist/sp/videotrans/styles/light.qss', 'dist/sp/videotrans/styles/icon.ico')) {
+          foreach ($required in @('dist/sp/sp.exe', 'dist/sp/ffmpeg/ffmpeg.exe', 'dist/sp/ffmpeg/ffprobe.exe', 'dist/sp/videotrans/styles/style.qss', 'dist/sp/videotrans/styles/light.qss', 'dist/sp/videotrans/styles/icon.ico', 'dist/sp/_internal/faster_whisper/assets/silero_vad_v6.onnx')) {
             if (-not (Test-Path $required)) { throw "Missing candidate file: $required" }
           }
 
