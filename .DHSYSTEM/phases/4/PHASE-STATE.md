@@ -34,11 +34,13 @@ Phase state: in_progress. Tasks 4.1–4.15 and ENH-003 are verified; Task 4.15 i
 - Local VieNeu voice discovery is restricted to loopback plus a VieNeu model name, keeps any saved roles first, falls back safely when discovery fails, and does not change the persisted OpenAI TTS provider ID/index. The main voice selector preserves a selected discovered voice across refreshes.
 - The existing Multiple speakers dialog can assign different VieNeu voices to different speakers/lines; dubbing consumes those per-line roles without changing subtitle text. This provides the male/female dubbing foundation without adding a new provider ID.
 - A 25/25 audition set was generated from the same 10-word sentence, `Xin chào, đây là giọng thử cho nội dung dịch.` Compact non-sensitive metadata is stored in `.DHSYSTEM/phases/4/evidence/4.16-vieneu-voice-audition.json`; local WAVs remain ignored under `tmp/` and are not committed.
+- The user completed the audition choice and selected `Hải Đăng` as the preferred primary VieNeu pilot voice. The selection does not overwrite saved roles or make VieNeu/OpenAI TTS the global default; all discovered voices remain available for content-specific and per-speaker use.
 - Focused pronunciation/BaseTTS/benchmark/voice-selection tests: 53 passed. Related TTS/config/UI tests: 185 passed. Full Python 3.12 suite: 642 passed; the full run has one external `pydub` deprecation warning.
 - Edge live benchmark generated all 12 required fixtures. Compact hashes/metrics are stored in `.DHSYSTEM/phases/4/evidence/4.16-edge-benchmark.json`; listening metrics remain pending human review.
 - VieNeu v3 Turbo ONNX/CPU ran successfully on loopback through the existing OpenAI-compatible adapter and generated all 12 required fixtures. Compact hashes/metrics are stored in `.DHSYSTEM/phases/4/evidence/4.16-vieneu-benchmark.json`; the 12 WAV hashes were rechecked with zero mismatches.
+- The preferred voice `Hải Đăng` was then benchmarked separately on the same 12 fixtures: 12/12 generated, mean duration ratio `0.502`, `1/12` within ±20%, and zero SHA-256 mismatches. Evidence is `.DHSYSTEM/phases/4/evidence/4.16-vieneu-hai-dang-benchmark.json`; the earlier `Mai Anh` evidence is retained.
 - The benchmark script now runs directly from the repository root without a manual `PYTHONPATH`, matching the documented command. OmniVoice's local model remains absent and is a supported-hardware skip.
-- Pronunciation accuracy, naturalness, voice continuity and the user's preferred main VieNeu voice are still pending human listening review for the live outputs, so Task 4.16 is not PASS and Task 4.17 must not start.
+- The preferred main VieNeu voice is now `Hải Đăng`; pronunciation accuracy, naturalness and voice continuity are still pending human listening review for the 12 preferred-voice outputs, so Task 4.16 is not PASS and Task 4.17 must not start.
 
 ## Task 4.15 evidence — 2026-10-05
 

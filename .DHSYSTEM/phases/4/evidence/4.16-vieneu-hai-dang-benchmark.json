@@ -1,0 +1,47 @@
+{
+  "task": "4.16",
+  "provider": "vieneu",
+  "date": "2026-10-05",
+  "pilot_mode": "local-loopback-only",
+  "adapter": "existing OpenAI-compatible TTS adapter",
+  "model": "vieneu-v3-turbo",
+  "voice": "Hải Đăng",
+  "backend": "onnx",
+  "device": "cpu",
+  "status": "pass",
+  "generated_audio_count": 12,
+  "expected_audio_count": 12,
+  "pronunciation_accuracy": "pending_human_review",
+  "naturalness": "pending_human_review",
+  "voice_continuity": "pending_human_review",
+  "duration_alignment": {
+    "within_20_percent_count": 1,
+    "fixture_count": 12,
+    "mean_duration_ratio": 0.502
+  },
+  "audio": [
+    {"fixture": "AI", "audio_file": "01-ai.wav", "sha256": "de1472246960e3c0953a0630bc57f849294cfb01065641c719a50b3ffa3d21c5", "target_duration_seconds": 1.5, "actual_duration_seconds": 0.62, "duration_ratio": 0.413},
+    {"fixture": "API", "audio_file": "02-api.wav", "sha256": "cc12949f6f79a4b30cc267e14204115c777e1d2f25de51ffe726534ca7dc8347", "target_duration_seconds": 1.5, "actual_duration_seconds": 0.82, "duration_ratio": 0.547},
+    {"fixture": "ChatGPT", "audio_file": "03-chatgpt.wav", "sha256": "2c64f0c767868a5f4ee0e4db4538bbfcac5e1e9e64d7d6f009e82fd27129daf5", "target_duration_seconds": 2.0, "actual_duration_seconds": 0.88, "duration_ratio": 0.44},
+    {"fixture": "GitHub", "audio_file": "04-github.wav", "sha256": "57c480755ea51331cdb0bf4a5117093e5956103bff878083dc6f923675b2c745", "target_duration_seconds": 2.0, "actual_duration_seconds": 0.59, "duration_ratio": 0.295},
+    {"fixture": "Docker", "audio_file": "05-docker.wav", "sha256": "c960d663fbf94c2337b39b0116fbcf18fff297b9637dff9e7926240e0fd428b3", "target_duration_seconds": 2.0, "actual_duration_seconds": 0.71, "duration_ratio": 0.355},
+    {"fixture": "Python", "audio_file": "06-python.wav", "sha256": "7b970abaca69e25320416d09a9704142a53521fac82b983b01af8da16b608be8", "target_duration_seconds": 2.0, "actual_duration_seconds": 0.56, "duration_ratio": 0.28},
+    {"fixture": "OpenRouter", "audio_file": "07-openrouter.wav", "sha256": "e0b51dc64141264e9eb2ad9a6b2b2228ef3339aa31655b4c6d977df2c22281d8", "target_duration_seconds": 2.5, "actual_duration_seconds": 0.99, "duration_ratio": 0.396},
+    {"fixture": "Gemini", "audio_file": "08-gemini.wav", "sha256": "b01a7c1e7c9bb3b3349aaab2752d7ac7a628d00e3d1fe5495fe35ecb3192d0a6", "target_duration_seconds": 2.0, "actual_duration_seconds": 0.87, "duration_ratio": 0.435},
+    {"fixture": "NVIDIA", "audio_file": "09-nvidia.wav", "sha256": "e1eae51b08b0e84b02811010a354bd061a87633727dda05914dfc913ebfe6aff", "target_duration_seconds": 2.0, "actual_duration_seconds": 0.85, "duration_ratio": 0.425},
+    {"fixture": "https://github.com/openai", "audio_file": "10-https-github-com-openai.wav", "sha256": "b616ce716dc08136654c1a60aba409cb1794a0970a3794a88f3f77aa1621703f", "target_duration_seconds": 4.0, "actual_duration_seconds": 4.42, "duration_ratio": 1.105},
+    {"fixture": "support@example.com", "audio_file": "11-support-example-com.wav", "sha256": "8aa3d7c91383d4494679c5db4a5ec7c92a88e738f3f12380ff1df055888bba7b", "target_duration_seconds": 3.0, "actual_duration_seconds": 2.01, "duration_ratio": 0.67},
+    {"fixture": "version 3.12.14", "audio_file": "12-version-3-12-14.wav", "sha256": "7cc1896a4826a385e634c6b2a68ab2a04c5eb904c82271dc56b873be19244a31", "target_duration_seconds": 3.0, "actual_duration_seconds": 1.99, "duration_ratio": 0.663}
+  ],
+  "verification": {
+    "wav_hashes_rechecked": "12/12",
+    "hash_mismatches": 0
+  },
+  "notes": [
+    "The user selected Hải Đăng as the preferred primary VieNeu pilot voice after the 25-voice audition.",
+    "Pronunciation accuracy, naturalness and voice continuity still require human listening review of these 12 benchmark fixtures.",
+    "The VieNeu runtime/model remains an opt-in local pilot and is not bundled into pyVideoTrans-DH.",
+    "No persisted provider/model ID, saved user role or displayed/persisted SRT is changed by this selection.",
+    "No API key, reference-audio path or absolute local path is stored in this evidence file."
+  ]
+}

@@ -9,11 +9,19 @@
   "generated": 25,
   "expected": 25,
   "audio_committed": false,
+  "primary_voice": {
+    "voice": "Hải Đăng",
+    "selection_basis": "user listening choice after the 25-voice audition",
+    "selected_at": "2026-10-05",
+    "metadata": {"gender": "male", "region": "north", "style": "natural"},
+    "changes_global_default": false
+  },
   "notes": [
     "Every preset used the same sample text for direct listening comparison.",
     "WAV files remain under ignored tmp/ and are not committed.",
     "Runtime voice metadata exposes gender, region and style but no age; no voice is classified as young from metadata alone.",
-    "Human listening is still required before selecting a primary voice or changing any default."
+    "The user selected Hải Đăng as the preferred primary VieNeu pilot voice after listening to the audition set.",
+    "This selection does not overwrite persisted user roles or make VieNeu/OpenAI TTS the global default; pronunciation, naturalness and continuity still require benchmark listening review."
   ],
   "voices": [
     {"index": 1, "voice": "Adam bựa", "gender": "male", "region": "north", "style": "natural", "fixture": "01-Adam bựa.wav"},
