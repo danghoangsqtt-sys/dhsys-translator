@@ -1,13 +1,13 @@
 ﻿{
     "schema_version":  1,
     "task":  "5.5",
-    "generated_at_utc":  "2026-10-06T15:14:18.3234666Z",
+    "generated_at_utc":  "2026-10-06T16:03:57.8821938Z",
     "environment_kind":  "DeveloperHost",
     "clean_environment_claimed":  false,
     "task_gate":  "partial",
     "artifact":  {
                      "name":  "pyVideoTrans-DH-4.14-win64-setup.exe",
-                     "sha256":  "A245DFF2E3D65FB0C623079156F5839C1E6A509DE03F0A0005EF0E10C6BDCF0C",
+                     "sha256":  "53B335C3CCB129C8AAB797CB52267960D2E9D1C63F7AF693290715BC9920D124",
                      "authenticode_status":  "NotSigned"
                  },
     "isolation":  {
@@ -107,7 +107,7 @@
                                                                  "status":  "ok",
                                                                  "action_code":  "none",
                                                                  "summary":  "Äáº¡t má»©c khuyáº¿n nghá»‹",
-                                                                 "value":  154.2,
+                                                                 "value":  153.9,
                                                                  "requirements":  {
                                                                                       "basic":  "required",
                                                                                       "local_models":  "required",
