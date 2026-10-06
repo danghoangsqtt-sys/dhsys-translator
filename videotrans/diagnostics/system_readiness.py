@@ -330,9 +330,9 @@ def _rate_workload(workload: str, findings: Sequence[Finding]) -> WorkloadRating
             continue
         if finding.status == STATUS_OK:
             continue
-        if requirement == REQUIRED:
+        if finding.status == STATUS_BLOCKED and requirement == REQUIRED:
             blocking.append(finding.code)
-        elif requirement == RECOMMENDED:
+        elif requirement in {REQUIRED, RECOMMENDED}:
             advisory.append(finding.code)
 
     if blocking:
@@ -470,7 +470,7 @@ def evaluate_readiness(snapshot: ProbeSnapshot) -> ReadinessReport:
     elif nvidia.state == STATUS_WARNING:
         findings.append(Finding(
             "gpu.nvidia",
-            STATUS_WARNING,
+            STATUS_BLOCKED,
             "use_cpu_or_install_nvidia_driver",
             "Không phát hiện NVIDIA GPU khả dụng",
             {"count": nvidia.gpu_count or 0, "vram_mib": nvidia.total_vram_mib or 0},
@@ -478,7 +478,7 @@ def evaluate_readiness(snapshot: ProbeSnapshot) -> ReadinessReport:
         ))
         findings.append(Finding(
             "gpu.cuda_driver",
-            STATUS_WARNING,
+            STATUS_BLOCKED,
             "use_cpu_or_install_nvidia_driver",
             "CUDA không khả dụng",
             None,

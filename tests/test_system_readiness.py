@@ -73,6 +73,15 @@ def test_low_ram_and_disk_are_factual_blockers():
     assert "storage.free_gib" in report.workloads[WORKLOAD_BASIC].blocking_codes
 
 
+def test_minimum_capacity_below_recommendation_is_degraded_not_blocked():
+    report = evaluate_readiness(_snapshot(ram_bytes=6 * GIB, disk_free_bytes=8 * GIB))
+
+    basic = report.workloads[WORKLOAD_BASIC]
+    assert basic.rating == "degraded"
+    assert set(basic.advisory_codes) >= {"memory.ram_gib", "storage.free_gib"}
+    assert not basic.blocking_codes
+
+
 def test_missing_bundled_media_and_resources_block_basic_workflow():
     report = evaluate_readiness(
         _snapshot(ffmpeg_present=False, ffprobe_present=False, resources_present=False)
