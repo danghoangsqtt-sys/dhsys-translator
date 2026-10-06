@@ -148,6 +148,7 @@ $Uninstalled = $false
 $OldPath = $env:PATH
 $OldLocalAppData = $env:LOCALAPPDATA
 $OldQt = $env:QT_QPA_PLATFORM
+$OldPyVideoTransLang = $env:PYVIDEOTRANS_LANG
 $RecipientPath = @(
     (Join-Path $env:SystemRoot "System32"),
     $env:SystemRoot,
@@ -221,8 +222,11 @@ try {
     $Evidence.checks.second_launch = "pass"
     $Evidence.checks.system_readiness = $CoreTwo.checks.system_readiness
 
-    Invoke-FrozenProbe $Executable $UiSmokeScript (Join-Path $ReportsDir "ui-vi.json") @("vi") | Out-Null
-    Invoke-FrozenProbe $Executable $UiSmokeScript (Join-Path $ReportsDir "ui-en.json") @("en") | Out-Null
+    $env:PYVIDEOTRANS_LANG = "vi"
+    Invoke-FrozenProbe $Executable $UiSmokeScript (Join-Path $ReportsDir "ui-vi.json") | Out-Null
+    $env:PYVIDEOTRANS_LANG = "en"
+    Invoke-FrozenProbe $Executable $UiSmokeScript (Join-Path $ReportsDir "ui-en.json") | Out-Null
+    $env:PYVIDEOTRANS_LANG = $OldPyVideoTransLang
     $Evidence.checks.ui_vi = "pass"
     $Evidence.checks.ui_en = "pass"
 
@@ -289,6 +293,7 @@ try {
     $env:PATH = $OldPath
     $env:LOCALAPPDATA = $OldLocalAppData
     $env:QT_QPA_PLATFORM = $OldQt
+    $env:PYVIDEOTRANS_LANG = $OldPyVideoTransLang
     New-Item -ItemType Directory -Path (Split-Path $EvidencePath -Parent) -Force | Out-Null
     $Evidence | ConvertTo-Json -Depth 20 | Set-Content -Path $EvidencePath -Encoding UTF8
     if (-not $KeepWorkRoot -and (Test-Path $WorkRoot)) {
