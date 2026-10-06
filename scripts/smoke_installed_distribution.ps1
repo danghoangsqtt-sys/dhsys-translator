@@ -169,7 +169,7 @@ try {
     $env:PATH = $RecipientPath
     $env:LOCALAPPDATA = $IsolatedLocalAppData
     $env:QT_QPA_PLATFORM = "offscreen"
-    $Evidence.isolation.external_python_on_path = @(& where.exe python 2>$null).Count -gt 0
+    $Evidence.isolation.external_python_on_path = $null -ne (Get-Command python.exe -ErrorAction SilentlyContinue)
     if ($Evidence.isolation.external_python_on_path) {
         throw "Python remains available on the machine PATH; clean recipient isolation is not satisfied."
     }
