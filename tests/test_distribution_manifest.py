@@ -161,3 +161,38 @@ def test_build_script_passes_verifier_parameters_by_name():
     assert "InnoCompiler = $InnoCompiler" in build_script
     assert "& $VerifyScript @VerifyArgs" in build_script
     assert '$VerifyArgs = @("-ManifestPath"' not in build_script
+
+
+def test_installed_smoke_contract_covers_recipient_lifecycle():
+    smoke = (PROJECT_ROOT / "scripts" / "smoke_installed_distribution.ps1").read_text(
+        encoding="utf-8"
+    )
+
+    for token in (
+        'ValidateSet("DeveloperHost", "WindowsSandbox", "DisposableVM", "CleanUser")',
+        "no_existing_registration = $true",
+        'if ($CleanEnvironment) { "pass" } else { "partial" }',
+        "first_launch",
+        "second_launch",
+        "in_place_upgrade",
+        "user_data_after_upgrade",
+        "user_data_after_uninstall",
+        "authenticode_status",
+    ):
+        assert token in smoke
+
+
+def test_installed_smoke_contract_isolated_and_read_only():
+    smoke = (PROJECT_ROOT / "scripts" / "smoke_installed_distribution.ps1").read_text(
+        encoding="utf-8"
+    )
+    frozen_smoke = (PROJECT_ROOT / "scripts" / "smoke_frozen.py").read_text(
+        encoding="utf-8"
+    )
+
+    assert "pyvideotrans-recipient-" in smoke
+    assert '$env:PATH = $RecipientPath' in smoke
+    assert '$env:LOCALAPPDATA = $IsolatedLocalAppData' in smoke
+    assert "icacls.exe $InstallDir /deny" in smoke
+    assert "collect_system_readiness" in frozen_smoke
+    assert '"system_readiness": readiness' in frozen_smoke

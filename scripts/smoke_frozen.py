@@ -32,6 +32,7 @@ def run_check(cli_script):
     require(ffmpeg.is_file() and ffprobe.is_file(), "missing bundled FFmpeg tools")
 
     from videotrans.configure._paths import ROOT_DIR, resource_path
+    from videotrans.diagnostics.system_readiness import collect_system_readiness
 
     user_data = Path(ROOT_DIR).resolve()
     require(user_data.is_dir(), "frozen user-data directory was not created")
@@ -41,6 +42,10 @@ def run_check(cli_script):
             "bundled style.qss could not be resolved")
     require(resource_path("videotrans", "styles", "light.qss").is_file(),
             "bundled light.qss could not be resolved")
+
+    readiness = collect_system_readiness().to_dict()
+    require(readiness["workloads"]["basic"]["rating"] in {"ready", "degraded"},
+            "frozen basic workload readiness is not usable")
 
     bundled_language_dir = install_root / "videotrans" / "language"
     bundled_catalogs = {path.name for path in bundled_language_dir.glob("*.json")}
@@ -222,6 +227,7 @@ def run_check(cli_script):
         "media_streams": sorted(streams),
         "hard_subtitle_frame_delta": hard_frame_delta,
         "soft_subtitle_stream": soft_stream,
+        "system_readiness": readiness,
         "silero_vad": str(vad_asset),
         "zhconv": "繁體中文 -> 繁体中文",
     }
