@@ -107,6 +107,13 @@ class WorkspaceShell(QWidget):
         self.all_tools.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         self.all_tools.setMenu(self._build_action_catalog())
         layout.addWidget(self.all_tools)
+        systemcheck_action = getattr(self.main_window, "systemcheck", None)
+        if systemcheck_action is not None:
+            self.system_check = QToolButton(sidebar)
+            self.system_check.setObjectName("workspaceSystemCheck")
+            self.system_check.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
+            self.system_check.setDefaultAction(systemcheck_action)
+            layout.addWidget(self.system_check)
         layout.addStretch()
         return sidebar
 
@@ -158,6 +165,10 @@ class WorkspaceShell(QWidget):
         menu.addSection(tr("Media jobs"))
         for action_name, _ in self.BASIC_JOBS:
             menu.addAction(getattr(self.main_window, action_name))
+        systemcheck_action = getattr(self.main_window, "systemcheck", None)
+        if systemcheck_action is not None:
+            menu.addSeparator()
+            menu.addAction(systemcheck_action)
         menu.addSeparator()
         advanced = menu.addMenu(tr("Advanced tools"))
         self._populate_action_catalog(advanced)

@@ -112,6 +112,7 @@ MENU_CFG_TOOLS = [
 # 菜单--帮助，每个  tuple 是一个菜单，
 MENU_CFG_HELP = [
     # Product help stays inside the application; third-party tools keep their own link.
+    ("systemcheck", tr("Check this PC"), None),
     ("ffmpeg", "FFmpeg", "https://www.ffmpeg.org/download.html"),
     ("info", tr("About"), None),
 ]

@@ -34,6 +34,7 @@ def run_check():
     from videotrans.ui.home import HomePage
     from videotrans.ui.info import Ui_info
     from videotrans.ui.en import Ui_MainWindow
+    from videotrans.ui.systemcheck import Ui_systemcheck
     from videotrans.ui.workspace_shell import WorkspaceShell
 
     app = QApplication.instance() or QApplication([])
@@ -125,6 +126,20 @@ def run_check():
     )
     if shell.findChild(type(workspace), 'centralwidget') is not workspace or window.fn_fanyisrt not in catalog_actions:
         raise AssertionError('packaged workspace shell did not retain original actions')
+    if window.systemcheck not in catalog_actions:
+        raise AssertionError('packaged workspace catalog lost the system-check action')
+    if not hasattr(shell, 'system_check') or shell.system_check.defaultAction() is not window.systemcheck:
+        raise AssertionError('packaged system-check shortcut does not reuse the generated QAction')
+    system_check = Ui_systemcheck(locale=expected_locale, auto_refresh=False)
+    system_check.show()
+    app.processEvents()
+    expected_system_check_title = 'System check' if expected_locale == 'en_US' else 'Kiểm tra máy'
+    if not system_check.isVisible() or system_check.windowTitle() != expected_system_check_title:
+        raise AssertionError(
+            f'packaged system-check dialog failed for {expected_locale}: '
+            f'{system_check.windowTitle()!r}'
+        )
+    system_check.close()
     if any(section.property('workflowSection') is not True for section in workflow_sections):
         raise AssertionError('packaged workspace is missing a workflow section')
     if (window.btn_get_video.parentWidget() is not window.prepareSection
@@ -415,6 +430,7 @@ def run_check():
         'brand': tr('Video Workshop'),
         'routes': routes,
         'workspace_shell': True,
+        'system_check_route': True,
         'light_style': resource_path('videotrans', 'styles', 'light.qss').is_file(),
         'workflow_sections': len(workflow_sections),
         'workflow_state': 'running',
