@@ -19,6 +19,7 @@
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — release gate and documentation; provider-backed frozen media and a detached clean Python 3.12.13 checkout are locally verified; GitHub clean-runner is deferred by user request
 - Phase 4: tasks 4.1–4.18 complete and persisted; no parallel UI task remains. Phase 3 release gating is independent.
+- Planned and user-approved: ENH-005 Phase 5 — local portable ZIP/Setup.exe, workload-aware “Kiểm tra máy”, sanitized diagnostics and consent-based allowlisted remediation. GitHub is not required; implementation starts with `$vp-auto --from 5`.
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 remains in_progress because the clean GitHub runner has not run. Current `main` tracks `origin/main`; the current frozen candidate has completed the provider-backed STT/translation/TTS/hard-subtitle media flow, and detached clean-checkout source regression passes on Python 3.12.13.
 - Active branch: `main` tracking `origin/main`.
 - Planned patch version: 4.14.1 (not yet applied to product manifest)

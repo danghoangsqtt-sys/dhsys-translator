@@ -64,15 +64,34 @@ flowchart TD
 | data-flow | required | Visible SRT and transient TTS text must remain separate |
 | event-flows | optional | Dialog events are sufficiently specified in task 4.13 |
 | module-dependencies | optional | Detailed imports belong to implementation design |
-| deployment | N/A | No new deployed service; VieNeu pilot is loopback and separately launched |
+| deployment | required for Phase 5 | Portable/installer boundaries, writable user data and consent-based remediation must remain explicit |
 | user-use-case | N/A | User outcomes are captured in PROJECT-CONTEXT |
 
 ## Deployment and runtime
 
 The packaged app remains a Windows onedir PyInstaller application. VieNeu runs as an optional local companion process on loopback during the pilot. Gemini/OpenRouter-compatible profiles are outbound API integrations and must remain optional.
 
+ENH-005 adds two local distribution wrappers around the same verified onedir tree: a portable ZIP and a per-user Windows installer. Required application runtime assets remain bundled; writable settings/models/logs/output remain outside the install tree. A pure readiness service feeds a localized UI and a separate allowlisted remediation coordinator. The scanner never owns provider selection or media processing.
+
+```mermaid
+flowchart TD
+    Build[Tracked local build script] --> Frozen[Verified PyInstaller onedir]
+    Frozen --> Zip[Portable ZIP + SHA-256]
+    Frozen --> Setup[Per-user Setup.exe + SHA-256]
+    Zip --> App[Desktop application]
+    Setup --> App
+    App --> Scan[Read-only readiness probes]
+    Scan --> Report[Workload-specific status + sanitized report]
+    Report --> Fix{User explicitly chooses a fix?}
+    Fix -->|No| Guide[Guidance / CPU fallback]
+    Fix -->|Yes| Allowlist[Allowlisted remediation coordinator]
+    Allowlist --> Rescan[Post-check and rescan]
+```
+
 ## Open architecture questions
 
 - Exact persisted schema for provider profiles and project glossary.
 - Whether code-switch detection should be deterministic-only in Phase 4.16 or optionally LLM-assisted after a privacy review.
 - How long English spans must be before dual-voice synthesis is offered.
+- Which prerequisite checks are actually required by the final frozen candidate versus merely recommended for optional GPU/local-model workloads.
+- Whether code signing is available for locally shared Setup/portable artifacts; unsigned builds must document Windows SmartScreen expectations truthfully.

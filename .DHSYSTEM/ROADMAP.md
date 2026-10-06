@@ -23,6 +23,19 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | 2 | ASR parsing, TLS, WebUI access, output safety | verified locally; git persistence pending |
 | 3 | Audit repair queue 3.4–3.9, supported Python, dependencies, Windows packaging and release gate | in_progress; source, Docker, extracted Windows and current-candidate provider media locally verified; clean-runner/release gate open |
 | 4 | PySide6 workflow UI, light workspace layout, ENH-003 Vietnamese/English UI locales with Chinese media support | complete; tasks 4.1–4.18 persisted; Phase 3 release gate remains independent and open |
-| 5 | Timeline editor | conditional; scope decision pending |
+| 5 | ENH-005 local Windows distribution, machine readiness scan and consent-based setup assistant | planned; approved by user; GitHub-independent |
+| 6 | Timeline editor | conditional; scope decision pending |
 
-ENH-003 is added to the current Phase 4. Target product version after the pending 4.14.1 repair release: **4.15.0 (provisional)**. Planning does not change the current `4.14` manifest or publish an artifact. See [Phase 4 localization contract](phases/4/SPEC.md).
+ENH-003 is added to Phase 4. ENH-005 is planned in [Phase 5](phases/5/SPEC.md) so the owner can build and share portable/installer artifacts directly without GitHub. Target product version after the pending 4.14.1 repair line: **4.15.0 (provisional)**. Planning does not change the current `4.14` manifest or publish an artifact.
+
+## Phase 5 — Local distribution and machine readiness
+
+| Task | Outcome | State |
+| --- | --- | --- |
+| 5.1 | Pure readiness model and Windows hardware/runtime probes | planned |
+| 5.2 | Việt/Anh “Kiểm tra máy” UI and sanitized support report | planned |
+| 5.3 | Explicit, allowlisted remediation assistant | planned |
+| 5.4 | Local portable ZIP and Setup.exe build pipeline | planned |
+| 5.5 | Recipient-style Windows acceptance and user handoff | planned |
+
+Source: [ENH-005](requests/ENH-005.md). GitHub is not required. The phase preserves all provider/model IDs, saved subtitle/provider mappings, Chinese media-language support and the separation between displayed SRT and transient TTS pronunciation text.

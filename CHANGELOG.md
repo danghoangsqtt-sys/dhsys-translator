@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Planned ENH-005 for the 4.15.0 line: add a GitHub-independent local distribution path with portable ZIP and per-user Setup.exe, plus a Vietnamese/English “Kiểm tra máy” surface that reports workload-specific CPU/RAM/disk/GPU/runtime readiness. Any remediation is explicit, allowlisted and re-verified; Python/Qt/FFmpeg stay bundled, while drivers/CUDA/large models remain guided or opt-in.
+
 Planned for 4.15.0 (ENH-003, after the pending 4.14.1 repair release): offer Vietnamese and English as the only application UI/message locales while retaining Chinese speech recognition, translation, subtitle and voice support. Tasks 4.9–4.12 are verified locally; the current manifest remains 4.14.
 
 - Subtitle correction dialogs now allow normal mouse and keyboard editing, use a readable light-table palette, show unsaved changes, and wait for an explicit save, discard or cancel action instead of auto-closing on a countdown.
