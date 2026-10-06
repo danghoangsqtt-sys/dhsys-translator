@@ -18,12 +18,17 @@ $UninstallKey = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\$AppI
 
 function Assert-SafeWorkRoot([string]$Path) {
     $Resolved = [System.IO.Path]::GetFullPath($Path).TrimEnd("\")
-    $Prefix = $SystemTemp + "\pyvideotrans-recipient-"
-    if (-not $Resolved.StartsWith($Prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
-        throw "WorkRoot must be a direct temporary path named pyvideotrans-recipient-* under the system temp directory."
+    $Leaf = Split-Path $Resolved -Leaf
+    $Parent = (Split-Path $Resolved -Parent).TrimEnd("\")
+    $DriveRoot = [System.IO.Path]::GetPathRoot($Resolved).TrimEnd("\")
+    if ($Leaf -notmatch '^pyvideotrans-recipient-[0-9a-f]{32}$') {
+        throw "WorkRoot leaf must be named pyvideotrans-recipient-<32 hex characters>."
     }
-    if ((Split-Path $Resolved -Parent).TrimEnd("\") -ne $SystemTemp) {
-        throw "WorkRoot must be a direct child of the system temp directory."
+    if (-not (Test-Path $Parent -PathType Container) -or $Parent -eq $DriveRoot) {
+        throw "WorkRoot parent must be an existing non-root temporary directory."
+    }
+    if ($Resolved.StartsWith($ProjectRoot + "\", [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "WorkRoot must be outside the source tree."
     }
     return $Resolved
 }
@@ -131,6 +136,7 @@ if ($Drive.AvailableFreeSpace -lt 10GB) {
 
 $InstallDir = Join-Path $WorkRoot "install"
 $IsolatedLocalAppData = Join-Path $WorkRoot "localappdata"
+$IsolatedTemp = Join-Path $WorkRoot "temp"
 $ReportsDir = Join-Path $WorkRoot "reports"
 $InstallLog = Join-Path $WorkRoot "install.log"
 $UpgradeLog = Join-Path $WorkRoot "upgrade.log"
@@ -149,6 +155,8 @@ $OldPath = $env:PATH
 $OldLocalAppData = $env:LOCALAPPDATA
 $OldQt = $env:QT_QPA_PLATFORM
 $OldPyVideoTransLang = $env:PYVIDEOTRANS_LANG
+$OldTemp = $env:TEMP
+$OldTmp = $env:TMP
 $RecipientPath = @(
     (Join-Path $env:SystemRoot "System32"),
     $env:SystemRoot,
@@ -172,6 +180,7 @@ $Evidence = [ordered]@{
         external_python_on_path = $null
         install_outside_source_tree = $true
         local_app_data_isolated = $true
+        process_temp_isolated = $true
         no_existing_registration = $true
     }
     checks = [ordered]@{}
@@ -179,9 +188,11 @@ $Evidence = [ordered]@{
 }
 
 try {
-    New-Item -ItemType Directory -Path $InstallDir, $IsolatedLocalAppData, $ReportsDir -Force | Out-Null
+    New-Item -ItemType Directory -Path $InstallDir, $IsolatedLocalAppData, $IsolatedTemp, $ReportsDir -Force | Out-Null
     $env:PATH = $RecipientPath
     $env:LOCALAPPDATA = $IsolatedLocalAppData
+    $env:TEMP = $IsolatedTemp
+    $env:TMP = $IsolatedTemp
     $env:QT_QPA_PLATFORM = "offscreen"
     $Evidence.isolation.external_python_on_path = $null -ne (Get-Command python.exe -ErrorAction SilentlyContinue)
     if ($Evidence.isolation.external_python_on_path) {
@@ -294,6 +305,8 @@ try {
     $env:LOCALAPPDATA = $OldLocalAppData
     $env:QT_QPA_PLATFORM = $OldQt
     $env:PYVIDEOTRANS_LANG = $OldPyVideoTransLang
+    $env:TEMP = $OldTemp
+    $env:TMP = $OldTmp
     New-Item -ItemType Directory -Path (Split-Path $EvidencePath -Parent) -Force | Out-Null
     $Evidence | ConvertTo-Json -Depth 20 | Set-Content -Path $EvidencePath -Encoding UTF8
     if (-not $KeepWorkRoot -and (Test-Path $WorkRoot)) {

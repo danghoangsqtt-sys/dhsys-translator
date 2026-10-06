@@ -193,6 +193,8 @@ def test_installed_smoke_contract_isolated_and_read_only():
     assert "pyvideotrans-recipient-" in smoke
     assert '$env:PATH = $RecipientPath' in smoke
     assert '$env:LOCALAPPDATA = $IsolatedLocalAppData' in smoke
+    assert '$env:TEMP = $IsolatedTemp' in smoke
+    assert '$env:TMP = $IsolatedTemp' in smoke
     assert "icacls.exe $InstallDir /deny" in smoke
     assert "collect_system_readiness" in frozen_smoke
     assert '"system_readiness": readiness' in frozen_smoke
