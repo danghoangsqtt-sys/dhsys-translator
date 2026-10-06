@@ -53,7 +53,7 @@ uv run --python 3.12.13 --locked --group dev pytest -q tests/test_cli.py tests/t
 uv run --python 3.12.13 --locked --group dev pytest -q tests/test_light_workspace.py tests/test_responsive_surfaces.py
 ```
 
-Kết quả mong đợi là pytest thoát với mã `0` và dòng `... passed`. Trên môi trường Python 3.12.14 của checkout này, ngày **05/10/2026**, lệnh tương đương chạy trực tiếp qua `.venv\Scripts\python.exe -m pytest` cho **642 passed, 1 warning** (cảnh báo `audioop` của `pydub`). Run này đặt `PYVIDEOTRANS_LANG=en_US` vì một số test WebUI cũ khẳng định nhãn tiếng Anh; regression phụ đề kiểm tra riêng cả `vi_VN` và `en_US`. Số lượng test có thể thay đổi khi mã được sửa. Các test này dùng mock ở một số nơi; chúng **chưa chứng minh** API thật, tải mô hình, GPU hoặc bản đóng gói hoạt động hoàn chỉnh.
+Kết quả mong đợi là pytest thoát với mã `0` và dòng `... passed`. Trên môi trường Python 3.12.14 của checkout này, ngày **06/10/2026**, lệnh tương đương chạy trực tiếp qua `.venv\Scripts\python.exe -m pytest` với `QT_QPA_PLATFORM=offscreen` cho **658 passed, 1 warning** (cảnh báo `audioop` của `pydub`). Số lượng test có thể thay đổi khi mã được sửa. Các test này dùng mock ở một số nơi; chúng **chưa chứng minh** API thật, tải mô hình, GPU hoặc bản đóng gói hoạt động hoàn chỉnh.
 
 ## 4. Kiểm tra nhanh công cụ media và CLI
 
@@ -205,7 +205,9 @@ $process.ExitCode
 Get-Content $report
 ```
 
-Mã thoát cần là `0` và report cần `"status": "pass"`. `sp.exe` là chương trình GUI nên PowerShell có thể không đợi nếu gọi trực tiếp bằng `&`; dùng `Start-Process -Wait` như trên. Script này kiểm tra tài nguyên, FFmpeg, CLI chạy trong interpreter đóng gói, model Silero VAD, dữ liệu chuyển đổi chữ Trung `zhconv`, hai catalog giao diện và MP4 tổng hợp; **không gọi provider thật**. Có thể dùng `scripts\smoke_frozen_ui.py`, `scripts\smoke_sidebar.py` và `scripts\smoke_dynamic_menus.py` theo cú pháp `sp.exe <script> <report.json>` để kiểm tra giao diện/menu. Với `smoke_frozen_ui.py`, chạy lần lượt locale `vi`, `en_US` và cấu hình cũ `zh_CN`; report phải chỉ có hai lựa chọn `vi_VN`/`en_US`, còn `zh_CN` chuyển sang `en_US`. Bản đóng gói vẫn cần thử với video lời nói và provider thực trên máy Windows sạch trước khi phát hành.
+Mã thoát cần là `0` và report cần `"status": "pass"`. `sp.exe` là chương trình GUI nên PowerShell có thể không đợi nếu gọi trực tiếp bằng `&`; dùng `Start-Process -Wait` như trên. Script này kiểm tra tài nguyên, FFmpeg, CLI chạy trong interpreter đóng gói, model Silero VAD, dữ liệu chuyển đổi chữ Trung `zhconv`, hai catalog giao diện, MP4 tổng hợp, phụ đề cứng bằng decoded-frame pixel delta và phụ đề mềm bằng `ffprobe` (`mov_text`, `language=vie`); **không gọi provider thật**. Có thể dùng `scripts\smoke_frozen_ui.py`, `scripts\smoke_sidebar.py` và `scripts\smoke_dynamic_menus.py` theo cú pháp `sp.exe <script> <report.json>` để kiểm tra giao diện/menu. Với `smoke_frozen_ui.py`, chạy lần lượt locale `vi`, `en_US` và cấu hình cũ `zh_CN`; report phải chỉ có hai lựa chọn `vi_VN`/`en_US`, còn `zh_CN` chuyển sang `en_US`.
+
+Task 4.18 ngày **06/10/2026** đã xác minh candidate `dist\sp\sp.exe` SHA-256 `A4C7D607B80C15CF04A023B94BA32A2CF4E31BA8F39B2BDBBA889F79B8B18F25`: core/UI Việt/UI Anh/sidebar/dynamic-menu smoke PASS; hard subtitle có frame delta `40953`; soft subtitle có đúng một track `mov_text` tiếng Việt. Đây là bằng chứng acceptance của Task 4.18, **không thay thế** Phase 3 clean-runner, full provider-backed media và release gate; các gate đó vẫn phải chạy riêng trước khi phát hành.
 
 ## 9. Khi có lỗi
 

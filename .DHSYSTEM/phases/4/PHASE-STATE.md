@@ -9,7 +9,7 @@
 | 4.15 Basic navigation and provider profiles | PASS | 11 focused, 35 related UI/config and 621 full Python 3.12 tests pass; reversible legacy-ID profiles verified |
 | 4.16 VieNeu pilot and En–Vi pronunciation control | PASS | Product/test/media/listening gate met; user accepted the Hải Đăng pilot listening gate on 2026-10-06; closeout commit persisted to `origin/main` |
 | 4.17 Controlled provider reduction | PASS | Compatibility-first policy proven; 17 focused, 151 related and 658 full Python 3.12 tests pass; no provider removed/renumbered |
-| 4.18 End-to-end handoff | in_progress | Source/frozen Windows evidence and documentation cover 4.13–4.17 |
+| 4.18 End-to-end handoff | PASS | 72 focused, 349 related, 658 full tests plus current frozen UI/menu/media hard+soft evidence pass |
 
 | Task | State | Gate |
 | --- | --- | --- |
@@ -26,7 +26,17 @@
 | 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
 | 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
 
-Phase state: in_progress. Tasks 4.1–4.17 and ENH-003 are verified; Task 4.17 is PASS and persisted to `origin/main` at closeout commit `ada51c14`. No provider deletion is authorized by 4.17. Task 4.18 is now in progress under the source/frozen Windows/media handoff gate. The separate Phase 3 clean-runner/release gates remain open.
+Phase state: in_progress. Tasks 4.1–4.18 and ENH-003 are verified; ENH-004 tasks 4.13–4.18 are PASS. No provider deletion is authorized by 4.17 or 4.18. The separate Phase 3 clean-runner/full-media/release gates remain open and are not closed by the Phase 4 acceptance result.
+
+## Task 4.18 evidence — 2026-10-06
+
+- Python 3.12.14 with Qt offscreen: 72 focused 4.13–4.17 regression tests, 349 related UI/config/CLI/WebUI tests and 658 full-suite tests pass. The only full/focused warning is external `pydub/audioop` deprecation; `git diff --check` has no whitespace errors.
+- A separate provider/profile plus real-media source gate passes 19 tests, retaining non-destructive profile recovery, legacy IDs and the subtitle media contract.
+- Current frozen candidate `dist/sp/sp.exe` SHA-256 `A4C7D607B80C15CF04A023B94BA32A2CF4E31BA8F39B2BDBBA889F79B8B18F25` passes core resource/media smoke, Vietnamese and English UI smoke, sidebar smoke and dynamic-menu smoke.
+- Frozen hard-subtitle proof changes decoded frame pixels with delta `40953`. Frozen soft-subtitle proof contains exactly one `mov_text` subtitle stream tagged `language=vie`.
+- Provider registries remain translation `0..28`, recognition `0..32`, TTS `0..37`; Chinese media codes `zh-cn`, `zh-tw`, `yue` remain supported. VieNeu remains local opt-in; Hải Đăng remains the preferred pilot voice without becoming a forced global default.
+- Compact evidence is stored in `.DHSYSTEM/phases/4/evidence/task-4.18-source-regression.json` and the `task-4.18-frozen-*.json` reports. No generated media, audition WAVs or credentials are committed.
+- Phase 3 clean-runner, full provider-backed media and release/persistence gates remain independently open.
 
 ## Task 4.17 evidence — 2026-10-06
 

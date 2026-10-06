@@ -12,19 +12,19 @@
   "source_spec": "docs/SPEC.md",
   "repair_plan": "docs/BUGFIX-PLAN.md",
   "planned_patch_version": "4.14.1",
-  "updated_at": "2026-10-05",
+  "updated_at": "2026-10-06",
   "planned_product_direction": {
     "request": "ENH-004",
     "phase": 4,
     "tasks": ["4.13", "4.14", "4.15", "4.16", "4.17", "4.18"],
-    "status": "tasks 4.13-4.17 PASS and are persisted to origin/main; task 4.18 is next. No provider was deleted, renumbered or hidden in 4.17; Local is accepted as local-only only with a loopback Local LLM endpoint, while Gemini/OpenRouter are remote/off-device and require quota/rate-limit plus fallback disclosure. Chinese media-language support remains unchanged.",
+    "status": "tasks 4.13-4.18 PASS. Task 4.18 source/frozen Windows/media acceptance is complete: 72 focused, 349 related and 658 full Python 3.12.14 tests pass; frozen core/UI/sidebar/dynamic-menu smoke passes; hard/soft subtitle media evidence passes. No provider was deleted, renumbered or hidden; Local is accepted as local-only only with a loopback Local LLM endpoint, while Gemini/OpenRouter remain remote/off-device. Chinese media-language support remains unchanged. Phase 3 release gates remain independently open.",
     "continuation_repository": "https://github.com/danghoangsqtt-sys/dhsys-translator",
     "continuation_prompt": "docs/HANDOFF-DESKTOP-AI.md",
     "source": "docs/brainstorm/session-2026-10-05-vietnamese-first-video-workflow.md",
     "constraints": [
       "Preserve provider IDs and Chinese media-language support",
       "Hard subtitle default for main video workflow",
-      "VieNeu is localhost pilot only until benchmark acceptance",
+      "VieNeu remains an opt-in localhost pilot; Hải Đăng is a preferred pilot voice, not a forced global default",
       "Phase 3 release gates remain independent"
     ],
     "task_4_16_evidence": ".DHSYSTEM/phases/4/evidence/4.16-edge-benchmark.json",
@@ -39,7 +39,20 @@
     "task_4_17_implementation_commit": "26a24591",
     "task_4_17_closeout_commit": "ada51c14",
     "task_4_17_tests": "17 focused, 151 related UI/config/locale/CLI, 658 full Python 3.12 tests; one external pydub/audioop warning",
-    "task_4_17_blockers": []
+    "task_4_17_blockers": [],
+    "task_4_18_candidate": "dist/sp/sp.exe",
+    "task_4_18_candidate_sha256": "A4C7D607B80C15CF04A023B94BA32A2CF4E31BA8F39B2BDBBA889F79B8B18F25",
+    "task_4_18_source_evidence": ".DHSYSTEM/phases/4/evidence/task-4.18-source-regression.json",
+    "task_4_18_frozen_evidence": [
+      ".DHSYSTEM/phases/4/evidence/task-4.18-frozen-smoke.json",
+      ".DHSYSTEM/phases/4/evidence/task-4.18-frozen-ui-vi.json",
+      ".DHSYSTEM/phases/4/evidence/task-4.18-frozen-ui-en.json",
+      ".DHSYSTEM/phases/4/evidence/task-4.18-frozen-sidebar.json",
+      ".DHSYSTEM/phases/4/evidence/task-4.18-frozen-dynamic-menus.json"
+    ],
+    "task_4_18_tests": "72 focused, 349 related UI/config/CLI/WebUI, 658 full Python 3.12.14 tests; one external pydub/audioop warning",
+    "task_4_18_media": "frozen hard subtitle decoded-frame delta 40953; frozen soft subtitle exactly one mov_text stream with language=vie",
+    "task_4_18_blockers": []
   },
   "parallel_work": {
     "phase": 4,

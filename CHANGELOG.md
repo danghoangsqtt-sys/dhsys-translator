@@ -8,6 +8,12 @@ Planned for 4.15.0 (ENH-003, after the pending 4.14.1 repair release): offer Vie
 
 - Fresh desktop video-translation tasks now default to subtitles that are always visible on the video while preserving every legacy `subtitle_type` value. Soft/no-subtitle choices are explicit, no-subtitle export warns before starting, and successful jobs show a receipt with subtitle mode, video/SRT paths, bilingual order and the soft-track player instruction.
 
+- Basic desktop navigation now exposes task-first media actions plus reversible Local/Gemini/Advanced provider profiles without deleting providers, renumbering persisted IDs or erasing saved credentials. Local-only status requires a loopback endpoint; remote profiles retain privacy, quota/rate-limit and fallback guidance.
+
+- Vietnamese TTS pronunciation control now uses transient `tts_text` plus an optional per-project glossary, leaving displayed/persisted SRT unchanged. VieNeu remains an opt-in local OpenAI-compatible pilot; discovered voices stay selectable for content-specific and multi-speaker dubbing, with Hải Đăng recorded as the preferred pilot voice rather than a forced default.
+
+- ENH-004 end-to-end acceptance now covers the current Windows candidate as well as source tests: 72 focused, 349 related and 658 full Python 3.12.14 tests pass; frozen core/UI/sidebar/menu smoke passes; hard subtitles are visible in decoded frames and soft subtitles contain one Vietnamese `mov_text` track. Independent Phase 3 release gates remain open.
+
 - Desktop UI now loads and packages only Vietnamese and English locales; saved Chinese UI settings migrate to English, while Chinese media languages and voices remain available.
 
 - Application-authored desktop status, errors, settings and provider dialogs now use Vietnamese or English. CLI output exposes only Vietnamese and English, and WebUI follows the shared locale allowlist without removing Chinese media language codes or voices.
