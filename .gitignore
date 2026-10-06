@@ -49,6 +49,7 @@ source
 build
 pretrained_models
 runtime
+release/local/
 
 __pycache__
 .idea

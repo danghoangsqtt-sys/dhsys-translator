@@ -25,4 +25,22 @@ Sau khi một prerequisite được cài thành công và post-condition đượ
 
 ## Sửa lỗi gói ứng dụng
 
-FFmpeg, ffprobe và tài nguyên UI là thành phần đi kèm bản đóng gói. Nếu các mục này bị thiếu, không cài bản global để che lỗi; hãy dùng đúng gói pyVideoTrans-DH tin cậy để repair/cài lại. Cơ chế đóng gói portable ZIP và Setup.exe được thực hiện ở Task 5.4.
+FFmpeg, ffprobe và tài nguyên UI là thành phần đi kèm bản đóng gói. Nếu các mục này bị thiếu, không cài bản global để che lỗi; hãy dùng đúng gói pyVideoTrans-DH tin cậy để repair/cài lại.
+
+## Nhận và cài bản đóng gói local
+
+Người phát triển có thể gửi trực tiếp bộ file trong `release\local`; GitHub không bắt buộc. Tên file có dạng `pyVideoTrans-DH-<version>-win64-portable.zip`, `pyVideoTrans-DH-<version>-win64-setup.exe`, manifest và các file `.sha256` tương ứng.
+
+Với bản portable, giải nén ZIP ra một thư mục mới rồi chạy `sp\sp.exe`. Không chạy `sp.exe` ngay bên trong ZIP. Bản portable đã mang theo Python runtime, Qt và FFmpeg cần cho ứng dụng, vì vậy máy người nhận không cần cài Python hoặc sửa PATH.
+
+Với bản Setup, chạy file `...-setup.exe`. Installer mặc định cài theo người dùng hiện tại vào `%LOCALAPPDATA%\Programs\pyVideoTrans-DH`, không yêu cầu ứng dụng luôn chạy bằng quyền Administrator và không sửa PATH toàn hệ thống. Shortcut Start Menu và Desktop là lựa chọn trong installer. Cùng một AppId được giữ cho các lần nâng cấp; dữ liệu/cài đặt người dùng ở `%LOCALAPPDATA%\pyVideoTrans` nằm ngoài thư mục chương trình và được giữ lại khi nâng cấp hoặc gỡ cài đặt mặc định.
+
+Trước khi chia sẻ, chạy `powershell -ExecutionPolicy Bypass -File scripts\build_local_distribution.ps1`. Lệnh shipping mặc định yêu cầu đúng Inno Setup `6.7.3`, tạo ZIP, Setup.exe, manifest và SHA-256, sau đó tự chạy bước xác minh. `-SkipInstaller` chỉ dành cho kiểm tra phát triển và không được xem là PASS của Task 5.4.
+
+Có thể xác minh lại một bộ đã tạo bằng `powershell -ExecutionPolicy Bypass -File scripts\verify_local_distribution.ps1`. Kiểm tra sẽ thất bại nếu thiếu file, nội dung bị thay đổi, checksum sai, ZIP có nội dung không khớp inventory hoặc compiler Inno Setup shipping không đúng phiên bản. Bước portable smoke giải nén sang đường dẫn mới, cô lập `%LOCALAPPDATA%` và loại Python khỏi PATH trước khi kiểm tra frozen app.
+
+## SmartScreen, chữ ký và giấy phép
+
+Bản build local chưa ký số có thể hiện cảnh báo Microsoft Defender SmartScreen. Chỉ tiếp tục khi người nhận tin cậy nguồn gửi và SHA-256 khớp sidecar. Khi phát hành rộng rãi, nên ký số executable/installer bằng chứng thư code-signing phù hợp thay vì hướng dẫn người dùng tắt SmartScreen.
+
+pyVideoTrans-DH sử dụng GPLv3. Gói frozen giữ file giấy phép dự án và các license/NOTICE của thư viện bên thứ ba đã được PyInstaller thu thập. Khi phân phối binary cho người khác, cần duy trì khả năng cung cấp mã nguồn tương ứng theo nghĩa vụ GPL và không được xóa các thông báo giấy phép đi kèm.

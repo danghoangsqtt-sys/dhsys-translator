@@ -48,15 +48,17 @@ Current project version: **4.14**.
 
 ##  Quick Start (Windows Users)
 
-We provide a pre-packaged `.exe` version for Windows 10/11 users, requiring no Python environment configuration.
+pyVideoTrans-DH can be shared directly as a local Windows package; recipients do not need Python, PySide6/Qt or a global FFmpeg installation.
 
-1. **Download**: [Click to download the latest pre-packaged version](https://github.com/jianchang512/pyvideotrans/releases)
-2. **Unzip**: Extract the compressed file to a path without Chinese characters or spaces (e.g., `D:\pyVideoTrans`).
-3. **Run**: Double-click `sp.exe` inside the folder to launch.
+1. **Portable ZIP**: extract `pyVideoTrans-DH-<version>-win64-portable.zip`, open the `sp` folder, then double-click `sp.exe`.
+2. **Setup.exe**: run `pyVideoTrans-DH-<version>-win64-setup.exe`. It installs for the current Windows user and can create optional Start Menu/Desktop shortcuts.
+3. **Verify before sharing**: keep the matching manifest and `.sha256` files beside the package. Maintainers can run `scripts\verify_local_distribution.ps1` to re-check hashes and the portable contents locally.
 
 > **Note**:
 > * Do not run directly from within the compressed archive.
-> * To use GPU acceleration(NVIDIA GPU only), ensure **CUDA 12.8** and **cuDNN 9.11** are installed.
+> * The application data under `%LOCALAPPDATA%\pyVideoTrans` is separate from the installed program and is preserved by uninstall by default.
+> * Unsigned local builds may trigger Windows SmartScreen. Verify the SHA-256 sidecar before choosing to run a package from a trusted sender.
+> * GPU acceleration remains optional; use **Kiểm tra máy / System check** for workload-specific readiness guidance.
 
 ---
 

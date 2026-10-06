@@ -24,7 +24,7 @@
   "planned_local_distribution": {
     "request": "ENH-005",
     "phase": 5,
-    "status": "in_progress; tasks 5.1-5.3 PASS locally; task 5.4 local packaging is in progress",
+    "status": "in_progress; tasks 5.1-5.4 PASS locally; task 5.5 recipient-style Windows acceptance is next",
     "target": "portable ZIP plus per-user Setup.exe built locally without GitHub",
     "features": [
       "workload-aware Windows hardware/runtime readiness scan",
@@ -45,7 +45,9 @@
     "task_5_2_audit": "Phase 5 ROADMAP/state/tracker drift reconciled; required deployment diagram source added; System Check remains read-only and exports sanitized readiness data",
     "task_5_3_tests": "18 focused, 29 readiness/remediation/UI, 17 provider-profile regression and 688 full Python 3.12 tests pass; one external pydub/audioop warning",
     "task_5_3_audit": "ROADMAP/task-path drift reconciled; official remediation URLs fail closed unless credential-free HTTPS with a hostname; exact allowlist and explicit consent remain enforced",
-    "next": "Task 5.4 in progress — local portable ZIP and per-user Setup.exe build pipeline"
+    "task_5_4_artifacts": "portable ZIP 3865362812 bytes sha256 9A33F1FD8D7ACEF6CFCBB74010B126EB8318B666A6F32C77BE95B6A5B6518855; Setup.exe 2662524388 bytes sha256 A245DFF2E3D65FB0C623079156F5839C1E6A509DE03F0A0005EF0E10C6BDCF0C; manifest 2277878 bytes sha256 89E3F5789B0DEC0337B63AC8DEA72A727BB0A018C874F98A7BA872FABAE79F86",
+    "task_5_4_verification": "one-command local build and auto verification PASS; candidate 11291 files / 6611552335 bytes with 67 license/NOTICE entries; 14 focused distribution tests and 702 full Python 3.12 tests pass; clean-recipient install/upgrade/uninstall lifecycle intentionally remains Task 5.5",
+    "next": "Task 5.5 — recipient-style Windows portable/install/upgrade/uninstall/media/diagnostic acceptance"
   },
   "planned_product_direction": {
     "request": "ENH-004",
