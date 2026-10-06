@@ -36,6 +36,6 @@ ENH-003 is added to Phase 4. ENH-005 is active in [Phase 5](phases/5/SPEC.md) so
 | 5.2 | Việt/Anh “Kiểm tra máy” UI and sanitized support report | PASS locally |
 | 5.3 | Explicit, allowlisted remediation assistant | PASS locally |
 | 5.4 | Local portable ZIP and Setup.exe build pipeline | PASS locally |
-| 5.5 | Recipient-style Windows acceptance and user handoff | planned |
+| 5.5 | Recipient-style Windows acceptance and user handoff | in_progress |
 
 Source: [ENH-005](requests/ENH-005.md). GitHub is not required. The phase preserves all provider/model IDs, saved subtitle/provider mappings, Chinese media-language support and the separation between displayed SRT and transient TTS pronunciation text.

@@ -24,7 +24,7 @@
   "planned_local_distribution": {
     "request": "ENH-005",
     "phase": 5,
-    "status": "in_progress; tasks 5.1-5.4 PASS locally; task 5.5 recipient-style Windows acceptance is next",
+    "status": "in_progress; tasks 5.1-5.4 PASS locally; task 5.5 recipient-style Windows acceptance is in progress",
     "target": "portable ZIP plus per-user Setup.exe built locally without GitHub",
     "features": [
       "workload-aware Windows hardware/runtime readiness scan",

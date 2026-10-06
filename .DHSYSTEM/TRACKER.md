@@ -1,5 +1,7 @@
 # Tracker
 
+- In progress: ENH-005 task 5.5 — recipient-style Windows acceptance for portable/install/upgrade/uninstall, isolated user data, frozen media/UI/readiness evidence and final handoff documentation. Windows Sandbox or a disposable VM remains the authority for clean-machine evidence; unsigned-artifact behavior must be documented truthfully.
+
 - Complete locally: ENH-005 task 5.4 — one command now builds a portable ZIP, per-user Setup.exe, manifest and SHA-256 sidecars from the verified `dist/sp` candidate, then automatically verifies archive integrity, forbidden-content exclusions and frozen startup from a fresh extracted path without Python on `PATH`. Evidence: 11,291 files / 6.16 GiB candidate, 67 license/NOTICE entries, 14 focused distribution tests and 702 full Python 3.12 tests pass; one external `pydub/audioop` warning. Actual clean-recipient install/upgrade/uninstall lifecycle remains Task 5.5. GitHub remains intentionally deferred.
 
 - Complete locally: ENH-005 task 5.3 — **Kiểm tra máy** now exposes only exact allowlisted remediation actions, requires explicit confirmation before every external effect, supports clean cancellation, uses exact WinGet package IDs without auto-accept/security-bypass flags, verifies post-conditions, and keeps GPU driver/CUDA/model setup guided or opt-in. Official fallback links fail closed unless they are credential-free HTTPS URLs with a hostname. Evidence: 18 focused, 29 readiness/remediation/UI, 17 provider-profile regression and 688 full Python 3.12 tests pass; one external `pydub/audioop` warning. `$vp-audit` findings were repaired. Task 5.4 local portable ZIP/Setup.exe packaging is next; GitHub remains intentionally deferred.
@@ -27,7 +29,7 @@
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — release gate and documentation; provider-backed frozen media and a detached clean Python 3.12.13 checkout are locally verified; GitHub clean-runner is deferred by user request
 - Phase 4: tasks 4.1–4.18 complete and persisted; no parallel UI task remains. Phase 3 release gating is independent.
-- In progress and user-approved: ENH-005 Phase 5 — Tasks 5.1–5.4 are PASS locally; Task 5.5 recipient-style Windows acceptance is next. GitHub is not required for this phase.
+- In progress and user-approved: ENH-005 Phase 5 — Tasks 5.1–5.4 are PASS locally; Task 5.5 recipient-style Windows acceptance is in progress. GitHub is not required for this phase.
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 remains in_progress because the clean GitHub runner has not run. Current `main` tracks `origin/main`; the current frozen candidate has completed the provider-backed STT/translation/TTS/hard-subtitle media flow, and detached clean-checkout source regression passes on Python 3.12.13.
 - Active branch: `main` tracking `origin/main`.
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
