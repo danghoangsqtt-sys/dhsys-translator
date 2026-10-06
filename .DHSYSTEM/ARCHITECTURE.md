@@ -23,6 +23,8 @@ flowchart LR
     FFmpeg --> Output[Video + SRT + output receipt]
 ```
 
+Diagram source: `.DHSYSTEM/architecture/system-overview.mermaid`.
+
 ## Data flow
 
 ```mermaid
@@ -44,6 +46,8 @@ flowchart TD
     Mux --> Assemble
     NoSub --> Assemble
 ```
+
+Diagram source: `.DHSYSTEM/architecture/data-flow.mermaid`.
 
 ## Component decisions
 
@@ -72,6 +76,8 @@ flowchart TD
 The packaged app remains a Windows onedir PyInstaller application. VieNeu runs as an optional local companion process on loopback during the pilot. Gemini/OpenRouter-compatible profiles are outbound API integrations and must remain optional.
 
 ENH-005 adds two local distribution wrappers around the same verified onedir tree: a portable ZIP and a per-user Windows installer. Required application runtime assets remain bundled; writable settings/models/logs/output remain outside the install tree. A pure readiness service feeds a localized UI and a separate allowlisted remediation coordinator. The scanner never owns provider selection or media processing.
+
+Diagram source: `.DHSYSTEM/architecture/deployment.mermaid`.
 
 ```mermaid
 flowchart TD

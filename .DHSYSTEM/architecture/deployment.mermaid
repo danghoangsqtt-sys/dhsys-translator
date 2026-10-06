@@ -1,0 +1,19 @@
+flowchart TD
+    Build[Tracked local build script] --> Frozen[Verified PyInstaller onedir]
+    Frozen --> Zip[Portable ZIP + SHA-256]
+    Frozen --> Setup[Per-user Setup.exe + SHA-256]
+    Frozen --> Runtime[Bundled Python + Qt + FFmpeg]
+    Zip --> App[Desktop application]
+    Setup --> App
+    Runtime --> App
+    App --> UserData[Writable settings/models/logs/output under LOCALAPPDATA]
+    App --> Scan[Read-only readiness service]
+    Scan --> UI[Localized System Check UI]
+    UI --> Report[Workload-specific status + sanitized report]
+    Report --> Fix{User explicitly chooses a fix?}
+    Fix -->|No| Guide[Guidance / CPU or remote fallback]
+    Fix -->|Yes| Allowlist[Separate allowlisted remediation coordinator]
+    Allowlist --> Confirm[Explicit consent + publisher/command/privilege disclosure]
+    Confirm --> Rescan[Post-check and rescan]
+    Allowlist -. never silent .-> Drivers[GPU drivers / CUDA / large models]
+    App --> Providers[Existing provider IDs and media behavior preserved]

@@ -1,6 +1,6 @@
 # Phase 5 — Local Windows distribution and system readiness
 
-Status: planned on 2026-10-06. Source request: [ENH-005](../../requests/ENH-005.md). Target product line: **4.15.0 provisional**; the current manifest remains 4.14 until implementation and local distribution acceptance pass.
+Status: in_progress on 2026-10-06. Tasks 5.1–5.2 are PASS locally; Task 5.3 is next. Source request: [ENH-005](../../requests/ENH-005.md). Target product line: **4.15.0 provisional**; the current manifest remains 4.14 until implementation and local distribution acceptance pass.
 
 ## Goal
 

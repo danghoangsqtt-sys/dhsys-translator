@@ -7,6 +7,8 @@
 
 # pyVideoTrans
 
+Current project version: **4.14**.
+
 <div align="center">
 
 **A Powerful Open Source Video Translation / Audio Transcription / AI Dubbing / Subtitle Translation Tool**

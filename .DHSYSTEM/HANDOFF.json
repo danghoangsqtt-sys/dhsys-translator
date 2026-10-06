@@ -24,7 +24,7 @@
   "planned_local_distribution": {
     "request": "ENH-005",
     "phase": 5,
-    "status": "in_progress; task 5.1 PASS locally; task 5.2 UI/report work is in progress",
+    "status": "in_progress; tasks 5.1-5.2 PASS locally; task 5.3 remediation is next",
     "target": "portable ZIP plus per-user Setup.exe built locally without GitHub",
     "features": [
       "workload-aware Windows hardware/runtime readiness scan",
@@ -40,7 +40,10 @@
     ],
     "task_5_1_tests": "11 focused, 51 related runtime/frozen/config and 670 full Python 3.12 tests pass; one external pydub/audioop warning",
     "task_5_1_audit": "blocked file ancestors classify writable paths as false; Windows PermissionError lock contention is retried within the existing bounded frozen-asset seed loop",
-    "next": "Continue Task 5.2 — Việt/Anh Kiểm tra máy UI, sanitized copy/export and frozen smoke"
+    "task_5_2_tests": "5 focused, 53 related UI/config/navigation and 675 full Python 3.12 tests pass; one external pydub/audioop warning",
+    "task_5_2_frozen": "fresh dist/sp/sp.exe build passes Vietnamese and English system-check UI smoke plus 72/72 dynamic-menu routes",
+    "task_5_2_audit": "Phase 5 ROADMAP/state/tracker drift reconciled; required deployment diagram source added; System Check remains read-only and exports sanitized readiness data",
+    "next": "Continue Task 5.3 — consent-based exact allowlist remediation with explicit confirmation and safe cancel/failure/elevation handling"
   },
   "planned_product_direction": {
     "request": "ENH-004",
