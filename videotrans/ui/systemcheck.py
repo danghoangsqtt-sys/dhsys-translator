@@ -6,8 +6,8 @@ import json
 from pathlib import Path
 from typing import Callable
 
-from PySide6.QtCore import QObject, QRunnable, QThreadPool, QTimer, Qt, Signal
-from PySide6.QtGui import QIcon
+from PySide6.QtCore import QObject, QRunnable, QThreadPool, QTimer, Qt, QUrl, Signal
+from PySide6.QtGui import QDesktopServices, QIcon
 from PySide6.QtWidgets import (
     QApplication,
     QDialog,
@@ -15,6 +15,7 @@ from PySide6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QLabel,
+    QMessageBox,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
@@ -23,6 +24,17 @@ from PySide6.QtWidgets import (
 
 from videotrans.configure import config
 from videotrans.configure._i18n import _get_transobj
+from videotrans.diagnostics.remediation import (
+    KIND_GUIDANCE,
+    KIND_OPEN_URL,
+    KIND_WINGET,
+    STATUS_GUIDANCE,
+    STATUS_LINK_OPENED,
+    STATUS_REBOOT_REQUIRED,
+    STATUS_SUCCESS,
+    execute_remediation,
+    get_remediation,
+)
 from videotrans.diagnostics.system_readiness import (
     ReadinessReport,
     WORKLOAD_BASIC,
@@ -91,15 +103,24 @@ class _ReadinessTask(QRunnable):
 
 
 class Ui_systemcheck(QDialog):
-    """Show sanitized readiness facts without changing the machine."""
+    """Show readiness facts and consent-gated, allowlisted recovery actions."""
 
-    def __init__(self, *, collector=None, locale: str | None = None, auto_refresh: bool = True):
+    def __init__(
+        self,
+        *,
+        collector=None,
+        remediation_executor=None,
+        locale: str | None = None,
+        auto_refresh: bool = True,
+    ):
         super().__init__()
         self._collector = collector or collect_system_readiness
+        self._remediation_executor = remediation_executor or self._execute_remediation
         self._catalog = _get_transobj(locale) if locale else None
         self._report: ReadinessReport | None = None
         self._task: _ReadinessTask | None = None
         self._cards: dict[str, tuple[QLabel, QLabel]] = {}
+        self._remediation_buttons: dict[str, QPushButton] = {}
 
         self.setObjectName("systemCheckDialog")
         self.setWindowIcon(QIcon(f"{config.ROOT_DIR}/videotrans/styles/icon.ico"))
@@ -182,6 +203,26 @@ class Ui_systemcheck(QDialog):
         self.system_facts.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
         facts_layout.addWidget(self.system_facts)
         content_layout.addWidget(facts_card)
+
+        remediation_card = QFrame(content)
+        remediation_card.setObjectName("systemRemediationCard")
+        remediation_card.setFrameShape(QFrame.Shape.StyledPanel)
+        remediation_layout = QVBoxLayout(remediation_card)
+        remediation_title = QLabel(self._tr("Recommended fixes"), remediation_card)
+        remediation_title.setStyleSheet("font-size: 16px; font-weight: 700;")
+        remediation_layout.addWidget(remediation_title)
+        remediation_intro = QLabel(self._tr("Remediation consent intro"), remediation_card)
+        remediation_intro.setWordWrap(True)
+        remediation_layout.addWidget(remediation_intro)
+        self.remediation_actions = QWidget(remediation_card)
+        self.remediation_actions_layout = QVBoxLayout(self.remediation_actions)
+        self.remediation_actions_layout.setContentsMargins(0, 0, 0, 0)
+        self.remediation_actions_layout.setSpacing(6)
+        remediation_layout.addWidget(self.remediation_actions)
+        self.remediation_empty = QLabel(self._tr("No allowlisted fix is needed."), remediation_card)
+        self.remediation_empty.setWordWrap(True)
+        remediation_layout.addWidget(self.remediation_empty)
+        content_layout.addWidget(remediation_card)
         content_layout.addStretch()
         scroll.setWidget(content)
         root.addWidget(scroll, 1)
@@ -261,6 +302,111 @@ class Ui_systemcheck(QDialog):
             details.setText("\n".join(lines) or self._tr("Could not fully verify"))
 
         self.system_facts.setText(self._system_summary(report, finding_by_code))
+        self._render_remediation_actions(report)
+
+    def _render_remediation_actions(self, report: ReadinessReport):
+        while self.remediation_actions_layout.count():
+            item = self.remediation_actions_layout.takeAt(0)
+            widget = item.widget()
+            if widget is not None:
+                widget.deleteLater()
+        self._remediation_buttons.clear()
+
+        action_codes = []
+        for finding in report.findings:
+            code = finding.action_code
+            if code == "none" or code in action_codes or get_remediation(code) is None:
+                continue
+            action_codes.append(code)
+
+        self.remediation_empty.setVisible(not action_codes)
+        for code in action_codes:
+            action = get_remediation(code)
+            if action is None:
+                continue
+            button = QPushButton(self._tr(action.title), self.remediation_actions)
+            button.setObjectName(f"remediation_{code}")
+            button.setToolTip(self._tr(action.description))
+            button.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+            button.clicked.connect(lambda _checked=False, action_code=code: self._request_remediation(action_code))
+            self.remediation_actions_layout.addWidget(button)
+            self._remediation_buttons[code] = button
+
+    def _confirmation_text(self, action_code: str) -> str:
+        action = get_remediation(action_code)
+        if action is None:
+            return self._tr("This remediation is not in the verified allowlist.")
+        if action.kind == KIND_WINGET:
+            exact_target = action.package_id or self._tr("Unknown")
+        elif action.kind == KIND_OPEN_URL:
+            exact_target = action.official_url or self._tr("Unknown")
+        else:
+            exact_target = self._tr("Guidance only; no installer will run")
+        return "\n".join((
+            f"{self._tr('Action')}: {self._tr(action.title)}",
+            f"{self._tr('Publisher')}: {action.publisher}",
+            f"{self._tr('Source')}: {self._tr(action.source)}",
+            f"{self._tr('Exact target')}: {exact_target}",
+            f"{self._tr('May request Windows elevation')}: {self._tr('Yes') if action.requires_elevation else self._tr('No')}",
+            f"{self._tr('May require restart')}: {self._tr('Yes') if action.restart_possible else self._tr('No')}",
+            "",
+            self._tr(action.description),
+        ))
+
+    def _request_remediation(self, action_code: str):
+        action = get_remediation(action_code)
+        if action is None:
+            QMessageBox.warning(
+                self,
+                self._tr("Action blocked"),
+                self._tr("This remediation is not in the verified allowlist."),
+            )
+            return None
+
+        reply = QMessageBox.question(
+            self,
+            self._tr("Confirm action"),
+            self._confirmation_text(action_code),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No,
+        )
+        if reply != QMessageBox.StandardButton.Yes:
+            self.scan_state.setText(self._tr("Cancelled. No system change was made."))
+            return None
+
+        result = self._remediation_executor(action_code, confirmed=True)
+        message = self._result_message(result.status, action.description)
+        self.scan_state.setText(message)
+        if result.status in (STATUS_GUIDANCE, STATUS_LINK_OPENED, STATUS_SUCCESS, STATUS_REBOOT_REQUIRED):
+            QMessageBox.information(self, self._tr("Action result"), message)
+        else:
+            QMessageBox.warning(self, self._tr("Action result"), message)
+        if result.status == STATUS_SUCCESS:
+            QTimer.singleShot(0, self.refresh_report)
+        return result
+
+    def _execute_remediation(self, action_code: str, *, confirmed: bool):
+        return execute_remediation(
+            action_code,
+            confirmed=confirmed,
+            url_opener=lambda url: bool(QDesktopServices.openUrl(QUrl(url))),
+        )
+
+    def _result_message(self, status: str, guidance: str) -> str:
+        messages = {
+            STATUS_GUIDANCE: self._tr(guidance),
+            STATUS_LINK_OPENED: self._tr("Opened the verified official page. Complete the action there, then run System check again."),
+            STATUS_SUCCESS: self._tr("The prerequisite was installed and verified. System check will run again."),
+            STATUS_REBOOT_REQUIRED: self._tr("Windows must restart before this prerequisite can be verified."),
+            "cancelled": self._tr("Cancelled. No system change was made."),
+            "missing_winget": self._tr("WinGet is not available. Use the verified official manual recovery path."),
+            "unavailable": self._tr("The verified recovery action is unavailable. Check the network connection and try again."),
+            "uac_denied": self._tr("Windows elevation was cancelled or denied. No other installer will run automatically."),
+            "installer_failed": self._tr("The installer failed. No other package will be attempted automatically."),
+            "post_check_failed": self._tr("The installer finished, but the prerequisite is still not verified. Restart if requested, then scan again."),
+            "not_allowed": self._tr("This remediation is not in the verified allowlist."),
+        }
+        return messages.get(status, self._tr("Could not complete the recovery action."))
 
     def _system_summary(self, report: ReadinessReport, finding_by_code) -> str:
         system = report.system

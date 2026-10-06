@@ -3,7 +3,9 @@ import json
 from PySide6.QtCore import Qt
 from PySide6.QtTest import QTest
 from PySide6.QtWidgets import QApplication
+from PySide6.QtWidgets import QMessageBox
 
+from videotrans.diagnostics.remediation import RemediationResult, STATUS_GUIDANCE
 from videotrans.diagnostics.system_readiness import (
     GIB,
     NvidiaProbe,
@@ -18,7 +20,7 @@ from videotrans.ui.systemcheck import Ui_systemcheck
 app = QApplication.instance() or QApplication([])
 
 
-def _report(*, cpu_only=False, low_disk=False):
+def _report(*, cpu_only=False, low_disk=False, missing_ffmpeg=False):
     return evaluate_readiness(ProbeSnapshot(
         os_name="Windows",
         os_release="11",
@@ -26,7 +28,7 @@ def _report(*, cpu_only=False, low_disk=False):
         cpu_logical_count=12,
         ram_bytes=16 * GIB,
         disk_free_bytes=(2 if low_disk else 64) * GIB,
-        ffmpeg_present=True,
+        ffmpeg_present=not missing_ffmpeg,
         ffprobe_present=True,
         resources_present=True,
         user_data_writable=True,
@@ -150,3 +152,77 @@ def test_generated_workspace_reuses_systemcheck_action_in_sidebar_and_compact_me
         action for section in shell._catalog_sections for action in section.actions()
     }
 
+
+def test_remediation_cancel_requires_confirmation_and_has_no_effect(monkeypatch):
+    calls = []
+    dialog = Ui_systemcheck(
+        locale="en_US",
+        auto_refresh=False,
+        remediation_executor=lambda code, confirmed: calls.append((code, confirmed)),
+    )
+    dialog.set_report(_report(missing_ffmpeg=True))
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args, **kwargs: QMessageBox.StandardButton.No,
+    )
+
+    dialog._remediation_buttons["repair_bundle_ffmpeg"].click()
+
+    assert calls == []
+    assert dialog.scan_state.text() == "Cancelled. No system change was made."
+
+
+def test_gpu_recovery_confirmation_shows_verified_source_and_url(monkeypatch):
+    prompts = []
+    dialog = Ui_systemcheck(locale="en_US", auto_refresh=False)
+    dialog.set_report(_report(cpu_only=True))
+
+    def cancel(*args, **kwargs):
+        prompts.append(args[2])
+        return QMessageBox.StandardButton.No
+
+    monkeypatch.setattr(QMessageBox, "question", cancel)
+    dialog._remediation_buttons["use_cpu_or_install_nvidia_driver"].click()
+
+    assert len(prompts) == 1
+    assert "NVIDIA" in prompts[0]
+    assert "https://www.nvidia.com/Download/index.aspx" in prompts[0]
+    assert "Exact target" in prompts[0]
+
+
+def test_confirmed_guidance_runs_exact_action_without_silent_installer(monkeypatch):
+    calls = []
+    messages = []
+
+    def executor(code, confirmed):
+        calls.append((code, confirmed))
+        return RemediationResult(
+            action_code=code,
+            status=STATUS_GUIDANCE,
+            method="guidance",
+            message="fixed guidance",
+        )
+
+    dialog = Ui_systemcheck(
+        locale="en_US",
+        auto_refresh=False,
+        remediation_executor=executor,
+    )
+    dialog.set_report(_report(missing_ffmpeg=True))
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args, **kwargs: QMessageBox.StandardButton.Yes,
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "information",
+        lambda *args, **kwargs: messages.append(args[2]) or QMessageBox.StandardButton.Ok,
+    )
+
+    dialog._remediation_buttons["repair_bundle_ffmpeg"].click()
+
+    assert calls == [("repair_bundle_ffmpeg", True)]
+    assert messages
+    assert "FFmpeg is bundled" in messages[0]

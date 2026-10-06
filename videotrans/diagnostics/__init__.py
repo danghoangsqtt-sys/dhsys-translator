@@ -8,6 +8,14 @@ from .system_readiness import (
     evaluate_readiness,
     probe_system,
 )
+from .remediation import (
+    REMEDIATION_REGISTRY,
+    RemediationAction,
+    RemediationResult,
+    action_public_details,
+    execute_remediation,
+    get_remediation,
+)
 
 __all__ = [
     "ProbeSnapshot",
@@ -16,4 +24,10 @@ __all__ = [
     "collect_system_readiness",
     "evaluate_readiness",
     "probe_system",
+    "REMEDIATION_REGISTRY",
+    "RemediationAction",
+    "RemediationResult",
+    "action_public_details",
+    "execute_remediation",
+    "get_remediation",
 ]
