@@ -1,5 +1,7 @@
 # Tracker
 
+- Complete locally: ENH-005 task 5.1 — side-effect-free readiness diagnostics now report workload-specific Windows OS/arch, CPU, RAM, free disk, NVIDIA/CUDA visibility, bundled FFmpeg/ffprobe/resources and writable app-data/cache facts without exporting private paths or secrets. CPU-only remains valid for the basic workflow. `$vp-audit` repaired blocked-path classification and Windows frozen lock-contention handling. Evidence: 11 focused, 51 related and 670 full Python 3.12 tests pass; one external `pydub/audioop` warning. Task 5.2 is next; GitHub remains intentionally deferred and Phase 3 task 3.3 stays open.
+
 - Complete: ENH-004 task 4.18 — end-to-end source and current frozen-Windows acceptance for tasks 4.13–4.17 passes. Evidence: 72 focused, 349 related UI/config/CLI/WebUI and 658 full Python 3.12.14 tests; current frozen core/UI/sidebar/dynamic-menu smoke passes; hard subtitles are visible in decoded frames (`40953` delta) and soft subtitles contain one `mov_text` stream tagged `vie`. Candidate SHA-256: `A4C7D607B80C15CF04A023B94BA32A2CF4E31BA8F39B2BDBBA889F79B8B18F25`. Phase 3 clean-runner/full-media/release gates remain open and independent.
 
 - Complete and persisted: ENH-004 task 4.17 — compatibility-first provider/data-plane policy is implemented. No provider is deleted, renumbered or hidden; Advanced/Custom and exact saved IDs are preserved. Local-only status requires a loopback Local LLM endpoint; invalid/non-loopback Local activation is rejected without changing prior provider indexes. Gemini/OpenRouter are disclosed as remote/off-device with quota/rate-limit and non-destructive fallback guidance. Chinese media-language support remains unchanged. Evidence: 17 focused, 151 related and 658 full Python 3.12 tests pass; implementation checkpoint `26a24591`, closeout `ada51c14` persisted to `origin/main`.
@@ -19,7 +21,7 @@
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — release gate and documentation; provider-backed frozen media and a detached clean Python 3.12.13 checkout are locally verified; GitHub clean-runner is deferred by user request
 - Phase 4: tasks 4.1–4.18 complete and persisted; no parallel UI task remains. Phase 3 release gating is independent.
-- Planned and user-approved: ENH-005 Phase 5 — local portable ZIP/Setup.exe, workload-aware “Kiểm tra máy”, sanitized diagnostics and consent-based allowlisted remediation. GitHub is not required; implementation starts with `$vp-auto --from 5`.
+- In progress and user-approved: ENH-005 Phase 5 — Task 5.1 readiness model/probes are PASS locally; next is Task 5.2 “Kiểm tra máy” UI, followed by consent-based allowlisted remediation and local portable ZIP/Setup.exe packaging. GitHub is not required for this phase.
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 remains in_progress because the clean GitHub runner has not run. Current `main` tracks `origin/main`; the current frozen candidate has completed the provider-backed STT/translation/TTS/hard-subtitle media flow, and detached clean-checkout source regression passes on Python 3.12.13.
 - Active branch: `main` tracking `origin/main`.
 - Planned patch version: 4.14.1 (not yet applied to product manifest)

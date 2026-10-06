@@ -32,7 +32,7 @@ ENH-003 is added to Phase 4. ENH-005 is planned in [Phase 5](phases/5/SPEC.md) s
 
 | Task | Outcome | State |
 | --- | --- | --- |
-| 5.1 | Pure readiness model and Windows hardware/runtime probes | planned |
+| 5.1 | Pure readiness model and Windows hardware/runtime probes | PASS locally |
 | 5.2 | Việt/Anh “Kiểm tra máy” UI and sanitized support report | planned |
 | 5.3 | Explicit, allowlisted remediation assistant | planned |
 | 5.4 | Local portable ZIP and Setup.exe build pipeline | planned |

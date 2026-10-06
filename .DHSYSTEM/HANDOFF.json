@@ -24,7 +24,7 @@
   "planned_local_distribution": {
     "request": "ENH-005",
     "phase": 5,
-    "status": "planned; user-approved; implementation not started",
+    "status": "in_progress; task 5.1 PASS locally; task 5.2 is next",
     "target": "portable ZIP plus per-user Setup.exe built locally without GitHub",
     "features": [
       "workload-aware Windows hardware/runtime readiness scan",
@@ -38,7 +38,9 @@
       "bundle Python, Qt and FFmpeg instead of changing global PATH",
       "preserve provider/model IDs, Chinese media support and user SRT"
     ],
-    "next": "$vp-auto --from 5"
+    "task_5_1_tests": "11 focused, 51 related runtime/frozen/config and 670 full Python 3.12 tests pass; one external pydub/audioop warning",
+    "task_5_1_audit": "blocked file ancestors classify writable paths as false; Windows PermissionError lock contention is retried within the existing bounded frozen-asset seed loop",
+    "next": "Task 5.2 — Việt/Anh Kiểm tra máy UI"
   },
   "planned_product_direction": {
     "request": "ENH-004",
