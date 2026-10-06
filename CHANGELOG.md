@@ -8,6 +8,8 @@ Planned ENH-005 for the 4.15.0 line: add a GitHub-independent local distribution
 
 - ENH-005 Task 5.2 adds a read-only Vietnamese/English **Kiểm tra máy** desktop surface with workload-specific readiness cards, Refresh, sanitized Copy/Export support reports and frozen-route coverage. It does not install drivers, CUDA, models or other prerequisites; remediation remains a separate explicit-consent Task 5.3 flow.
 
+- ENH-005 Task 5.3 adds consent-based remediation from an immutable allowlist: exact WinGet IDs only, explicit confirmation and cancellation, readable UAC/network/reboot/installer recovery, post-condition verification, redacted logs and credential-free HTTPS-only official fallback links. GPU drivers/CUDA and large models are never silently installed.
+
 Planned for 4.15.0 (ENH-003, after the pending 4.14.1 repair release): offer Vietnamese and English as the only application UI/message locales while retaining Chinese speech recognition, translation, subtitle and voice support. Tasks 4.9–4.12 are verified locally; the current manifest remains 4.14.
 
 - Subtitle correction dialogs now allow normal mouse and keyboard editing, use a readable light-table palette, show unsaved changes, and wait for an explicit save, discard or cancel action instead of auto-closing on a countdown.

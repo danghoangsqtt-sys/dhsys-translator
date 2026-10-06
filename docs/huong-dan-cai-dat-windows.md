@@ -26,4 +26,3 @@ Sau khi một prerequisite được cài thành công và post-condition đượ
 ## Sửa lỗi gói ứng dụng
 
 FFmpeg, ffprobe và tài nguyên UI là thành phần đi kèm bản đóng gói. Nếu các mục này bị thiếu, không cài bản global để che lỗi; hãy dùng đúng gói pyVideoTrans-DH tin cậy để repair/cài lại. Cơ chế đóng gói portable ZIP và Setup.exe được thực hiện ở Task 5.4.
-
