@@ -2,7 +2,7 @@
 
 ## Planned extension — ENH-004 Vietnamese-first video workflow
 
-Phase 4 continues with tasks 4.13–4.18. The order is deliberate: repair subtitle correction first, prove hard/soft subtitle output second, simplify navigation/provider choice third, then pilot Vietnamese–English TTS before any provider removal.
+Phase 4 tasks 4.13–4.18 are complete and persisted. Their order was deliberate: repair subtitle correction first, prove hard/soft subtitle output second, simplify navigation/provider choice third, then pilot Vietnamese–English TTS before any provider reduction decision.
 
 | Task | Outcome | State |
 | --- | --- | --- |
@@ -21,8 +21,8 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | --- | --- | --- |
 | 1 | Reproducible tests, stale tests, version and docs | verified locally; git persistence pending |
 | 2 | ASR parsing, TLS, WebUI access, output safety | verified locally; git persistence pending |
-| 3 | Audit repair queue 3.4–3.9, supported Python, dependencies, Windows packaging and release gate | in_progress; source, Docker and extracted Windows smoke locally verified; clean-runner/release/persistence gates open |
-| 4 | PySide6 workflow UI, light workspace layout, ENH-003 Vietnamese/English UI locales with Chinese media support | in_progress; 4.1–4.12 and ENH-003 verified locally; upstream persistence and Phase 3 release gates remain open |
+| 3 | Audit repair queue 3.4–3.9, supported Python, dependencies, Windows packaging and release gate | in_progress; source, Docker, extracted Windows and current-candidate provider media locally verified; clean-runner/release gate open |
+| 4 | PySide6 workflow UI, light workspace layout, ENH-003 Vietnamese/English UI locales with Chinese media support | complete; tasks 4.1–4.18 persisted; Phase 3 release gate remains independent and open |
 | 5 | Timeline editor | conditional; scope decision pending |
 
 ENH-003 is added to the current Phase 4. Target product version after the pending 4.14.1 repair release: **4.15.0 (provisional)**. Planning does not change the current `4.14` manifest or publish an artifact. See [Phase 4 localization contract](phases/4/SPEC.md).

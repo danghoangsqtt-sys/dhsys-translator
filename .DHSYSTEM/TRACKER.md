@@ -14,13 +14,13 @@
 
 - Complete: [ENH-004](requests/ENH-004.md) — Vietnamese-first video workflow (Phase 4 tasks 4.13–4.18). Tasks 4.13–4.18 are PASS; Task 4.18 closes the source/frozen Windows/media handoff only. This work does not supersede or close the active Phase 3 release gate.
 
-- Active: [ENH-003](requests/ENH-003.md) — UI Việt/Anh, giữ xử lý nội dung tiếng Trung (P1; tasks 4.9–4.12 verified locally; persistence pending).
+- Complete and persisted: [ENH-003](requests/ENH-003.md) — UI Việt/Anh while preserving Chinese media-language processing; Phase 4 closeout is on `origin/main`.
 
 - Current phase: 3 — supported runtime and Windows packaging
-- Current task: 3.3 — clean-runner release gate and documentation
-- Parallel UI task: 4.12 packaged locale and Chinese-media regression verified locally (576 Python 3.12 tests); tasks 4.1–4.12 verified locally; persistence pending
-- State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 in_progress with the frozen startup contention repair verified locally; phases 1–2 verified locally; local Git checkpoint exists but upstream persistence is pending
-- Local branch/checkpoint: `codex/phase3-release-gate`; `fbcd924f` preserves the prior Phase 1–3 changes, later commits contain the release gate; no upstream is configured for this branch
+- Current task: 3.3 — clean-runner release gate and documentation; provider-backed frozen media now verified on the current candidate
+- Phase 4: tasks 4.1–4.18 complete and persisted; no parallel UI task remains. Phase 3 release gating is independent.
+- State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 remains in_progress because the clean GitHub runner has not run. Current `main` tracks `origin/main`; the current frozen candidate has completed the provider-backed STT/translation/TTS/hard-subtitle media flow.
+- Active branch: `main` tracking `origin/main`.
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
 - Planned Phase 4 localization target: 4.15.0 after the 4.14.1 repair release; current manifest remains 4.14 until implementation and release gates pass.
 - Starting commit: `8cf344fe`
@@ -39,7 +39,9 @@
 
 - Responsive workspace repair 2026-10-04: workflow rows wrap instead of compressing, the workflow pane scrolls vertically, the subtitle pane can shrink, and navigation collapses into a menu below 980 px while reusing existing QAction instances. Focused UI: 11 passed; full Python 3.12: 559 passed with one existing external `pydub` warning. Source screenshots at 1280?720, 1024?720 and 900?720 are stored in `.DHSYSTEM/ui-direction/2026-10-04-light-workspace/`. Candidate `tmp/responsive-dist/sp/sp.exe` SHA-256 `B4CF72937F57790380018A4571731FA16C18340BE51D10099C06504AE59FF827` passed frozen resource/provider/dialog/CLI/SRT/MP4 and responsive UI smoke; concurrent startup smoke passed. The candidate was synchronized to `dist/sp`; the deployed resource and responsive UI smoke checks passed.
 
-- Frozen startup contention repair 2026-10-04: the path initializer no longer overwrites the shared icon on every launch. Missing bundled assets are seeded through an exclusive lock and atomic destination replacement. `tests/test_frozen_paths.py` plus `tests/test_config_split.py`: 39 passed; full Python 3.12 suite: 557 passed with one existing external `pydub` warning. Candidate SHA-256 `05AB4C46E56A3042A5876119A4710A1C6C068F33376A24D98A69170994CC3EE3` started twice concurrently with one isolated `LOCALAPPDATA`; both returned 0 and passed resource, provider/dialog, CLI, SRT and generated MP4 smoke checks. The verified package was synchronized to `dist/sp` and the same two-process smoke passed again there. Clean runner, full provider media and upstream persistence remain open.
+- Frozen startup contention repair 2026-10-04: the path initializer no longer overwrites the shared icon on every launch. Missing bundled assets are seeded through an exclusive lock and atomic destination replacement. `tests/test_frozen_paths.py` plus `tests/test_config_split.py`: 39 passed; full Python 3.12 suite: 557 passed with one existing external `pydub` warning. Candidate SHA-256 `05AB4C46E56A3042A5876119A4710A1C6C068F33376A24D98A69170994CC3EE3` started twice concurrently with one isolated `LOCALAPPDATA`; both returned 0 and passed resource, provider/dialog, CLI, SRT and generated MP4 smoke checks. The verified package was synchronized to `dist/sp` and the same two-process smoke passed again there.
+
+- Task 3.3 provider-backed media 2026-10-06: current `dist/sp/sp.exe` SHA-256 `A4C7D607B80C15CF04A023B94BA32A2CF4E31BA8F39B2BDBBA889F79B8B18F25` completed real packaged English STT with faster-whisper `tiny`, Microsoft translation fallback after Google HTTP 429, Vietnamese Edge-TTS 1/1, and final H.264/AAC hard-subtitle MP4 of 7.84 s. The translated Vietnamese SRT was generated and a decoded frame visibly contains the subtitle. GitHub Actions exposes `Build Windows Candidate` but reports zero runs, so the clean-runner release gate is still open and version remains 4.14.
 
 - Task 4.2 workflow view state 2026-10-04: a pure presentation mapper receives existing action status and `SignMsg.type`, without changing queue, media, settings, output, dialog or CLI behavior. Focused Python 3.12 UI/state tests: 11 passed; full suite: 554 passed. Rebuilt candidate `dist/sp/sp.exe` SHA-256 `A37D876AA535802538EBA223714DD3E830B95C633248B91EECEFF3A05829ED02` passed frozen resource/media and UI probes; the UI probe reported five sections and `workflow_state: running`.
 
