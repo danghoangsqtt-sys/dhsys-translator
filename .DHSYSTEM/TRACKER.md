@@ -17,9 +17,9 @@
 - Complete and persisted: [ENH-003](requests/ENH-003.md) — UI Việt/Anh while preserving Chinese media-language processing; Phase 4 closeout is on `origin/main`.
 
 - Current phase: 3 — supported runtime and Windows packaging
-- Current task: 3.3 — clean-runner release gate and documentation; provider-backed frozen media now verified on the current candidate
+- Current task: 3.3 — release gate and documentation; provider-backed frozen media and a detached clean Python 3.12.13 checkout are locally verified; GitHub clean-runner is deferred by user request
 - Phase 4: tasks 4.1–4.18 complete and persisted; no parallel UI task remains. Phase 3 release gating is independent.
-- State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 remains in_progress because the clean GitHub runner has not run. Current `main` tracks `origin/main`; the current frozen candidate has completed the provider-backed STT/translation/TTS/hard-subtitle media flow.
+- State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 remains in_progress because the clean GitHub runner has not run. Current `main` tracks `origin/main`; the current frozen candidate has completed the provider-backed STT/translation/TTS/hard-subtitle media flow, and detached clean-checkout source regression passes on Python 3.12.13.
 - Active branch: `main` tracking `origin/main`.
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
 - Planned Phase 4 localization target: 4.15.0 after the 4.14.1 repair release; current manifest remains 4.14 until implementation and release gates pass.
@@ -42,6 +42,8 @@
 - Frozen startup contention repair 2026-10-04: the path initializer no longer overwrites the shared icon on every launch. Missing bundled assets are seeded through an exclusive lock and atomic destination replacement. `tests/test_frozen_paths.py` plus `tests/test_config_split.py`: 39 passed; full Python 3.12 suite: 557 passed with one existing external `pydub` warning. Candidate SHA-256 `05AB4C46E56A3042A5876119A4710A1C6C068F33376A24D98A69170994CC3EE3` started twice concurrently with one isolated `LOCALAPPDATA`; both returned 0 and passed resource, provider/dialog, CLI, SRT and generated MP4 smoke checks. The verified package was synchronized to `dist/sp` and the same two-process smoke passed again there.
 
 - Task 3.3 provider-backed media 2026-10-06: current `dist/sp/sp.exe` SHA-256 `A4C7D607B80C15CF04A023B94BA32A2CF4E31BA8F39B2BDBBA889F79B8B18F25` completed real packaged English STT with faster-whisper `tiny`, Microsoft translation fallback after Google HTTP 429, Vietnamese Edge-TTS 1/1, and final H.264/AAC hard-subtitle MP4 of 7.84 s. The translated Vietnamese SRT was generated and a decoded frame visibly contains the subtitle. GitHub Actions exposes `Build Windows Candidate` but reports zero runs, so the clean-runner release gate is still open and version remains 4.14.
+
+- Task 3.3 local clean-checkout revalidation 2026-10-06: per user direction, GitHub is deferred while local development continues. A detached worktree at `39c4c023` synchronized successfully with CPython 3.12.13 (`uv sync --locked --group dev`; 424 packages resolved, 392 installed). Focused frozen/CLI/provider/subtitle tests passed 104/104 and the full suite passed 658/658 with five external `pydub`/`audioop` warnings. Workflow YAML parse and `git diff --check` passed. Docker Desktop is currently unavailable, so Docker was not re-run; earlier Docker PASS evidence is retained. Task 3.3 remains `in_progress` and product version remains 4.14.
 
 - Task 4.2 workflow view state 2026-10-04: a pure presentation mapper receives existing action status and `SignMsg.type`, without changing queue, media, settings, output, dialog or CLI behavior. Focused Python 3.12 UI/state tests: 11 passed; full suite: 554 passed. Rebuilt candidate `dist/sp/sp.exe` SHA-256 `A37D876AA535802538EBA223714DD3E830B95C633248B91EECEFF3A05829ED02` passed frozen resource/media and UI probes; the UI probe reported five sections and `workflow_state: running`.
 
