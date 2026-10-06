@@ -34,9 +34,13 @@ def _copy_missing_frozen_asset(source, destination):
     for _ in range(100):
         try:
             lock_descriptor = os.open(lock_path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
-        except FileExistsError:
+        except (FileExistsError, PermissionError):
             if destination.exists():
                 return
+            # Windows can report sharing contention on an existing O_EXCL
+            # lock file as PermissionError instead of FileExistsError. Keep
+            # the existing bounded retry behavior; a persistent permission
+            # problem still times out and surfaces below.
             time.sleep(0.05)
             continue
         os.close(lock_descriptor)

@@ -98,6 +98,29 @@ def test_frozen_home_concurrent_seed_has_one_writer_and_no_errors(tmp_path):
     assert copied_language.read_text(encoding="utf-8") == '{"seed":"bundle"}'
 
 
+def test_frozen_asset_seed_retries_windows_permission_lock_contention(tmp_path, monkeypatch):
+    source = tmp_path / "bundle" / "en_US.json"
+    source.parent.mkdir(parents=True)
+    source.write_text('{"seed":"bundle"}', encoding="utf-8")
+    destination = tmp_path / "userdata" / "en_US.json"
+    real_open = _paths.os.open
+    attempts = 0
+
+    def open_with_one_contention(path, flags, *args, **kwargs):
+        nonlocal attempts
+        attempts += 1
+        if attempts == 1:
+            raise PermissionError("simulated Windows lock contention")
+        return real_open(path, flags, *args, **kwargs)
+
+    monkeypatch.setattr(_paths.os, "open", open_with_one_contention)
+
+    _paths._copy_missing_frozen_asset(source, destination)
+
+    assert attempts >= 2
+    assert destination.read_text(encoding="utf-8") == '{"seed":"bundle"}'
+
+
 def test_frozen_config_import_writes_only_to_user_data_from_other_cwd(tmp_path):
     install = tmp_path / "Read Only Install"
     bundle = install / "_internal"
