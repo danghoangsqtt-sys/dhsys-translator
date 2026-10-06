@@ -54,7 +54,20 @@ function Invoke-FrozenProbe(
         (Quote-ProcessArgument $ProbeScript),
         (Quote-ProcessArgument $ReportPath)
     ) + $ExtraArguments
-    Invoke-CheckedProcess $Executable $Arguments "Frozen probe $(Split-Path $ProbeScript -Leaf)"
+    $Process = Start-Process -FilePath $Executable -ArgumentList $Arguments -PassThru -Wait
+    $Process.Refresh()
+    if ($Process.ExitCode -ne 0) {
+        $Detail = "exit code $($Process.ExitCode)"
+        if (Test-Path $ReportPath -PathType Leaf) {
+            try {
+                $FailedReport = Get-Content $ReportPath -Raw | ConvertFrom-Json
+                if ($FailedReport.error) { $Detail = [string]$FailedReport.error }
+            } catch {
+                $Detail = "exit code $($Process.ExitCode); report could not be parsed"
+            }
+        }
+        throw "Frozen probe $(Split-Path $ProbeScript -Leaf) failed: $Detail"
+    }
     $Report = Get-Content $ReportPath -Raw | ConvertFrom-Json
     if ($Report.status -ne "pass") {
         throw "Frozen probe $(Split-Path $ProbeScript -Leaf) reported failure."
