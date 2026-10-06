@@ -13,20 +13,20 @@
 
 | Task | State | Gate |
 | --- | --- | --- |
-| 4.1 Existing workflow section cards | verified locally; persistence pending | 5 section cards preserve original widgets; source and packaged UI probes pass |
-| 4.2 Workflow view state bridge | verified locally; persistence pending | Presentation-only mapping from action/`SignMsg` events to card state; source and frozen UI/resource probes pass |
-| 4.3 Workflow hierarchy and action areas | verified locally; persistence pending | Responsive rows/menu, one visible Home route; 560 tests and deployed frozen smoke pass |
-| 4.4 Light application shell and theme | verified locally; persistence pending | Existing workspace is reparented into shell; shared light QSS and 1280?720/1920?1080 smoke pass |
-| 4.5 Navigation parity and workspace hierarchy | verified locally; persistence pending | Sidebar shortcuts and tool catalog reuse original QAction instances; focused Qt tests pass |
-| 4.6 Regression evidence and handoff | verified locally; persistence pending | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved |
-| 4.7 Rebuild and smoke-test light Windows candidate | verified locally; persistence pending | Python 3.12 candidate has light QSS; frozen/UI/sidebar/menu smoke pass |
-| 4.8 Responsive home and core utility surfaces | verified locally; persistence pending | Home cards, core quick tools, light-table parity and compact Vietnamese navigation at 480/720/900/1280 px |
-| 4.9 Two UI locales and legacy migration | verified locally; persistence pending | `vi_VN`/`en_US` allowlist; old Chinese UI settings migrate; Chinese media codes preserved; 567 source tests pass |
-| 4.10 Application-authored runtime messages | verified locally; persistence pending | Task summary, progress, errors, settings and provider dialogs use Vietnamese/English; Chinese media text untouched |
-| 4.11 CLI/WebUI locale parity | verified locally; persistence pending | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language |
-| 4.12 Packaged and Chinese-media regression | verified locally; persistence pending | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass |
+| 4.1 Existing workflow section cards | PASS | 5 section cards preserve original widgets; source and packaged UI probes pass; persisted |
+| 4.2 Workflow view state bridge | PASS | Presentation-only mapping from action/`SignMsg` events to card state; source and frozen UI/resource probes pass; persisted |
+| 4.3 Workflow hierarchy and action areas | PASS | Responsive rows/menu, one visible Home route; 560 tests and deployed frozen smoke pass; persisted |
+| 4.4 Light application shell and theme | PASS | Existing workspace is reparented into shell; shared light QSS and 1280?720/1920?1080 smoke pass; persisted |
+| 4.5 Navigation parity and workspace hierarchy | PASS | Sidebar shortcuts and tool catalog reuse original QAction instances; focused Qt tests pass; persisted |
+| 4.6 Regression evidence and handoff | PASS | 10 focused UI tests and 549 full Python 3.12 tests pass; offscreen screenshots saved; persisted |
+| 4.7 Rebuild and smoke-test light Windows candidate | PASS | Python 3.12 candidate has light QSS; frozen/UI/sidebar/menu smoke pass; persisted |
+| 4.8 Responsive home and core utility surfaces | PASS | Home cards, core quick tools, light-table parity and compact Vietnamese navigation at 480/720/900/1280 px; persisted |
+| 4.9 Two UI locales and legacy migration | PASS | `vi_VN`/`en_US` allowlist; old Chinese UI settings migrate; Chinese media codes preserved; 567 source tests pass; persisted |
+| 4.10 Application-authored runtime messages | PASS | Task summary, progress, errors, settings and provider dialogs use Vietnamese/English; Chinese media text untouched; persisted |
+| 4.11 CLI/WebUI locale parity | PASS | CLI exposes only Vietnamese/English; WebUI uses the shared locale allowlist; Chinese remains source/target content language; persisted |
+| 4.12 Packaged and Chinese-media regression | PASS | 576 tests; frozen vi/en/legacy migration; VAD/zhconv; packaged Mandarin → Vietnamese STT/translation/TTS/MP4 flow pass; persisted |
 
-Phase state: in_progress. Tasks 4.1–4.18 and ENH-003 are verified; ENH-004 tasks 4.13–4.18 are PASS. No provider deletion is authorized by 4.17 or 4.18. The separate Phase 3 clean-runner/full-media/release gates remain open and are not closed by the Phase 4 acceptance result.
+Phase state: complete. Tasks 4.1–4.18, ENH-003 and ENH-004 are verified and persisted. No provider deletion is authorized by 4.17 or 4.18. The separate Phase 3 clean-runner/full-media/release gates remain open and are not closed by the Phase 4 acceptance result.
 
 ## Task 4.18 evidence — 2026-10-06
 
