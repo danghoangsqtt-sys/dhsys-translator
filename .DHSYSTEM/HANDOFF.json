@@ -7,7 +7,7 @@
   "current_task": "3.3",
   "status": "3.1, 3.2 and 3.4-3.9 verified locally; Phase 4 is complete; current dist/sp passes provider-backed faster-whisper STT, Microsoft fallback translation, Edge-TTS and hard-subtitle MP4 with visible decoded subtitles; 3.3 remains open only for the clean GitHub runner/release gate",
   "local_branch": "main",
-  "checkpoint_commit": "b967b8dc",
+  "checkpoint_commit": "5a6511ad",
   "source_plan": "docs/PLAN.md",
   "source_spec": "docs/SPEC.md",
   "repair_plan": "docs/BUGFIX-PLAN.md",
@@ -15,6 +15,7 @@
   "updated_at": "2026-10-06",
   "task_3_3_current_candidate": "dist/sp/sp.exe",
   "task_3_3_current_candidate_sha256": "A4C7D607B80C15CF04A023B94BA32A2CF4E31BA8F39B2BDBBA889F79B8B18F25",
+  "task_3_3_evidence_commit": "5a6511ad",
   "task_3_3_provider_media": "packaged faster-whisper tiny STT; Google HTTP 429 -> Microsoft HTTP 200 fallback; Edge-TTS 1/1; final H.264/AAC hard-subtitle MP4 7.84s; decoded frame visibly contains Vietnamese subtitle",
   "task_3_3_blockers": ["Build Windows Candidate GitHub Actions workflow has zero runs; clean-runner release gate is unproven"],
   "planned_product_direction": {
