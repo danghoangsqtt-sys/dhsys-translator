@@ -243,12 +243,19 @@ try {
 
     $SnapshotBefore = Get-InstallSnapshot $InstallDir
     $Identity = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-    & icacls.exe $InstallDir /deny "${Identity}:(OI)(CI)(W)" /T /C /Q | Out-Null
+    & icacls.exe $InstallDir /deny "${Identity}:(OI)(CI)(WD,AD,DC,DE)" /Q | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Failed to apply the read-only install-tree ACL." }
     $AclDenied = $true
+    $WriteProbe = Join-Path $InstallDir "recipient-write-probe.tmp"
+    try {
+        Set-Content -Path $WriteProbe -Value "must-not-write" -ErrorAction Stop
+        throw "The install tree remained writable after applying the read-only ACL."
+    } catch [System.UnauthorizedAccessException] {
+        # Expected: execution remains allowed while content mutation is denied.
+    }
     Invoke-FrozenProbe $Executable $SmokeScript (Join-Path $ReportsDir "read-only.json") @((Quote-ProcessArgument $CliScript)) | Out-Null
     $Evidence.checks.read_only_install_tree = "pass"
-    & icacls.exe $InstallDir /remove:d $Identity /T /C /Q | Out-Null
+    & icacls.exe $InstallDir /remove:d $Identity /Q | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Failed to restore the install-tree ACL." }
     $AclDenied = $false
 
@@ -292,7 +299,7 @@ try {
 } finally {
     if ($AclDenied -and (Test-Path $InstallDir)) {
         $Identity = [System.Security.Principal.WindowsIdentity]::GetCurrent().Name
-        & icacls.exe $InstallDir /remove:d $Identity /T /C /Q 2>$null | Out-Null
+        & icacls.exe $InstallDir /remove:d $Identity /Q 2>$null | Out-Null
     }
     if ($Installed -and -not $Uninstalled -and (Test-Path $Uninstaller -PathType Leaf)) {
         try {
