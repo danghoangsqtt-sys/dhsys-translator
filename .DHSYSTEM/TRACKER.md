@@ -1,6 +1,6 @@
 # Tracker
 
-- Complete locally: ENH-005 task 5.2 — the desktop now exposes a read-only Việt/Anh **Kiểm tra máy** route with workload-specific status cards, system facts, Refresh, sanitized Copy and Export actions, responsive/keyboard behavior and no auto-close. The rebuilt `dist/sp/sp.exe` passes Vietnamese and English frozen UI probes plus 72/72 dynamic-menu entries. Evidence: 5 focused, 53 related and 675 full Python 3.12 tests pass; one external `pydub/audioop` warning. `$vp-audit` reconciled Phase 5 documentation and the required deployment diagram. Task 5.3 is next; GitHub remains intentionally deferred and Phase 3 task 3.3 stays open.
+- Complete locally: ENH-005 task 5.2 — the desktop now exposes a read-only Việt/Anh **Kiểm tra máy** route with workload-specific status cards, system facts, Refresh, sanitized Copy and Export actions, responsive/keyboard behavior and no auto-close. The rebuilt `dist/sp/sp.exe` passes Vietnamese and English frozen UI probes plus 72/72 dynamic-menu entries. Evidence: 5 focused, 53 related and 675 full Python 3.12 tests pass; one external `pydub/audioop` warning. `$vp-audit` reconciled Phase 5 documentation and the required deployment diagram. Task 5.3 is now in progress; GitHub remains intentionally deferred and Phase 3 task 3.3 stays open.
 
 - Complete locally: ENH-005 task 5.1 — side-effect-free readiness diagnostics now report workload-specific Windows OS/arch, CPU, RAM, free disk, NVIDIA/CUDA visibility, bundled FFmpeg/ffprobe/resources and writable app-data/cache facts without exporting private paths or secrets. CPU-only remains valid for the basic workflow. `$vp-audit` repaired blocked-path classification and Windows frozen lock-contention handling. Evidence: 11 focused, 51 related and 670 full Python 3.12 tests pass; one external `pydub/audioop` warning. Task 5.2 subsequently passed locally; Task 5.3 is next. GitHub remains intentionally deferred and Phase 3 task 3.3 stays open.
 
@@ -23,7 +23,7 @@
 - Current phase: 3 — supported runtime and Windows packaging
 - Current task: 3.3 — release gate and documentation; provider-backed frozen media and a detached clean Python 3.12.13 checkout are locally verified; GitHub clean-runner is deferred by user request
 - Phase 4: tasks 4.1–4.18 complete and persisted; no parallel UI task remains. Phase 3 release gating is independent.
-- In progress and user-approved: ENH-005 Phase 5 — Tasks 5.1–5.2 are PASS locally; Task 5.3 consent-based allowlisted remediation is next, followed by local portable ZIP/Setup.exe packaging. GitHub is not required for this phase.
+- In progress and user-approved: ENH-005 Phase 5 — Tasks 5.1–5.2 are PASS locally; Task 5.3 consent-based allowlisted remediation is in progress, followed by local portable ZIP/Setup.exe packaging. GitHub is not required for this phase.
 - State: 3.1–3.2 and 3.4–3.9 verified locally; 3.3 remains in_progress because the clean GitHub runner has not run. Current `main` tracks `origin/main`; the current frozen candidate has completed the provider-backed STT/translation/TTS/hard-subtitle media flow, and detached clean-checkout source regression passes on Python 3.12.13.
 - Active branch: `main` tracking `origin/main`.
 - Planned patch version: 4.14.1 (not yet applied to product manifest)
