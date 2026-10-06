@@ -19,6 +19,12 @@ The prior empty-cache offline check could not fetch a GitHub source; offline ope
 The Windows workflow now selects FFmpeg `ffmpeg-N-127142-g12b7b9891b-win64-gpl.zip` from the fixed `autobuild-2026-10-03-18-14` release and checks SHA-256 `a885f564dee2b60f69ab866c6c89b96ae531fc2ee1f24ff8b5b1a6d29960a96b` before extraction. A local download matched that hash and contained both `bin/ffmpeg.exe` and `bin/ffprobe.exe`. The clean runner has not executed this workflow yet.
 Those binaries also generated a 0.3 second MP4 with audio and video streams in a local smoke check.
 
+## Installed recipient lifecycle
+
+On 2026-10-06 the unsigned Setup artifact `A245DFF2E3D65FB0C623079156F5839C1E6A509DE03F0A0005EF0E10C6BDCF0C` passed a developer-host recipient simulation with Python removed from PATH and isolated program, user-data and process-temp directories. Installation, two core launches, Vietnamese and English frozen UI, hard/soft subtitle media checks, execution from a write-denied program tree, same-version in-place upgrade, uninstall and user-data preservation all passed. The System Check reported the actual Windows 11/AMD64 machine facts; the basic workload was ready, local models degraded only because the CUDA driver level was unknown, and CUDA acceleration remained unknown rather than being guessed ready.
+
+This evidence is intentionally marked `partial`: shortcuts, SmartScreen interaction and the complete lifecycle still require Windows Sandbox, a disposable VM or a clean user profile. The local Setup has no Authenticode signature, so it is not a broadly trusted distribution candidate.
+
 ## System readiness ratings
 
 The local Windows distribution exposes machine facts separately from workload ratings. The

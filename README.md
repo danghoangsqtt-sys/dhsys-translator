@@ -53,6 +53,7 @@ pyVideoTrans-DH can be shared directly as a local Windows package; recipients do
 1. **Portable ZIP**: extract `pyVideoTrans-DH-<version>-win64-portable.zip`, open the `sp` folder, then double-click `sp.exe`.
 2. **Setup.exe**: run `pyVideoTrans-DH-<version>-win64-setup.exe`. It installs for the current Windows user and can create optional Start Menu/Desktop shortcuts.
 3. **Verify before sharing**: keep the matching manifest and `.sha256` files beside the package. Maintainers can run `scripts\verify_local_distribution.ps1` to re-check hashes and the portable contents locally.
+4. **Clean-recipient gate**: maintainers should run `scripts\smoke_installed_distribution.ps1 -EnvironmentKind WindowsSandbox` inside Windows Sandbox (or select `DisposableVM`/`CleanUser` truthfully). A developer-host run is diagnostic only and returns `partial`.
 
 > **Note**:
 > * Do not run directly from within the compressed archive.

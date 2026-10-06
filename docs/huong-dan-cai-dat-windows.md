@@ -39,6 +39,17 @@ Trước khi chia sẻ, chạy `powershell -ExecutionPolicy Bypass -File scripts
 
 Có thể xác minh lại một bộ đã tạo bằng `powershell -ExecutionPolicy Bypass -File scripts\verify_local_distribution.ps1`. Kiểm tra sẽ thất bại nếu thiếu file, nội dung bị thay đổi, checksum sai, ZIP có nội dung không khớp inventory hoặc compiler Inno Setup shipping không đúng phiên bản. Bước portable smoke giải nén sang đường dẫn mới, cô lập `%LOCALAPPDATA%` và loại Python khỏi PATH trước khi kiểm tra frozen app.
 
+Trước khi bàn giao cho người nhận, maintainer chạy thêm vòng cài đặt thực tế trong Windows Sandbox, máy ảo dùng một lần hoặc tài khoản Windows sạch:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\smoke_installed_distribution.ps1 `
+  -EnvironmentKind WindowsSandbox
+```
+
+Nếu ổ hệ thống không đủ chỗ, có thể truyền một work root tạm nằm ngoài source tree, ví dụ `-WorkRoot D:\tmp\pyvideotrans-recipient-<32-ký-tự-hex>`. Script xác minh checksum, loại Python khỏi PATH, cô lập `LOCALAPPDATA`/`TEMP`, cài và mở ứng dụng hai lần, kiểm tra UI Việt/Anh, chạy với cây chương trình chỉ đọc, cài đè, gỡ cài đặt và xác nhận dữ liệu người dùng được giữ lại. Báo cáo đã rút gọn được ghi vào `.DHSYSTEM\phases\5\evidence\task-5.5-installed-smoke.json`.
+
+`DeveloperHost` chỉ dùng để chẩn đoán và luôn trả gate `partial`; không được dùng kết quả đó để tuyên bố đã kiểm thử trên máy sạch. Chỉ `WindowsSandbox`, `DisposableVM` hoặc `CleanUser` mới có thể trả gate `pass`, và maintainer phải bảo đảm mô tả môi trường truyền vào là đúng sự thật.
+
 ## SmartScreen, chữ ký và giấy phép
 
 Bản build local chưa ký số có thể hiện cảnh báo Microsoft Defender SmartScreen. Chỉ tiếp tục khi người nhận tin cậy nguồn gửi và SHA-256 khớp sidecar. Khi phát hành rộng rãi, nên ký số executable/installer bằng chứng thư code-signing phù hợp thay vì hướng dẫn người dùng tắt SmartScreen.

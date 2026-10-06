@@ -12,6 +12,8 @@ Planned ENH-005 for the 4.15.0 line: add a GitHub-independent local distribution
 
 - ENH-005 Task 5.4 adds a GitHub-independent local shipping pipeline that produces a portable ZIP, per-user Setup.exe, manifest and SHA-256 sidecars from the verified frozen candidate, rejects credentials/user runtime data/build-machine path leakage, inventories bundled licenses, and automatically verifies the portable build from a fresh extracted path without Python on `PATH`. Recipient-machine install/upgrade/uninstall lifecycle testing remains Task 5.5.
 
+- ENH-005 Task 5.5 now has an automated recipient-lifecycle harness. A developer-host simulation passed install, repeated launch, Vietnamese/English UI, frozen media, read-only program tree, same-version upgrade, uninstall and user-data preservation without Python on PATH; 35 focused and 704 full tests pass. Evidence remains partial until the unsigned Setup and shortcut/SmartScreen behavior pass in Windows Sandbox, a disposable VM or a clean Windows user profile.
+
 Planned for 4.15.0 (ENH-003, after the pending 4.14.1 repair release): offer Vietnamese and English as the only application UI/message locales while retaining Chinese speech recognition, translation, subtitle and voice support. Tasks 4.9–4.12 are verified locally; the current manifest remains 4.14.
 
 - Subtitle correction dialogs now allow normal mouse and keyboard editing, use a readable light-table palette, show unsaved changes, and wait for an explicit save, discard or cancel action instead of auto-closing on a countdown.

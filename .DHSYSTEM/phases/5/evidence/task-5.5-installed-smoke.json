@@ -1,0 +1,208 @@
+﻿{
+    "schema_version":  1,
+    "task":  "5.5",
+    "generated_at_utc":  "2026-10-06T15:14:18.3234666Z",
+    "environment_kind":  "DeveloperHost",
+    "clean_environment_claimed":  false,
+    "task_gate":  "partial",
+    "artifact":  {
+                     "name":  "pyVideoTrans-DH-4.14-win64-setup.exe",
+                     "sha256":  "A245DFF2E3D65FB0C623079156F5839C1E6A509DE03F0A0005EF0E10C6BDCF0C",
+                     "authenticode_status":  "NotSigned"
+                 },
+    "isolation":  {
+                      "external_python_on_path":  false,
+                      "install_outside_source_tree":  true,
+                      "local_app_data_isolated":  true,
+                      "process_temp_isolated":  true,
+                      "no_existing_registration":  true
+                  },
+    "checks":  {
+                   "install":  "pass",
+                   "shortcuts":  "not_run_on_developer_host",
+                   "first_launch":  "pass",
+                   "second_launch":  "pass",
+                   "system_readiness":  {
+                                            "schema_version":  1,
+                                            "system":  {
+                                                           "os":  "Windows",
+                                                           "os_release":  "11",
+                                                           "architecture":  "AMD64"
+                                                       },
+                                            "findings":  [
+                                                             {
+                                                                 "code":  "bundle.ffmpeg",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "FFmpeg Ä‘i kÃ¨m sáºµn sÃ ng",
+                                                                 "value":  true,
+                                                                 "requirements":  {
+                                                                                      "basic":  "required",
+                                                                                      "local_models":  "required",
+                                                                                      "cuda_acceleration":  "required"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "bundle.ffprobe",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "ffprobe Ä‘i kÃ¨m sáºµn sÃ ng",
+                                                                 "value":  true,
+                                                                 "requirements":  {
+                                                                                      "basic":  "required",
+                                                                                      "local_models":  "required",
+                                                                                      "cuda_acceleration":  "required"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "bundle.resources",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "TÃ i nguyÃªn á»©ng dá»¥ng sáºµn sÃ ng",
+                                                                 "value":  true,
+                                                                 "requirements":  {
+                                                                                      "basic":  "required",
+                                                                                      "local_models":  "required",
+                                                                                      "cuda_acceleration":  "required"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "storage.user_data_writable",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "ThÆ° má»¥c dá»¯ liá»‡u ngÆ°á»i dÃ¹ng cÃ³ thá»ƒ ghi",
+                                                                 "value":  true,
+                                                                 "requirements":  {
+                                                                                      "basic":  "required",
+                                                                                      "local_models":  "required",
+                                                                                      "cuda_acceleration":  "required"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "storage.cache_writable",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "VÃ¹ng cache cÃ³ thá»ƒ ghi",
+                                                                 "value":  true,
+                                                                 "requirements":  {
+                                                                                      "basic":  "required",
+                                                                                      "local_models":  "required",
+                                                                                      "cuda_acceleration":  "required"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "memory.ram_gib",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "Äáº¡t má»©c khuyáº¿n nghá»‹",
+                                                                 "value":  31.7,
+                                                                 "requirements":  {
+                                                                                      "basic":  "required",
+                                                                                      "local_models":  "required",
+                                                                                      "cuda_acceleration":  "recommended"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "storage.free_gib",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "Äáº¡t má»©c khuyáº¿n nghá»‹",
+                                                                 "value":  154.2,
+                                                                 "requirements":  {
+                                                                                      "basic":  "required",
+                                                                                      "local_models":  "required",
+                                                                                      "cuda_acceleration":  "required"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "cpu.logical_count",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "CPU Ä‘áº¡t má»©c khuyáº¿n nghá»‹ cÆ¡ báº£n",
+                                                                 "value":  20,
+                                                                 "requirements":  {
+                                                                                      "basic":  "recommended",
+                                                                                      "local_models":  "recommended",
+                                                                                      "cuda_acceleration":  "optional"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "gpu.nvidia",
+                                                                 "status":  "ok",
+                                                                 "action_code":  "none",
+                                                                 "summary":  "NVIDIA GPU kháº£ dá»¥ng",
+                                                                 "value":  {
+                                                                               "count":  1,
+                                                                               "vram_mib":  12288
+                                                                           },
+                                                                 "requirements":  {
+                                                                                      "basic":  "optional",
+                                                                                      "local_models":  "recommended",
+                                                                                      "cuda_acceleration":  "required"
+                                                                                  }
+                                                             },
+                                                             {
+                                                                 "code":  "gpu.cuda_driver",
+                                                                 "status":  "unknown",
+                                                                 "action_code":  "install_or_update_nvidia_driver",
+                                                                 "summary":  "KhÃ´ng xÃ¡c Ä‘á»‹nh CUDA driver",
+                                                                 "value":  null,
+                                                                 "requirements":  {
+                                                                                      "basic":  "optional",
+                                                                                      "local_models":  "recommended",
+                                                                                      "cuda_acceleration":  "required"
+                                                                                  }
+                                                             }
+                                                         ],
+                                            "workloads":  {
+                                                              "basic":  {
+                                                                            "workload":  "basic",
+                                                                            "rating":  "ready",
+                                                                            "blocking_codes":  [
+
+                                                                                               ],
+                                                                            "advisory_codes":  [
+
+                                                                                               ],
+                                                                            "unknown_codes":  [
+
+                                                                                              ]
+                                                                        },
+                                                              "local_models":  {
+                                                                                   "workload":  "local_models",
+                                                                                   "rating":  "degraded",
+                                                                                   "blocking_codes":  [
+
+                                                                                                      ],
+                                                                                   "advisory_codes":  [
+                                                                                                          "gpu.cuda_driver"
+                                                                                                      ],
+                                                                                   "unknown_codes":  [
+
+                                                                                                     ]
+                                                                               },
+                                                              "cuda_acceleration":  {
+                                                                                        "workload":  "cuda_acceleration",
+                                                                                        "rating":  "unknown",
+                                                                                        "blocking_codes":  [
+
+                                                                                                           ],
+                                                                                        "advisory_codes":  [
+
+                                                                                                           ],
+                                                                                        "unknown_codes":  [
+                                                                                                              "gpu.cuda_driver"
+                                                                                                          ]
+                                                                                    }
+                                                          }
+                                        },
+                   "ui_vi":  "pass",
+                   "ui_en":  "pass",
+                   "read_only_install_tree":  "pass",
+                   "in_place_upgrade":  "pass",
+                   "user_data_after_upgrade":  "pass",
+                   "uninstall":  "pass",
+                   "user_data_after_uninstall":  "pass"
+               },
+    "limitation":  "DeveloperHost is diagnostic only; authoritative acceptance requires Windows Sandbox, a disposable VM, or a clean user profile."
+}
