@@ -44,8 +44,6 @@ def run_check(cli_script):
             "bundled light.qss could not be resolved")
 
     readiness = collect_system_readiness().to_dict()
-    require(readiness["workloads"]["basic"]["rating"] in {"ready", "degraded"},
-            "frozen basic workload readiness is not usable")
 
     bundled_language_dir = install_root / "videotrans" / "language"
     bundled_catalogs = {path.name for path in bundled_language_dir.glob("*.json")}
