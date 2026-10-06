@@ -1,0 +1,58 @@
+{
+  "status": "pass",
+  "checks": {
+    "requested_locale": "en",
+    "locale": "en_US",
+    "locale_choices": [
+      "vi_VN",
+      "en_US"
+    ],
+    "legacy_catalog_ignored": false,
+    "brand": "Video Workshop",
+    "routes": [
+      "fn_recogn",
+      "fn_fanyisrt",
+      "fn_peiyinrole",
+      "fn_vas"
+    ],
+    "workspace_shell": true,
+    "light_style": true,
+    "workflow_sections": 5,
+    "workflow_state": "running",
+    "workflow_hierarchy": true,
+    "responsive_layout": true,
+    "responsive_quick_tools": true,
+    "subtitle_editors": [
+      "EditRecognResultDialog",
+      "EditRecognResultDialog2"
+    ],
+    "subtitle_mapping": [
+      "nosubtitle",
+      "embedsubtitle",
+      "softsubtitle",
+      "embedsubtitle2",
+      "softsubtitle2"
+    ],
+    "bilingual_orders": [
+      [
+        "Original line",
+        "Translated line"
+      ],
+      [
+        "Translated line",
+        "Original line"
+      ]
+    ],
+    "soft_receipt_requires_player": true,
+    "no_subtitle_confirmation": true,
+    "provider_registry_sizes": {
+      "translation": 29,
+      "recognition": 33,
+      "tts": 38
+    },
+    "provider_custom_restore": true,
+    "local_profile_loopback_only": true,
+    "pronunciation_layer_transient": true,
+    "vieneu_public_discovery_blocked": true
+  }
+}

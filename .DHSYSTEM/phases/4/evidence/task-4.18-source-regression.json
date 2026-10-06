@@ -1,0 +1,26 @@
+{
+  "status": "pass",
+  "date": "2026-10-06",
+  "python": "3.12.14",
+  "qt_platform": "offscreen",
+  "focused_4_13_to_4_17": {
+    "passed": 72,
+    "warnings": 1
+  },
+  "related_ui_config_cli_webui": {
+    "passed": 349,
+    "warnings": 0
+  },
+  "provider_profile_and_media_gate": {
+    "passed": 19,
+    "hard_subtitle": "decoded frame visibly differs from baseline",
+    "soft_subtitle": "one mov_text stream with language=vie"
+  },
+  "full_suite": {
+    "passed": 658,
+    "warnings": 1,
+    "warning": "external pydub/audioop deprecation warning"
+  },
+  "git_diff_check": "pass; only Windows LF-to-CRLF working-copy notices",
+  "phase_3_release_gates": "open and independent"
+}

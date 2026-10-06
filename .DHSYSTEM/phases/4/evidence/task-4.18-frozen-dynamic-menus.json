@@ -1,0 +1,712 @@
+{
+  "status": "pass",
+  "frozen": true,
+  "opened": true,
+  "results": [
+    {
+      "section": "MENU_CFG_PANEL",
+      "name": "fn_recogn",
+      "title": "Chuyển lời nói thành văn bản",
+      "modules": [
+        "videotrans.winform.fn_recogn",
+        "videotrans.ui.fn_recogn"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_PANEL",
+      "name": "fn_peiyin",
+      "title": "Chuyển văn bản thành giọng nói",
+      "modules": [
+        "videotrans.winform.fn_peiyin",
+        "videotrans.ui.fn_peiyin"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_PANEL",
+      "name": "fn_fanyisrt",
+      "title": "Dịch văn bản / phụ đề SRT",
+      "modules": [
+        "videotrans.winform.fn_fanyisrt",
+        "videotrans.ui.fn_fanyisrt"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_PANEL",
+      "name": "fn_peiyinrole",
+      "title": "Lồng tiếng nhiều người",
+      "modules": [
+        "videotrans.winform.fn_peiyinrole",
+        "videotrans.ui.fn_peiyinrole"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_PANEL",
+      "name": "fn_vas",
+      "title": "Ghép video / âm thanh / phụ đề",
+      "modules": [
+        "videotrans.winform.fn_vas",
+        "videotrans.ui.fn_vas"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "deepseek",
+      "title": "DeepSeek",
+      "modules": [
+        "videotrans.winform.deepseek",
+        "videotrans.ui.deepseek"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "chatgpt",
+      "title": "OpenAI API và AI tương thích",
+      "modules": [
+        "videotrans.winform.chatgpt",
+        "videotrans.ui.chatgpt"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "gemini",
+      "title": "Gemini AI",
+      "modules": [
+        "videotrans.winform.gemini",
+        "videotrans.ui.gemini"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "localllm",
+      "title": "LLM cục bộ (tương thích với OpenAI)",
+      "modules": [
+        "videotrans.winform.localllm",
+        "videotrans.ui.localllm"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "zijiehuoshan",
+      "title": "ByteDance Ark LLM",
+      "modules": [
+        "videotrans.winform.zijiehuoshan",
+        "videotrans.ui.zijiehuoshan"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "zhipuai",
+      "title": "Trí Phố AI",
+      "modules": [
+        "videotrans.winform.zhipuai",
+        "videotrans.ui.zhipuai"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "minimaxi",
+      "title": "Minimaxi AI",
+      "modules": [
+        "videotrans.winform.minimaxi",
+        "videotrans.ui.minimaxi"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "qwenmt",
+      "title": "Bailian / Qwen-ASR",
+      "modules": [
+        "videotrans.winform.qwenmt",
+        "videotrans.ui.qwenmt"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "azure",
+      "title": "Dịch thuật AzureGPT",
+      "modules": [
+        "videotrans.winform.azure",
+        "videotrans.ui.azure"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "openrouter",
+      "title": "OpenRouter.AI",
+      "modules": [
+        "videotrans.winform.openrouter",
+        "videotrans.ui.openrouter"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "siliconflow",
+      "title": "Dòng chảy silicon",
+      "modules": [
+        "videotrans.winform.siliconflow",
+        "videotrans.ui.siliconflow"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "ai302",
+      "title": "302.AI",
+      "modules": [
+        "videotrans.winform.ai302",
+        "videotrans.ui.ai302"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "litellm",
+      "title": "LiteLLM",
+      "modules": [
+        "videotrans.winform.litellm",
+        "videotrans.ui.litellm"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "cambtts",
+      "title": "CAMB.ai",
+      "modules": [
+        "videotrans.winform.cambtts",
+        "videotrans.ui.cambtts"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "api_route",
+      "title": "api-route.com",
+      "modules": [
+        "videotrans.winform.api_route",
+        "videotrans.ui.api_route"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "cheaperinference",
+      "title": "Cheaper Inference",
+      "modules": [
+        "videotrans.winform.cheaperinference",
+        "videotrans.ui.cheaperinference"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "infistar",
+      "title": "Infistar.cc",
+      "modules": [
+        "videotrans.winform.infistar",
+        "videotrans.ui.infistar"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "deepl",
+      "title": "DeepL API",
+      "modules": [
+        "videotrans.winform.deepl",
+        "videotrans.ui.deepl"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "deeplx",
+      "title": "DeepLX API",
+      "modules": [
+        "videotrans.winform.deeplx",
+        "videotrans.ui.deeplx"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "tencent",
+      "title": "Cài đặt dịch Tencent",
+      "modules": [
+        "videotrans.winform.tencent",
+        "videotrans.ui.tencent"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "baidu",
+      "title": "Baidu Dịch",
+      "modules": [
+        "videotrans.winform.baidu",
+        "videotrans.ui.baidu"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "ali",
+      "title": "Dịch máy của Alibaba",
+      "modules": [
+        "videotrans.winform.ali",
+        "videotrans.ui.ali"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "libre",
+      "title": "LibreTranslate API",
+      "modules": [
+        "videotrans.winform.libre",
+        "videotrans.ui.libre"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TRANS",
+      "name": "transapi",
+      "title": "API dịch tùy chỉnh",
+      "modules": [
+        "videotrans.winform.transapi",
+        "videotrans.ui.transapi"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "refaudio",
+      "title": "Đặt âm thanh tham chiếu",
+      "modules": [
+        "videotrans.winform.refaudio",
+        "videotrans.ui.refaudio"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "openaitts",
+      "title": "OpenAI TTS",
+      "modules": [
+        "videotrans.winform.openaitts",
+        "videotrans.ui.openaitts"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "doubao2",
+      "title": "Giọng nói Doubao 2.0",
+      "modules": [
+        "videotrans.winform.doubao2",
+        "videotrans.ui.doubao2"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "xiaomi",
+      "title": "Xiaomi",
+      "modules": [
+        "videotrans.winform.xiaomi",
+        "videotrans.ui.xiaomi"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "qwentts",
+      "title": "API Bailian/Qwen3-TTS",
+      "modules": [
+        "videotrans.winform.qwentts",
+        "videotrans.ui.qwentts"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "xaitts",
+      "title": "X.AI TTS",
+      "modules": [
+        "videotrans.winform.xaitts",
+        "videotrans.ui.xaitts"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "elevenlabs",
+      "title": "ElevenLabs.io",
+      "modules": [
+        "videotrans.winform.elevenlabs",
+        "videotrans.ui.elevenlabs"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "azuretts",
+      "title": "AzureAI TTS",
+      "modules": [
+        "videotrans.winform.azuretts",
+        "videotrans.ui.azuretts"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "gptsovits",
+      "title": "GPT-SoVITS",
+      "modules": [
+        "videotrans.winform.gptsovits",
+        "videotrans.ui.gptsovits"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "gradiowin",
+      "title": "Index/VoxCPM/SparK/FireRed3",
+      "modules": [
+        "videotrans.winform.gradiowin",
+        "videotrans.ui.gradiowin"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "chatterbox",
+      "title": "ChatterBox-TTS",
+      "modules": [
+        "videotrans.winform.chatterbox",
+        "videotrans.ui.chatterbox"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "cosyvoice",
+      "title": "CosyVoice-TTS",
+      "modules": [
+        "videotrans.winform.cosyvoice",
+        "videotrans.ui.cosyvoice"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "chattts",
+      "title": "ChatTTS",
+      "modules": [
+        "videotrans.winform.chattts",
+        "videotrans.ui.chattts"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "kokoro",
+      "title": "Kokoro-TTS",
+      "modules": [
+        "videotrans.winform.kokoro",
+        "videotrans.ui.kokoro"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "fishtts",
+      "title": "Fish-TTS",
+      "modules": [
+        "videotrans.winform.fishtts",
+        "videotrans.ui.fishtts"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "clone",
+      "title": "Nhân bản giọng nói",
+      "modules": [
+        "videotrans.winform.clone",
+        "videotrans.ui.clone"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "qwenttslocal",
+      "title": "Qwen3 TTS(Địa phương)",
+      "modules": [
+        "videotrans.winform.qwenttslocal",
+        "videotrans.ui.qwenttslocal"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TTS",
+      "name": "ttsapi",
+      "title": "API TTS tùy chỉnh",
+      "modules": [
+        "videotrans.winform.ttsapi",
+        "videotrans.ui.ttsapi"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "openairecognapi",
+      "title": "OpenAI & API STT tương thích",
+      "modules": [
+        "videotrans.winform.openairecognapi",
+        "videotrans.ui.openairecognapi"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "zijierecognmodel",
+      "title": "ByteDance STT Turbo",
+      "modules": [
+        "videotrans.winform.zijierecognmodel",
+        "videotrans.ui.zijierecognmodel"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "parakeet",
+      "title": "Nvidia parakeet-tdt",
+      "modules": [
+        "videotrans.winform.parakeet",
+        "videotrans.ui.parakeet"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "whisperxapi",
+      "title": "WhisperX-API",
+      "modules": [
+        "videotrans.winform.whisperxapi",
+        "videotrans.ui.whisperxapi"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "deepgram",
+      "title": "API Deepgram STT",
+      "modules": [
+        "videotrans.winform.deepgram",
+        "videotrans.ui.deepgram"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "audexum",
+      "title": "Audexum",
+      "modules": [
+        "videotrans.winform.audexum",
+        "videotrans.ui.audexum"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "xxl",
+      "title": "Faster_Whisper_XXL.exe",
+      "modules": [
+        "videotrans.component.xxl"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "sttapi",
+      "title": "API STT",
+      "modules": [
+        "videotrans.winform.sttapi",
+        "videotrans.ui.sttapi"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_STT",
+      "name": "recognapi",
+      "title": "API nhận dạng giọng nói tùy chỉnh",
+      "modules": [
+        "videotrans.winform.recognapi",
+        "videotrans.ui.recognapi"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "setini",
+      "title": "Tùy chọn nâng cao",
+      "modules": [
+        "videotrans.winform.setini",
+        "videotrans.ui.setini"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "clip_video",
+      "title": "Cắt video theo phụ đề",
+      "modules": [
+        "videotrans.component.clip_video"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "realtime_stt",
+      "title": "Chuyển lời nói thành văn bản theo thời gian thực",
+      "modules": [
+        "videotrans.component.realtime_stt"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "textmatching",
+      "title": "Căn chỉnh & Thời gian Tập lệnh",
+      "modules": [
+        "videotrans.component.textmatching"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "formatsrtfiles",
+      "title": "Cấu trúc thư mục tạo hàng loạt",
+      "modules": [
+        "videotrans.component.formatsrtfiles"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_audiofromvideo",
+      "title": "Trích xuất hàng loạt âm thanh từ video",
+      "modules": [
+        "videotrans.winform.fn_audiofromvideo",
+        "videotrans.ui.fn_audiofromvideo"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_separate",
+      "title": "Tách giọng hát / âm thanh nền",
+      "modules": [
+        "videotrans.winform.fn_separate",
+        "videotrans.ui.fn_separate"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_hebingsrt",
+      "title": "Kết hợp hai phụ đề",
+      "modules": [
+        "videotrans.winform.fn_hebingsrt",
+        "videotrans.ui.fn_hebingsrt"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_videoandaudio",
+      "title": "Hợp nhất video và âm thanh",
+      "modules": [
+        "videotrans.winform.fn_videoandaudio",
+        "videotrans.ui.fn_videoandaudio"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_videoandsrt",
+      "title": "Hợp nhất video và phụ đề",
+      "modules": [
+        "videotrans.winform.fn_videoandsrt",
+        "videotrans.ui.fn_videoandsrt"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_hunliu",
+      "title": "Trộn hai luồng âm thanh...",
+      "modules": [
+        "videotrans.winform.fn_hunliu",
+        "videotrans.ui.fn_hunliu"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_formatcover",
+      "title": "Bộ chuyển đổi âm thanh/video",
+      "modules": [
+        "videotrans.winform.fn_formatcover",
+        "videotrans.ui.fn_formatcover"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_subtitlescover",
+      "title": "Chuyển đổi định dạng phụ đề hàng loạt",
+      "modules": [
+        "videotrans.winform.fn_subtitlescover",
+        "videotrans.ui.fn_subtitlescover"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_TOOLS",
+      "name": "fn_watermark",
+      "title": "Thêm hình mờ hàng loạt",
+      "modules": [
+        "videotrans.winform.fn_watermark",
+        "videotrans.ui.fn_watermark"
+      ],
+      "status": "pass"
+    },
+    {
+      "section": "MENU_CFG_HELP",
+      "name": "info",
+      "title": "Giới thiệu",
+      "modules": [
+        "videotrans.winform.info",
+        "videotrans.ui.info"
+      ],
+      "status": "pass"
+    }
+  ]
+}

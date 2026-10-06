@@ -1,0 +1,41 @@
+{
+  "status": "pass",
+  "checks": {
+    "bundle": "dist/sp",
+    "user_data": "isolated-temp/LocalAppData/pyVideoTrans",
+    "provider": "videotrans.translator._google",
+    "fallback_provider": "videotrans.translator._microsoft",
+    "recognizer": "videotrans.recognition._whisper",
+    "dialog": "videotrans.winform.chatgpt",
+    "cli_version": "cli.py 4.14",
+    "ui_catalogs": [
+      "en_US.json",
+      "vi_VN.json"
+    ],
+    "ui_locales": [
+      "vi_VN",
+      "en_US"
+    ],
+    "chinese_media_codes": [
+      "zh-cn",
+      "zh-tw",
+      "yue"
+    ],
+    "srt_items": 1,
+    "media_streams": [
+      "audio",
+      "video"
+    ],
+    "hard_subtitle_frame_delta": 40953,
+    "soft_subtitle_stream": {
+      "index": 2,
+      "codec_name": "mov_text",
+      "codec_type": "subtitle",
+      "tags": {
+        "language": "vie"
+      }
+    },
+    "silero_vad": "dist/sp/_internal/faster_whisper/assets/silero_vad_v6.onnx",
+    "zhconv": "繁體中文 -> 繁体中文"
+  }
+}

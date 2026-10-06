@@ -136,12 +136,21 @@ def run_check(cli_script):
             "bundled SRT parser failed")
 
     with tempfile.TemporaryDirectory(prefix="pyvideotrans-candidate-") as temporary:
-        media = Path(temporary) / "sample.mp4"
+        temporary_path = Path(temporary)
+        media = temporary_path / "sample.mp4"
+        subtitle = temporary_path / "fixture.srt"
+        hard_media = temporary_path / "hard.mp4"
+        soft_media = temporary_path / "soft.mp4"
+        subtitle.write_text(
+            "1\n00:00:00,250 --> 00:00:01,750\nVISIBLE SUBTITLE\n",
+            encoding="utf-8",
+        )
         subprocess.run([
             str(ffmpeg), "-hide_banner", "-loglevel", "error", "-y",
-            "-f", "lavfi", "-i", "color=c=black:s=64x64:r=10",
-            "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=16000",
-            "-t", "0.4", "-c:v", "mpeg4", "-c:a", "aac", "-shortest", str(media),
+            "-f", "lavfi", "-i", "color=c=black:s=320x180:r=10:d=2",
+            "-f", "lavfi", "-i", "sine=frequency=440:sample_rate=48000:duration=2",
+            "-c:v", "libx264", "-pix_fmt", "yuv420p",
+            "-c:a", "aac", "-shortest", str(media),
         ], check=True, capture_output=True, text=True, timeout=30)
         require(media.is_file() and media.stat().st_size > 0,
                 "bundled FFmpeg did not create an MP4")
@@ -152,6 +161,51 @@ def run_check(cli_script):
         streams = {stream["codec_type"] for stream in json.loads(probe.stdout)["streams"]}
         require({"video", "audio"}.issubset(streams),
                 "generated MP4 lacks an audio or video stream")
+
+        subprocess.run([
+            str(ffmpeg), "-hide_banner", "-loglevel", "error", "-y",
+            "-i", "sample.mp4", "-vf", "subtitles=fixture.srt",
+            "-c:v", "libx264", "-pix_fmt", "yuv420p", "-c:a", "copy", "hard.mp4",
+        ], cwd=temporary, check=True, capture_output=True, text=True, timeout=30)
+
+        def decoded_gray_frame(filename):
+            result = subprocess.run([
+                str(ffmpeg), "-hide_banner", "-loglevel", "error",
+                "-ss", "1", "-i", filename, "-frames:v", "1",
+                "-f", "rawvideo", "-pix_fmt", "gray", "pipe:1",
+            ], cwd=temporary, check=True, capture_output=True, timeout=30)
+            return result.stdout
+
+        baseline_frame = decoded_gray_frame("sample.mp4")
+        hard_frame = decoded_gray_frame("hard.mp4")
+        require(len(hard_frame) == len(baseline_frame) == 320 * 180,
+                "hard-subtitle decoded frame has an unexpected size")
+        hard_frame_delta = sum(hard_frame) - sum(baseline_frame)
+        require(hard_frame != baseline_frame and hard_frame_delta > 10_000,
+                "hard subtitle is not visible in the decoded frame")
+
+        subprocess.run([
+            str(ffmpeg), "-hide_banner", "-loglevel", "error", "-y",
+            "-i", "sample.mp4", "-i", "fixture.srt",
+            "-map", "0:v", "-map", "0:a?", "-map", "1:0",
+            "-c:v", "copy", "-c:a", "copy", "-c:s", "mov_text",
+            "-metadata:s:s:0", "language=vie", "soft.mp4",
+        ], cwd=temporary, check=True, capture_output=True, text=True, timeout=30)
+        soft_probe = subprocess.run([
+            str(ffprobe), "-v", "error", "-select_streams", "s",
+            "-show_entries", "stream=index,codec_name,codec_type:stream_tags=language",
+            "-of", "json", "soft.mp4",
+        ], cwd=temporary, check=True, capture_output=True, text=True, timeout=30)
+        soft_streams = json.loads(soft_probe.stdout)["streams"]
+        require(len(soft_streams) == 1,
+                f"soft subtitle expected one stream, found {len(soft_streams)}")
+        soft_stream = soft_streams[0]
+        require(soft_stream.get("codec_type") == "subtitle",
+                "soft subtitle stream has the wrong media type")
+        require(soft_stream.get("codec_name") == "mov_text",
+                "soft subtitle stream is not mov_text")
+        require(soft_stream.get("tags", {}).get("language") == "vie",
+                "soft subtitle stream language metadata is not vie")
 
     return {
         "bundle": str(bundle),
@@ -166,6 +220,8 @@ def run_check(cli_script):
         "chinese_media_codes": ["zh-cn", "zh-tw", "yue"],
         "srt_items": len(parsed),
         "media_streams": sorted(streams),
+        "hard_subtitle_frame_delta": hard_frame_delta,
+        "soft_subtitle_stream": soft_stream,
         "silero_vad": str(vad_asset),
         "zhconv": "繁體中文 -> 繁体中文",
     }

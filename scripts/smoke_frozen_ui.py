@@ -12,7 +12,9 @@ from types import SimpleNamespace
 def run_check():
     if not getattr(sys, 'frozen', False):
         raise AssertionError('run this probe through the packaged sp.exe')
-    requested_locale = sys.argv[2] if len(sys.argv) > 2 else 'vi'
+    requested_locale = os.environ.get('PYVIDEOTRANS_LANG') or (
+        sys.argv[2] if len(sys.argv) > 2 else 'vi'
+    )
     os.environ['QT_QPA_PLATFORM'] = 'offscreen'
     os.environ['PYVIDEOTRANS_LANG'] = requested_locale
 
@@ -401,7 +403,8 @@ def run_check():
             if help_role.get_openaitts_roles() != ['No', 'Hải Đăng', 'Thục Đoan']:
                 raise AssertionError('saved OpenAI-compatible voices were not preserved')
         finally:
-            params.update(saved_openaitts)
+            for key, value in saved_openaitts.items():
+                params[key] = value
 
     window.close()
     return {
