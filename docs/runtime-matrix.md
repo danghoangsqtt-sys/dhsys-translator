@@ -18,3 +18,29 @@ The prior empty-cache offline check could not fetch a GitHub source; offline ope
 
 The Windows workflow now selects FFmpeg `ffmpeg-N-127142-g12b7b9891b-win64-gpl.zip` from the fixed `autobuild-2026-10-03-18-14` release and checks SHA-256 `a885f564dee2b60f69ab866c6c89b96ae531fc2ee1f24ff8b5b1a6d29960a96b` before extraction. A local download matched that hash and contained both `bin/ffmpeg.exe` and `bin/ffprobe.exe`. The clean runner has not executed this workflow yet.
 Those binaries also generated a 0.3 second MP4 with audio and video streams in a local smoke check.
+
+## System readiness ratings
+
+The local Windows distribution exposes machine facts separately from workload ratings. The
+diagnostic payload uses stable codes and does not export usernames, full local paths, media
+filenames, API keys, provider credentials or arbitrary environment values.
+
+| Capability | Basic translate/dub | Local models | NVIDIA/CUDA acceleration |
+| --- | --- | --- | --- |
+| Bundled FFmpeg + ffprobe | Required | Required | Required |
+| Bundled application resources | Required | Required | Required |
+| Writable user-data + cache | Required | Required | Required |
+| RAM | 4 GiB minimum, 8 GiB recommended | 4 GiB minimum; more is recommended per model | Recommended |
+| Free disk | 4 GiB minimum, 12 GiB recommended | 4 GiB minimum; model downloads need additional space | 4 GiB minimum |
+| CPU | CPU-only is supported; 4 logical threads recommended | Recommended | Optional |
+| NVIDIA GPU / CUDA driver visibility | Optional | Recommended | Required |
+
+`ready` means every required fact is present and no recommended item is missing. `degraded`
+means required items are present but a recommended capability is missing or unknown. `blocked`
+means a required capability is known to be missing. `unknown` is kept distinct when a required
+probe cannot be completed; diagnostics do not guess that unknown hardware is absent.
+
+GPU probing uses bounded `nvidia-smi` subprocess calls with argument lists and short timeouts.
+Failure to find or query `nvidia-smi` does not block the basic CPU workflow. The CUDA value is
+the driver-supported CUDA level reported by `nvidia-smi`; it is not a claim that every optional
+local model has a compatible CUDA runtime installed.
