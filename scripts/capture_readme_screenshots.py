@@ -34,11 +34,16 @@ from videotrans.ui.en import Ui_MainWindow
 from videotrans.ui.home import HomePage
 from videotrans.ui.systemcheck import Ui_systemcheck
 from videotrans.ui.workspace_shell import WorkspaceShell
+from videotrans.ui.provider_profiles import PROFILE_NO_KEY
 
 
 class _GeneratedWindow(QMainWindow, Ui_MainWindow):
     def show_home(self):
         """WorkspaceShell requires the same route exposed by MainWindow."""
+
+    def current_provider_profile(self):
+        """Keep documentation captures on the fresh-install recommendation."""
+        return PROFILE_NO_KEY
 
 
 def _save_widget(app: QApplication, widget, path: Path, size: tuple[int, int]) -> None:

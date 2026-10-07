@@ -6,7 +6,9 @@ from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QMenu, QToolBar, QWidget
 
 from videotrans.ui.en import Ui_MainWindow
-from videotrans.ui.provider_profiles import PROFILE_CUSTOM, PROFILE_GEMINI, PROFILE_LOCAL
+from videotrans.ui.provider_profiles import (
+    PROFILE_CUSTOM, PROFILE_GEMINI, PROFILE_LOCAL, PROFILE_NO_KEY,
+)
 from videotrans.ui import workspace_shell
 from videotrans.ui.workspace_shell import WorkspaceShell
 
@@ -189,6 +191,41 @@ def test_remote_profile_explains_privacy_quota_and_fallback_before_apply(monkeyp
     assert "quota" in prompt
     assert "data policy" in prompt or "chính sách dữ liệu" in prompt
     assert "fallback" in prompt or "dự phòng" in prompt
+
+
+def test_no_key_profile_discloses_online_best_effort_limits_before_apply(monkeypatch):
+    class ProfileWindow(_WindowDouble):
+        def __init__(self):
+            super().__init__()
+            self.profile = PROFILE_CUSTOM
+            self.applied = []
+
+        def current_provider_profile(self):
+            return self.profile
+
+        def apply_provider_profile(self, profile):
+            self.applied.append(profile)
+            self.profile = profile
+
+    prompts = []
+    monkeypatch.setattr(
+        QMessageBox,
+        "question",
+        lambda *args: prompts.append(args[2]) or QMessageBox.StandardButton.Yes,
+    )
+    window = ProfileWindow()
+    shell = WorkspaceShell(window, QWidget())
+
+    shell.provider_profile.setCurrentIndex(
+        shell.provider_profile.findData(PROFILE_NO_KEY)
+    )
+
+    assert window.applied == [PROFILE_NO_KEY]
+    prompt = prompts[0].lower()
+    assert "api key" in prompt
+    assert "internet" in prompt
+    assert "rate" in prompt or "giới hạn" in prompt
+    assert shell.provider_settings.toolTip()
 
 
 @pytest.mark.parametrize("endpoint", ("", "https://api.example.com/v1", "http://192.168.1.20:8000/v1"))

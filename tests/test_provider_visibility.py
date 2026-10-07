@@ -3,12 +3,15 @@ import os
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 import pytest
+from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QApplication, QComboBox
 
 from videotrans import recognition, translator, tts
+from videotrans.configure._i18n import tr
 from videotrans.ui.provider_visibility import (
     CUSTOM_ENDPOINT,
     LOCAL_MODEL,
+    LOCAL_SERVICE,
     ONLINE_NO_KEY,
     PROVIDER_API,
     RECOGNITION,
@@ -120,6 +123,30 @@ def test_access_categories_distinguish_bundled_online_and_paid_api_paths():
     assert provider_access(TTS, tts.TTS_API).category == CUSTOM_ENDPOINT
     assert provider_access(TTS, tts.EDGE_TTS).api_key_required is False
     assert provider_access(TRANSLATION, translator.CHATGPT_INDEX).provider_charge_possible is True
+
+
+@pytest.mark.parametrize(
+    ("kind", "names"),
+    (
+        (TRANSLATION, translator.TRANSLASTE_NAME_LIST),
+        (RECOGNITION, recognition.RECOGN_NAME_LIST),
+        (TTS, tts.TTS_NAME_LIST),
+    ),
+)
+def test_every_provider_row_has_localized_cost_readiness_guidance(kind, names):
+    combo = QComboBox()
+    combo.addItems(names)
+
+    apply_combo_visibility(combo, kind)
+
+    for provider_id in range(len(names)):
+        access = provider_access(kind, provider_id)
+        assert access.category in {
+            LOCAL_MODEL, ONLINE_NO_KEY, PROVIDER_API, LOCAL_SERVICE, CUSTOM_ENDPOINT,
+        }
+        assert combo.itemData(provider_id, Qt.ItemDataRole.ToolTipRole) == tr(
+            access.guidance_key
+        )
 
 
 def test_settings_menu_policy_hides_china_focused_actions_but_can_restore_them():

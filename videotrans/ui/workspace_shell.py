@@ -93,6 +93,7 @@ class WorkspaceShell(QWidget):
         self.provider_settings = QToolButton(sidebar)
         self.provider_settings.setObjectName("workspaceProviderSettings")
         self.provider_settings.setText(tr("Provider settings"))
+        self.provider_settings.setToolTip(tr("Provider visibility guidance"))
         self.provider_settings.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextOnly)
         self.provider_settings.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
         self.provider_settings.setMenu(self._build_provider_settings())

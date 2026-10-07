@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-Planned ENH-007 for the 4.15.0 line: reduce provider noise for Vietnamese/global users with a reversible curated view, a no-key recommended profile and explicit local/download/API-cost guidance. Existing provider IDs, credentials and saved selections remain available through **Show all providers**; the current product manifest remains 4.14 until release gates pass.
+ENH-007 is implemented for the 4.15.0 line: provider menus and desktop combo boxes now default to a reversible Viet Nam/global curated view, offer a no-API-key recommended profile, and explain local model downloads, best-effort online services, local servers and potentially billable APIs. Existing provider IDs, credentials and saved selections remain available through **Show all providers**. 75 focused and 726 full Python 3.12.14 tests pass with one external `pydub/audioop` warning; the current product manifest remains 4.14 until independent release gates pass.
 
 Planned ENH-005 for the 4.15.0 line: add a GitHub-independent local distribution path with portable ZIP and per-user Setup.exe, plus a Vietnamese/English “Kiểm tra máy” surface that reports workload-specific CPU/RAM/disk/GPU/runtime readiness. Any remediation is explicit, allowlisted and re-verified; Python/Qt/FFmpeg stay bundled, while drivers/CUDA/large models remain guided or opt-in.
 

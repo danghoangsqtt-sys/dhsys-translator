@@ -207,6 +207,9 @@ def visible_provider_ids(kind: str, *, show_all: bool = False, selected_id: int 
 
 def apply_combo_visibility(combo, kind: str, *, show_all: bool = False):
     """Hide model rows in place and return the IDs that remain visible."""
+    from PySide6.QtCore import Qt
+    from videotrans.configure._i18n import tr
+
     _validate_kind(kind)
     registry_ids = tuple(_REGISTRIES[kind])
     if combo.count() != len(registry_ids):
@@ -219,6 +222,11 @@ def apply_combo_visibility(combo, kind: str, *, show_all: bool = False):
     ))
     view = combo.view()
     for provider_id in registry_ids:
+        combo.setItemData(
+            provider_id,
+            tr(provider_access(kind, provider_id).guidance_key),
+            Qt.ItemDataRole.ToolTipRole,
+        )
         view.setRowHidden(provider_id, provider_id not in visible)
     return tuple(provider_id for provider_id in registry_ids if provider_id in visible)
 
