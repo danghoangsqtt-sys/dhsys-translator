@@ -25,7 +25,7 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | 4 | PySide6 workflow UI, light workspace layout, ENH-003 Vietnamese/English UI locales with Chinese media support | complete; tasks 4.1–4.18 persisted; Phase 3 release gate remains independent and open |
 | 5 | ENH-005 local Windows distribution, machine readiness scan and consent-based setup assistant | in_progress; tasks 5.1–5.4 PASS locally; GitHub-independent |
 | 6 | Timeline editor | conditional; scope decision pending |
-| 7 | ENH-007 Việt Nam/global provider visibility and free-first guidance | in_progress; presentation-only filtering with frozen provider IDs |
+| 7 | ENH-007 Việt Nam/global provider visibility and free-first guidance | complete; reversible curated view, no-key profile and bilingual cost guidance; 726 tests pass |
 
 ENH-003 is added to Phase 4. ENH-005 is active in [Phase 5](phases/5/SPEC.md) so the owner can build and share portable/installer artifacts directly without GitHub. Target product version after the pending 4.14.1 repair line: **4.15.0 (provisional)**. Phase 5 progress does not change the current `4.14` manifest or publish an artifact.
 
@@ -45,8 +45,8 @@ Source: [ENH-005](requests/ENH-005.md). GitHub is not required. The phase preser
 
 | Task | Outcome | State |
 | --- | --- | --- |
-| 7.1 | Central provider visibility/cost policy with frozen registry compatibility | in_progress |
-| 7.2 | Filtered desktop surfaces, show-all control and no-key recommended profile | planned |
-| 7.3 | Việt/Anh cost guidance, docs and regression acceptance | planned |
+| 7.1 | Central provider visibility/cost policy with frozen registry compatibility | PASS |
+| 7.2 | Filtered desktop surfaces, show-all control and no-key recommended profile | PASS |
+| 7.3 | Việt/Anh cost guidance, docs and regression acceptance | PASS |
 
 Source: [ENH-007](requests/ENH-007.md). This phase hides only presentation rows/actions; it does not delete providers, renumber saved indexes or remove Chinese media-language support.

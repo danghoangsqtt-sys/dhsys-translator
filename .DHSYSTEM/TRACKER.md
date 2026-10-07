@@ -1,6 +1,6 @@
 # Tracker
 
-- In progress: [ENH-007](requests/ENH-007.md) / Phase 7 — Tasks 7.1–7.2 PASS (`6df80b81`, `9a3e754d`; 80 focused UI/config tests). Task 7.3 is adding Việt/Anh cost/readiness guidance, documentation and full regression. All provider IDs, credentials, saved selections and Chinese media-language support remain intact.
+- Complete locally: [ENH-007](requests/ENH-007.md) / Phase 7 — default provider surfaces now prioritize Việt Nam/global choices, a persisted **Hiện tất cả nhà cung cấp** control restores every integration, and the recommended 0/0/0 profile needs no API key. “Tích hợp sẵn” was replaced by explicit local-download/online/API guidance. All 29/33/38 provider IDs, credentials, saved selections and Chinese media-language support remain intact. Evidence: 75 focused and 726 full Python 3.12.14 tests pass with one external warning; commits `6df80b81`, `9a3e754d`, `bb3b6f27`.
 
 - Complete: [ENH-006](requests/ENH-006.md) — the root README now documents the current 4.14 Vietnamese-first application, correct GitHub clone path, desktop/CLI/WebUI workflows, distribution limits and release status. Three sanitized screenshots are rendered from the current Qt widgets by a reproducible script. Local-link/diff checks, 22 focused UI tests and all 705 Python 3.12.14 tests pass with one external `pydub/audioop` warning. ENH-005 task 5.5 and the Phase 3 clean-runner/signing gates remain open.
 
