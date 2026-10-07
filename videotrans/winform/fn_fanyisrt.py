@@ -18,6 +18,7 @@ def openwin():
     from videotrans.configure import config
     from videotrans.task.taskcfg import TaskCfgSTS
     from videotrans import translator
+    from videotrans.ui.provider_visibility import TRANSLATION, register_provider_combo
 
     RESULT_DIR = HOME_DIR + "/translate"
     SOURCE_DIR = RESULT_DIR
@@ -301,6 +302,11 @@ def openwin():
         Path(RESULT_DIR).mkdir(parents=True,exist_ok=True)
         winobj.fanyi_translate_type.addItems(translator.TRANSLASTE_NAME_LIST)
         winobj.fanyi_translate_type.setCurrentIndex(int(params.get('trans_translate_type', 0)))
+        register_provider_combo(
+            winobj.fanyi_translate_type,
+            TRANSLATION,
+            show_all=bool(params.get("show_all_providers", False)),
+        )
 
         update_target_language()
         winobj.fanyi_source.addItems([tr('auto')] + language_namelist)

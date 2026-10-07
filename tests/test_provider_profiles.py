@@ -13,6 +13,7 @@ from videotrans.ui.provider_profiles import (
     PROFILE_CUSTOM,
     PROFILE_GEMINI,
     PROFILE_LOCAL,
+    PROFILE_NO_KEY,
     PROFILE_BY_KEY,
     ProviderSelection,
     classify_endpoint,
@@ -48,6 +49,25 @@ def test_profile_presets_use_existing_provider_ids_without_renumbering():
     assert recognition.ID_NAME_DICT[local.selection.recogn_type].key_name is None
     assert tts.ID_NAME_DICT[local.selection.tts_type].key_name is None
     assert translator.ID_NAME_DICT[local.selection.translate_type].key_name == "localllm_api"
+
+
+def test_no_key_profile_uses_existing_zero_ids_and_discloses_remote_services():
+    current = ProviderSelection(recogn_type=8, translate_type=10, tts_type=29)
+
+    transition = resolve_profile_transition(
+        PROFILE_NO_KEY, current, PROFILE_CUSTOM, None
+    )
+    policy = profile_policy(PROFILE_NO_KEY)
+
+    assert transition.selection == ProviderSelection(
+        recogn_type=recognition.FASTER_WHISPER,
+        translate_type=translator.GOOGLE_INDEX,
+        tts_type=tts.EDGE_TTS,
+    )
+    assert transition.custom_backup == current
+    assert PROFILE_BY_KEY[PROFILE_NO_KEY].remote is True
+    assert policy.off_device is True
+    assert policy.local_only_ready is False
 
 
 def test_frozen_provider_registries_and_chinese_media_codes_remain_unchanged():

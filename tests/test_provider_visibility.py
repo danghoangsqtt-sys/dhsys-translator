@@ -15,8 +15,11 @@ from videotrans.ui.provider_visibility import (
     TRANSLATION,
     TTS,
     apply_combo_visibility,
+    apply_menu_visibility,
     menu_action_visible,
     provider_access,
+    refresh_registered_combos,
+    register_provider_combo,
     visible_provider_ids,
 )
 
@@ -126,3 +129,59 @@ def test_settings_menu_policy_hides_china_focused_actions_but_can_restore_them()
     assert not menu_action_visible(TTS, "doubao2")
     assert menu_action_visible(TRANSLATION, "tencent", show_all=True)
 
+
+def test_registered_open_combos_follow_one_show_all_refresh():
+    combos = []
+    for kind, names in (
+        (TRANSLATION, translator.TRANSLASTE_NAME_LIST),
+        (RECOGNITION, recognition.RECOGN_NAME_LIST),
+        (TTS, tts.TTS_NAME_LIST),
+    ):
+        combo = QComboBox()
+        combo.addItems(names)
+        register_provider_combo(combo, kind, show_all=False)
+        combos.append(combo)
+
+    assert any(combo.view().isRowHidden(row) for combo in combos for row in range(combo.count()))
+
+    refresh_registered_combos(show_all=True)
+
+    assert all(
+        not combo.view().isRowHidden(row)
+        for combo in combos
+        for row in range(combo.count())
+    )
+
+
+def test_generated_provider_menus_keep_actions_but_hide_and_restore_them(monkeypatch):
+    from PySide6.QtWidgets import QMainWindow
+    from videotrans.ui import _setup_menus
+    from videotrans.ui.en import Ui_MainWindow
+
+    class Params(dict):
+        def getset_params(self, update):
+            self.update(update)
+
+    saved = Params(show_all_providers=False)
+    monkeypatch.setattr(_setup_menus, "params", saved)
+
+    class Window(QMainWindow, Ui_MainWindow):
+        pass
+
+    window = Window()
+    window.setupUi(window)
+
+    assert window.tencent in window.menu_Key.actions()
+    assert window.tencent.isVisible() is False
+    assert window.deepl.isVisible() is True
+    assert window.show_all_providers in window.menu_Key.actions()
+    assert window.show_all_providers in window.menu_TTS.actions()
+    assert window.show_all_providers in window.menu_RECOGN.actions()
+
+    window.show_all_providers.setChecked(True)
+
+    assert saved["show_all_providers"] is True
+    assert window.tencent.isVisible() is True
+    assert window.zijierecognmodel.isVisible() is True
+    assert window.doubao2.isVisible() is True
+    apply_menu_visibility(window, show_all=False)

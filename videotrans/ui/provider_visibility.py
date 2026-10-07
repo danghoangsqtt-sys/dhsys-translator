@@ -8,6 +8,7 @@ registries; this policy only decides what a typical Viet Nam/global user sees fi
 
 from dataclasses import dataclass
 from types import MappingProxyType
+from weakref import ref
 
 from videotrans import recognition, translator, tts
 
@@ -135,6 +136,8 @@ _REGISTRIES = MappingProxyType({
     TTS: tts.ID_NAME_DICT,
 })
 
+_ACTIVE_COMBOS = []
+
 _CATEGORY_OVERRIDES = MappingProxyType({
     TRANSLATION: {
         LOCAL_MODEL: {translator.M2M100_INDEX, translator.HYMT2_INDEX},
@@ -220,7 +223,48 @@ def apply_combo_visibility(combo, kind: str, *, show_all: bool = False):
     return tuple(provider_id for provider_id in registry_ids if provider_id in visible)
 
 
+def register_provider_combo(combo, kind: str, *, show_all: bool = False):
+    """Track an open desktop combo so the global show-all toggle can refresh it."""
+    _validate_kind(kind)
+    live = []
+    found = False
+    for combo_ref, registered_kind in _ACTIVE_COMBOS:
+        candidate = combo_ref()
+        if candidate is None:
+            continue
+        live.append((combo_ref, registered_kind))
+        if candidate is combo:
+            found = True
+    _ACTIVE_COMBOS[:] = live
+    if not found:
+        _ACTIVE_COMBOS.append((ref(combo), kind))
+    return apply_combo_visibility(combo, kind, show_all=show_all)
+
+
+def refresh_registered_combos(*, show_all: bool = False):
+    """Refresh every currently open combo; discard closed Qt wrappers safely."""
+    live = []
+    for combo_ref, kind in _ACTIVE_COMBOS:
+        combo = combo_ref()
+        if combo is None:
+            continue
+        try:
+            apply_combo_visibility(combo, kind, show_all=show_all)
+        except RuntimeError:
+            continue
+        live.append((combo_ref, kind))
+    _ACTIVE_COMBOS[:] = live
+
+
+def apply_menu_visibility(owner, *, show_all: bool = False):
+    """Apply the same policy to registered provider-setting QAction objects."""
+    for kind, actions in getattr(owner, "_provider_actions_by_kind", {}).items():
+        for action in actions:
+            action.setVisible(menu_action_visible(
+                kind, action.objectName(), show_all=show_all
+            ))
+
+
 def menu_action_visible(kind: str, action_name: str, *, show_all: bool = False) -> bool:
     _validate_kind(kind)
     return show_all or action_name in CURATED_MENU_ACTIONS[kind]
-

@@ -19,6 +19,7 @@ def openwin():
     from videotrans.configure import config
     from videotrans.task.taskcfg import TaskCfgTTS
     from videotrans import translator, tts
+    from videotrans.ui.provider_visibility import TTS, register_provider_combo
 
 
 
@@ -370,6 +371,11 @@ def openwin():
         winobj.hecheng_language.addItems(getlangnamelist(last_tts_type))
         winobj.hecheng_language.setCurrentIndex(int(params.get("dubb_source_language", 0)))
         winobj.tts_type.setCurrentIndex(last_tts_type)
+        register_provider_combo(
+            winobj.tts_type,
+            TTS,
+            show_all=bool(params.get("show_all_providers", False)),
+        )
 
         winobj.out_format.setCurrentIndex(int(params.get("dubb_out_format", 0)))
 

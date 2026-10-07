@@ -22,6 +22,10 @@ from videotrans.ui.workflow_state import WorkflowStatePresenter
 from videotrans.ui.provider_profiles import (
     PROFILE_BY_KEY, PROFILE_CUSTOM, ProviderSelection, resolve_profile_transition,
 )
+from videotrans.ui.provider_visibility import (
+    RECOGNITION, TRANSLATION, TTS, apply_menu_visibility,
+    refresh_registered_combos, register_provider_combo,
+)
 from videotrans.task.simple_runnable_qt import run_in_threadpool
 from videotrans.task.subtitle_output import SUBTITLE_TYPE_KEYS
 
@@ -90,6 +94,9 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
             self.tts_type.setCurrentIndex(transition.selection.tts_type)
         finally:
             self._applying_provider_profile = False
+        refresh_registered_combos(
+            show_all=bool(params.get("show_all_providers", False))
+        )
         update = transition.selection.to_dict() | {
             'provider_profile': transition.profile_key,
             'provider_profile_custom': (
@@ -99,6 +106,18 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         params.getset_params(update)
         self.workspace_shell.set_provider_profile(transition.profile_key)
         return transition
+
+    def set_show_all_providers(self, checked):
+        """Persist and synchronize one reversible visibility preference."""
+        show_all = bool(checked)
+        params.getset_params({"show_all_providers": show_all})
+        action = getattr(self, "show_all_providers", None)
+        if action is not None and action.isChecked() != show_all:
+            action.blockSignals(True)
+            action.setChecked(show_all)
+            action.blockSignals(False)
+        apply_menu_visibility(self, show_all=show_all)
+        refresh_registered_combos(show_all=show_all)
 
     def mark_provider_profile_custom(self):
         if getattr(self, '_applying_provider_profile', False):
@@ -196,6 +215,14 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.translate_type.setCurrentIndex(_translate_type)
         self.tts_type.setCurrentIndex(_tts_type)
         self.recogn_type.setCurrentIndex(_recogn_type)
+        show_all_providers = bool(params.get("show_all_providers", False))
+        register_provider_combo(
+            self.translate_type, TRANSLATION, show_all=show_all_providers
+        )
+        register_provider_combo(self.tts_type, TTS, show_all=show_all_providers)
+        register_provider_combo(
+            self.recogn_type, RECOGNITION, show_all=show_all_providers
+        )
         self.voice_role.clear()
         self.model_name.clear()
         curr = recognition.get_model_by_type(_recogn_type)

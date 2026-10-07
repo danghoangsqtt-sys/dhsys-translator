@@ -17,6 +17,7 @@ def openwin():
     from videotrans.configure import config
     from videotrans.task.taskcfg import TaskCfgSTT
     from videotrans import translator, recognition
+    from videotrans.ui.provider_visibility import RECOGNITION, register_provider_combo
 
 
     EDGE_LANGUANGES_DICT = {}
@@ -303,6 +304,11 @@ def openwin():
         winobj.shibie_recogn_type.clear()
         winobj.shibie_recogn_type.addItems(recognition.RECOGN_NAME_LIST)
         winobj.shibie_recogn_type.setCurrentIndex(default_type)
+        register_provider_combo(
+            winobj.shibie_recogn_type,
+            RECOGNITION,
+            show_all=bool(params.get("show_all_providers", False)),
+        )
         winobj.shibie_recogn_type.currentIndexChanged.connect(recogn_type_change)
 
         winobj.shibie_model.clear()

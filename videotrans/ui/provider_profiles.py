@@ -9,6 +9,7 @@ from videotrans import recognition, translator, tts
 
 
 PROFILE_CUSTOM = "custom"
+PROFILE_NO_KEY = "no_key"
 PROFILE_LOCAL = "local"
 PROFILE_GEMINI = "gemini"
 
@@ -58,6 +59,17 @@ class ProfilePolicy:
 
 
 PROFILES = (
+    ProviderProfile(
+        PROFILE_NO_KEY,
+        "profile_no_key_label",
+        "profile_no_key_hint",
+        ProviderSelection(
+            recognition.FASTER_WHISPER,
+            translator.GOOGLE_INDEX,
+            tts.EDGE_TTS,
+        ),
+        remote=True,
+    ),
     ProviderProfile(
         PROFILE_LOCAL,
         "profile_local_label",
@@ -172,6 +184,15 @@ def profile_policy(profile_key, localllm_api="") -> ProfilePolicy:
             off_device=None,
             local_only_ready=False,
             summary_key="profile_local_policy_unknown",
+        )
+
+    if profile_key == PROFILE_NO_KEY:
+        return ProfilePolicy(
+            PROFILE_NO_KEY,
+            ENDPOINT_PUBLIC,
+            off_device=True,
+            local_only_ready=False,
+            summary_key="profile_no_key_policy_remote",
         )
 
     if profile_key == PROFILE_GEMINI:

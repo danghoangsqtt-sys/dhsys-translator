@@ -50,6 +50,7 @@ class AppParams:
             try:
                 loaded = json.loads(Path(self._json_path).read_text(encoding='utf-8'))
                 if isinstance(loaded, dict):
+                    had_provider_profile = "provider_profile" in loaded
                     roles = loaded.get('f5tts_role')
                     if isinstance(roles, str):
                         loaded['f5tts_role'] = "\n".join(dict.fromkeys(
@@ -64,6 +65,13 @@ class AppParams:
                             default[key] = value
                         elif isinstance(expected, float) and type(value) is int:
                             default[key] = float(value)
+                    if not had_provider_profile and any(
+                        type(loaded.get(key)) is int and loaded.get(key) != 0
+                        for key in ("recogn_type", "translate_type", "tts_type")
+                    ):
+                        # Older installs predate profiles.  A non-default selection
+                        # is custom, not the fresh no-key 0/0/0 preset.
+                        default["provider_profile"] = "custom"
             except (OSError, json.JSONDecodeError):
                 pass
         else:
@@ -92,8 +100,9 @@ class AppParams:
             "source_language": "en",
             "target_language": "zh-cn",
             "translate_type": 0,
-            "provider_profile": "custom",
+            "provider_profile": "no_key",
             "provider_profile_custom": {},
+            "show_all_providers": False,
             # Persisted values stay frozen: 1 is the existing hard-subtitle mode.
             "subtitle_type": 1,
             "tts_type": 0,

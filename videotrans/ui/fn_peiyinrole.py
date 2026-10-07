@@ -10,7 +10,8 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                                QAbstractItemView, QHeaderView, QTableWidget, QTableWidgetItem)
 
 from videotrans import tts
-from videotrans.configure.config import tr, app_cfg, ROOT_DIR
+from videotrans.configure.config import tr, app_cfg, params, ROOT_DIR
+from videotrans.ui.provider_visibility import TTS, register_provider_combo
 from videotrans.ui.responsive_layout import WrappingRowLayout
 from videotrans.util._srt_parse import get_subtitle_from_srt
 from videotrans.util.help_misc import show_error
@@ -371,6 +372,11 @@ class Ui_fn_peiyinrole(QtWidgets.QWidget):
         self.tts_type = QtWidgets.QComboBox()
         self.tts_type.setMinimumSize(QtCore.QSize(200, 30))
         self.tts_type.addItems(tts.TTS_NAME_LIST)
+        register_provider_combo(
+            self.tts_type,
+            TTS,
+            show_all=bool(params.get("show_all_providers", False)),
+        )
         self.formLayout_7.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.tts_type)
         self.horizontalLayout_10.addLayout(self.formLayout_3)
         self.horizontalLayout_10.addLayout(self.formLayout_7)

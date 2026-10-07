@@ -13,12 +13,27 @@ def test_fresh_main_workflow_defaults_to_existing_hard_subtitle_enum(tmp_path):
     assert params.subtitle_type == 1
 
 
-def test_provider_profile_defaults_preserve_legacy_provider_ids(tmp_path):
+def test_provider_profile_defaults_use_no_key_preset_without_changing_provider_ids(tmp_path):
     params = AppParams(_json_path=str(tmp_path / "params.json"))
 
-    assert params.provider_profile == "custom"
+    assert params.provider_profile == "no_key"
     assert params.provider_profile_custom == {}
+    assert params.show_all_providers is False
     assert (params.recogn_type, params.translate_type, params.tts_type) == (0, 0, 0)
+
+
+def test_pre_profile_install_with_nondefault_provider_ids_migrates_to_custom(tmp_path):
+    config_path = tmp_path / "params.json"
+    config_path.write_text(json.dumps({
+        "recogn_type": 13,
+        "translate_type": 20,
+        "tts_type": 18,
+    }), encoding="utf-8")
+
+    params = AppParams(_json_path=str(config_path))
+
+    assert params.provider_profile == "custom"
+    assert (params.recogn_type, params.translate_type, params.tts_type) == (13, 20, 18)
 
 
 @pytest.mark.parametrize("saved_value", [0, 1, 2, 3, 4])

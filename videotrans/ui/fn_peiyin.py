@@ -7,7 +7,8 @@ from PySide6.QtGui import QIcon
 
 from videotrans import tts
 from videotrans.component.component import Textedit
-from videotrans.configure.config import tr, ROOT_DIR
+from videotrans.configure.config import tr, params, ROOT_DIR
+from videotrans.ui.provider_visibility import TTS, register_provider_combo
 
 
 class Ui_fn_peiyin(QtWidgets.QWidget):
@@ -86,6 +87,11 @@ class Ui_fn_peiyin(QtWidgets.QWidget):
         self.tts_type.setMinimumSize(QtCore.QSize(200, 30))
         self.tts_type.setObjectName("tts_type")
         self.tts_type.addItems(tts.TTS_NAME_LIST)
+        register_provider_combo(
+            self.tts_type,
+            TTS,
+            show_all=bool(params.get("show_all_providers", False)),
+        )
         self.formLayout_7.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.tts_type)
         self.horizontalLayout_10.addLayout(self.formLayout_7)
         self.formLayout_4 = QtWidgets.QFormLayout()
