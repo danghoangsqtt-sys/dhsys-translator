@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Planned ENH-007 for the 4.15.0 line: reduce provider noise for Vietnamese/global users with a reversible curated view, a no-key recommended profile and explicit local/download/API-cost guidance. Existing provider IDs, credentials and saved selections remain available through **Show all providers**; the current product manifest remains 4.14 until release gates pass.
+
 Planned ENH-005 for the 4.15.0 line: add a GitHub-independent local distribution path with portable ZIP and per-user Setup.exe, plus a Vietnamese/English “Kiểm tra máy” surface that reports workload-specific CPU/RAM/disk/GPU/runtime readiness. Any remediation is explicit, allowlisted and re-verified; Python/Qt/FFmpeg stay bundled, while drivers/CUDA/large models remain guided or opt-in.
 
 - ENH-005 Task 5.1 now provides a sanitized, workload-aware readiness service for Windows hardware/runtime checks. Basic CPU-only use remains supported, bundled FFmpeg/resources and writable app-data remain required, and Windows frozen first-run seeding now tolerates the `PermissionError` form of lock contention.
