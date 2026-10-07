@@ -1,221 +1,212 @@
-﻿> Sponsors:
-> - **[Recall.ai](https://www.recall.ai/product/meeting-transcription-api?utm_source=github&utm_medium=sponsorship&utm_campaign=jianchang512-pyvideotrans) -  Meeting Transcription API**:  If you’re looking for a transcription API for meetings, consider checking out **[Recall.ai](https://www.recall.ai/product/meeting-transcription-api?utm_source=github&utm_medium=sponsorship&utm_campaign=jianchang512-pyvideotrans)** , an API that works with Zoom, Google Meet, Microsoft Teams, and more
-> - **[infistar - 160+ 模型,一个 Key](https://www.infistar.cc/register?aff=9H6H7RR9&ref_source=link)**: 字幕翻译还在纠结用 GPT、Claude、Gemini 还是 DeepSeek? infistar 是 OpenAI 兼容中转,一个 Key 随时切 160+ 模型,挑出翻得最准又最省的那个
-
-
----
-
-# pyVideoTrans
-
-Current project version: **4.14**.
+# pyVideoTrans-DH
 
 <div align="center">
 
-**A Powerful Open Source Video Translation / Audio Transcription / AI Dubbing / Subtitle Translation Tool**
+**Xưởng dịch video Việt-first: chép lời, dịch phụ đề, lồng tiếng AI và xuất video trong một quy trình.**
 
-[简体中文](docs/README_CN.md) | [**Documentation**](https://pyvideotrans.com) | [**Online Q&A**](https://bbs.pyvideotrans.com)
+[![Version](https://img.shields.io/badge/version-4.14-14452F)](pyproject.toml)
+[![Python](https://img.shields.io/badge/Python-3.10%E2%80%933.12-3776AB?logo=python&logoColor=white)](docs/runtime-matrix.md)
+[![Windows](https://img.shields.io/badge/Windows-portable%20%7C%20setup-0078D4?logo=windows)](docs/huong-dan-cai-dat-windows.md)
+[![Tests](https://img.shields.io/badge/tests-705%20passed-success)](.DHSYSTEM/TRACKER.md)
+[![License](https://img.shields.io/badge/license-GPL--3.0-blue)](LICENSE)
 
-[![License](https://img.shields.io/badge/License-GPL_v3-blue.svg)](LICENSE) [![Python](https://img.shields.io/badge/Python-3.10--3.12-green.svg)](https://www.python.org/) [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey.svg)]()
+[Bắt đầu](#bắt-đầu-nhanh) · [Tính năng](#tính-năng-chính) · [CLI](#dòng-lệnh-cli) · [WebUI](#webui) · [Tài liệu](#tài-liệu) · [Trạng thái](#trạng-thái-hiện-tại)
 
 </div>
 
-**pyVideoTrans** is dedicated to seamlessly converting videos from one language to another, offering a complete workflow that includes speech recognition, subtitle translation, multi-role dubbing, and audio-video synchronization. It supports both local offline deployment and a wide variety of mainstream online APIs.
+pyVideoTrans-DH là nhánh phát triển của [pyVideoTrans](https://github.com/jianchang512/pyvideotrans), tập trung vào trải nghiệm desktop tiếng Việt, khả năng đóng gói Windows và quy trình kiểm thử có thể lặp lại. Giao diện ứng dụng chỉ có **Tiếng Việt** và **English**; ngôn ngữ của nội dung video vẫn hỗ trợ tiếng Trung và các ngôn ngữ khác theo provider được chọn.
 
+> **Phiên bản hiện tại:** `4.14`. Bản portable và Setup đã vượt qua kiểm thử local/developer-host, nhưng Setup vẫn **chưa ký số** và cổng xác nhận trên máy Windows sạch vẫn đang mở. Xem [trạng thái chi tiết](#trạng-thái-hiện-tại) trước khi phân phối rộng.
 
-<img width="1730" height="957" alt="image" src="https://github.com/user-attachments/assets/25d78661-8b73-4f34-a3e5-205c7daba99b" />
+## Giao diện hiện tại
 
----
+### Trang chủ Xưởng Video
 
-##  Core Features
+![Trang chủ Xưởng Video bằng tiếng Việt](docs/assets/readme/home-vi.png)
 
-> [Technical Architecture and Principles](docs/architecture.md)
+### Không gian làm việc năm bước
 
-- **Fully Automatic Video Translation**: One-click workflow: Speech Recognition (ASR) → Subtitle Translation → Speech Synthesis (TTS) → Video Synthesis.
-- **Audio Transcription / Subtitle Generation**: Batch convert audio/video to SRT subtitles, supporting **Speaker Diarization** to distinguish between different roles.
-- **️Multi-Role AI Dubbing**: Assign different AI dubbing voices to different speakers.
-- **Voice Cloning**: Integrates models like **F5-TTS, CosyVoice, GPT-SoVITS** for zero-shot voice cloning.
-- **Powerful Model Support**:
-  - **ASR**: Faster-Whisper (Local), OpenAI Whisper, Alibaba Qwen, ByteDance Volcano, Azure, Google, etc.
-  - **LLM Translation**: DeepSeek, ChatGPT, Claude, Gemini, MiniMax, Ollama (Local), Alibaba Bailian, etc.
-  - **TTS**: Edge-TTS (Free), OpenAI, Azure, Minimaxi, ChatTTS, ChatterBox, etc.
-- **️Interactive Editing**: Supports pausing and manual proofreading at each stage (recognition, translation, dubbing) to ensure accuracy.
-- **️Utility Toolkit**: Includes auxiliary tools such as vocal separation, video/subtitle merging, audio-video alignment, and transcript matching.
-- **Command Line Interface (CLI)**: Supports headless operation, convenient for server deployment or batch processing.
-- **Web Interface (WebUI)**: Browser-based interface for remote access or internal network deployment.
+![Không gian dịch video năm bước](docs/assets/readme/workspace-vi.png)
 
+<details>
+<summary><strong>Kiểm tra khả năng chạy trên máy Windows</strong></summary>
 
----
+![Màn hình Kiểm tra máy](docs/assets/readme/system-check-vi.png)
 
-##  Quick Start (Windows Users)
+</details>
 
-pyVideoTrans-DH can be shared directly as a local Windows package; recipients do not need Python, PySide6/Qt or a global FFmpeg installation.
+Các ảnh trên được render trực tiếp từ widget PySide6 hiện tại bằng dữ liệu mẫu đã khử thông tin riêng tư. Có thể tạo lại bằng [script chụp ảnh README](scripts/capture_readme_screenshots.py).
 
-1. **Portable ZIP**: extract `pyVideoTrans-DH-<version>-win64-portable.zip`, open the `sp` folder, then double-click `sp.exe`.
-2. **Setup.exe**: run `pyVideoTrans-DH-<version>-win64-setup.exe`. It installs for the current Windows user and can create optional Start Menu/Desktop shortcuts.
-3. **Verify before sharing**: keep the matching manifest and `.sha256` files beside the package. Maintainers can run `scripts\verify_local_distribution.ps1` to re-check hashes and the portable contents locally.
-4. **Clean-recipient gate**: maintainers should run `scripts\smoke_installed_distribution.ps1 -EnvironmentKind WindowsSandbox` inside Windows Sandbox (or select `DisposableVM`/`CleanUser` truthfully). A developer-host run is diagnostic only and returns `partial`.
+## Tính năng chính
 
-> **Note**:
-> * Do not run directly from within the compressed archive.
-> * The application data under `%LOCALAPPDATA%\pyVideoTrans` is separate from the installed program and is preserved by uninstall by default.
-> * Unsigned local builds may trigger Windows SmartScreen. Verify the SHA-256 sidecar before choosing to run a package from a trusted sender.
-> * GPU acceleration remains optional; use **Kiểm tra máy / System check** for workload-specific readiness guidance.
+- **Dịch video trọn quy trình:** nhận dạng giọng nói → sửa phụ đề → dịch → lồng tiếng → căn thời gian và xuất video.
+- **Không gian làm việc năm bước:** nhóm các điều khiển hiện có theo Chuẩn bị, Chép lời, Dịch thuật, Lồng tiếng & phụ đề, Căn chỉnh & xuất.
+- **Phụ đề rõ ràng:** tác vụ mới mặc định dùng phụ đề cứng luôn hiển thị; vẫn có phụ đề mềm, song ngữ và chế độ không phụ đề có xác nhận.
+- **Công cụ nhanh:** chép lời thành SRT, dịch SRT, gán giọng cho nhiều người nói và ghép video/âm thanh/phụ đề.
+- **Provider linh hoạt:** local, cloud và API tương thích OpenAI; giữ nguyên ID/cấu hình cũ để nâng cấp không làm mất lựa chọn người dùng.
+- **Phát âm Việt–Anh không phá dữ liệu:** lớp phát âm chỉ thay chuỗi gửi tới TTS, không sửa SRT hiển thị hoặc file SRT đã lưu.
+- **Kiểm tra máy:** đánh giá riêng tác vụ cơ bản, mô hình local và tăng tốc GPU; báo cáo hỗ trợ không chứa khóa API, media hay đường dẫn riêng tư đầy đủ.
+- **Ba cách sử dụng:** desktop PySide6, CLI cho tự động hóa và WebUI có kiểm soát truy cập.
+- **Phân phối Windows local:** tạo portable ZIP và Setup theo người dùng, không yêu cầu người nhận cài Python, Qt hoặc FFmpeg toàn cục.
 
----
+## Bắt đầu nhanh
 
-## ️ Source Deployment (macOS / Linux / Windows Developers)
+### Dùng bản Windows đã đóng gói
 
-We recommend using **[`uv`](https://docs.astral.sh/uv/)** for package management for faster speed and better environment isolation.
+Repository không lưu trực tiếp các gói phát hành nhiều GB. Khi nhận bộ cài từ người duy trì dự án:
 
-### 1. Prerequisites
+1. Đối chiếu file `.sha256` và manifest đi kèm.
+2. Với portable ZIP: giải nén toàn bộ, mở thư mục `sp`, chạy `sp.exe`.
+3. Với Setup: chạy `pyVideoTrans-DH-<version>-win64-setup.exe` và chọn shortcut nếu cần.
+4. Mở **Kiểm tra máy** trước khi tải mô hình lớn hoặc bật CUDA.
 
-* **Python**: Supported source runtimes are 3.10–3.12. The Windows candidate build uses 3.12.13; see [the runtime matrix](docs/runtime-matrix.md) for verification scope.
-* **FFmpeg**: Must be installed and configured in the environment variables.
-  * **macOS**: 
-  ```
-    brew install libsndfile  git  python@3.10
-	
-	brew uninstall --ignore-dependencies ffmpeg
-	
-	brew tap homebrew-ffmpeg/ffmpeg
-	
-	brew install homebrew-ffmpeg/ffmpeg/ffmpeg
-  ```
-  * **Linux (Ubuntu/Debian)**: `sudo apt-get install ffmpeg libsndfile1-dev`
-  * **Windows**: [Download FFmpeg](https://ffmpeg.org/download.html) and configure Path, or place `ffmpeg.exe` and `ffprobe.exe` directly in the project directory.
+Không chạy `sp.exe` ngay bên trong file ZIP. Dữ liệu người dùng nằm ngoài thư mục cài đặt, mặc định tại `%LOCALAPPDATA%\pyVideoTrans`, và được giữ lại khi gỡ ứng dụng. Windows SmartScreen có thể cảnh báo vì bản Setup hiện chưa ký số; chỉ tiếp tục khi checksum đúng và gói đến từ nguồn bạn tin cậy.
 
-### 2. Install uv (If not installed)
+Hướng dẫn đầy đủ: [Cài đặt Windows](docs/huong-dan-cai-dat-windows.md).
 
-```bash
-# macOS/Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
+### Chạy từ mã nguồn
 
-# Windows (PowerShell)
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+Yêu cầu:
+
+- Python `3.10`–`3.12`; môi trường kiểm chứng gần nhất dùng Python `3.12.14`.
+- [uv](https://docs.astral.sh/uv/getting-started/installation/).
+- Git, FFmpeg và ffprobe có trong `PATH`.
+- Dung lượng trống đủ lớn cho PyTorch và các mô hình AI tùy chọn.
+
+```powershell
+git clone https://github.com/danghoangsqtt-sys/dhsys-translator.git
+cd dhsys-translator
+
+uv python install 3.12.14
+uv sync --python 3.12.14 --locked --group dev
+uv run --python 3.12.14 --locked sp.py --lang vi
 ```
 
-### 3. Clone and Install
+Dùng `--lang en` để mở giao diện tiếng Anh. Lần đồng bộ đầu tiên cần mạng và có thể tải nhiều dependency dung lượng lớn.
 
-```bash
-git clone https://github.com/jianchang512/pyvideotrans.git
-cd pyvideotrans
-uv sync
+## Sử dụng desktop
+
+Luồng cơ bản cho một video:
+
+1. **Chuẩn bị:** chọn video/âm thanh và nơi lưu kết quả.
+2. **Chép lời:** chọn ngôn ngữ nguồn, kênh nhận dạng và model. Với lần thử CPU đầu tiên, faster-whisper `tiny` là lựa chọn nhẹ.
+3. **Dịch thuật:** chọn ngôn ngữ đích và provider dịch; provider cloud cần mạng/quota/khóa tương ứng.
+4. **Lồng tiếng & phụ đề:** chọn dịch vụ TTS, giọng đọc và kiểu phụ đề. Chọn `No` nếu không cần lồng tiếng.
+5. **Căn chỉnh & xuất:** kiểm tra tùy chọn thời gian, nhấn **Bắt đầu**, rồi đọc biên nhận đầu ra khi hoàn tất.
+
+Profile **Cục bộ** chỉ được coi là local-only khi endpoint Local LLM dùng loopback (`localhost`, `127.0.0.1` hoặc `::1`). Gemini/OpenRouter và các API từ xa có thể gửi dữ liệu ra khỏi máy; hãy đọc chính sách của provider trước khi dùng nội dung nhạy cảm.
+
+Hướng dẫn thao tác, phụ đề, VieNeu và xử lý lỗi: [Kiểm thử và sử dụng](docs/huong-dan-test-va-su-dung.md).
+
+## Dòng lệnh CLI
+
+Xem version và các lựa chọn đang có trong chính checkout:
+
+```powershell
+uv run --python 3.12.14 --locked cli.py --version
+uv run --python 3.12.14 --locked cli.py --list providers
+uv run --python 3.12.14 --locked cli.py --list languages
+uv run --python 3.12.14 --locked cli.py --list models
 ```
 
-> WebUI is optional: install it with `uv sync --extra webui`. The `pythonnet` dependency for Whisper.NET on Windows is included in the base installation.
-> - To install WebUI: `uv sync --extra webui` 
+Ví dụ chép lời video bằng faster-whisper `tiny` trên CPU:
 
-### 4. Launch Software
-
-**GUI**:
-```bash
-uv run sp.py
+```powershell
+uv run --python 3.12.14 --locked cli.py `
+  --task stt `
+  --name "C:\media\speech.mp4" `
+  --recogn_type 0 `
+  --model_name tiny `
+  --detect_language vi `
+  --output-dir "C:\media\results"
 ```
 
-**CLI**:
-```bash
-# Video Translation
-uv run cli.py --task vtv --name "./video.mp4" --source_language_code zh-cn --target_language_code en --voice_role "en-US-GuyNeural"
+CLI hỗ trợ bốn tác vụ: `stt` (chép lời), `sts` (dịch phụ đề), `tts` (tạo giọng đọc) và `vtv` (dịch video trọn quy trình). Mỗi lần chạy tạo thư mục kết quả riêng để tránh đè đầu ra của file trùng tên. Xem [toàn bộ tham số CLI](docs/cli.md).
 
-# Audio to Subtitle
-uv run cli.py --task stt --name "./audio.wav" --model_name large-v3
+## WebUI
 
-# Subtitle Translation
-uv run cli.py --task sts --name "./subs.srt" --target_language_code en
+WebUI là giao diện bổ sung và chưa thay thế đầy đủ desktop:
 
-# Text to Speech
-uv run cli.py --task tts --name "./subs.srt" --voice_role "zh-CN-YunyangNeural"
+```powershell
+uv sync --python 3.12.14 --locked --extra webui
+uv run --python 3.12.14 --locked --extra webui webui.py
 ```
 
-> [CLI documentation with all parameters](docs/cli.md)
+Mở `http://127.0.0.1:7860`. Mặc định WebUI chỉ nghe trên máy cục bộ.
 
-**WebUI** (for remote/internal network access):
-```bash
-uv sync --extra webui
-uv run webui.py
+Khi cần truy cập từ mạng nội bộ, phải đặt cả tên người dùng và mật khẩu trước khi bind ra ngoài:
+
+```powershell
+$env:PYVIDEOTRANS_WEBUI_USER = 'admin'
+$env:PYVIDEOTRANS_WEBUI_PASSWORD = 'thay-bang-mat-khau-dai-rieng'
+uv run --python 3.12.14 --locked --extra webui webui.py --host 0.0.0.0 --port 7860
 ```
 
+Không commit mật khẩu. Nếu đưa WebUI ra Internet, đặt HTTPS ở reverse proxy hoặc một kênh bảo mật tương đương. Xem [hướng dẫn WebUI](docs/webui.md).
 
-**Docker** (containerized deployment):
-```bash
-# Build
-docker build -t pyvideotrans-webui .
+## Provider và mô hình
 
-# Create runtime credentials outside the image build context; change the example password.
-printf 'PYVIDEOTRANS_WEBUI_USER=admin\nPYVIDEOTRANS_WEBUI_PASSWORD=change-this-long-password\n' > ../webui.env
+| Nhóm | Ví dụ được tích hợp | Ghi chú |
+| --- | --- | --- |
+| Nhận dạng | faster-whisper, Whisper/OpenAI, WhisperX, Qwen, Deepgram, Azure, Google | Local và cloud; model lớn cần thêm tài nguyên. |
+| Dịch | Google, Microsoft, DeepSeek, Gemini, OpenRouter, Claude/OpenAI-compatible, Ollama/Local LLM | Chất lượng, quota và chính sách dữ liệu phụ thuộc provider. |
+| Giọng đọc | Edge TTS, OpenAI-compatible, Azure, ElevenLabs, F5-TTS, GPT-SoVITS, VieNeu pilot | Một số kênh cần server/model chạy riêng hoặc khóa API. |
+| Công cụ media | FFmpeg/ffprobe, tách giọng, ghép audio/video/SRT, căn phụ đề | FFmpeg được bundle trong bản Windows. |
 
-# Expose the authenticated UI on the local host.
-docker run -d -p 127.0.0.1:7860:7860 --env-file ../webui.env \
-  --name pyvideotrans pyvideotrans-webui
+Danh sách có thể thay đổi theo code và cấu hình. Dùng `cli.py --list providers` hoặc menu **Cài đặt nhà cung cấp** để xem dữ liệu chính xác của bản đang chạy. Không có API key, model có giấy phép chưa xác minh hay dữ liệu người dùng nào được bundle vào gói phân phối.
+
+## Trạng thái hiện tại
+
+Kiểm chứng gần nhất ngày **07/10/2026**:
+
+| Hạng mục | Trạng thái |
+| --- | --- |
+| Bộ test nguồn | **705 passed**, 1 cảnh báo ngoài dự án từ `pydub/audioop`, Python 3.12.14 |
+| Giao diện | Việt/Anh, 5 bước, trang chủ, công cụ nhanh, Kiểm tra máy |
+| Windows portable/Setup | Build và xác minh local đạt; portable chạy không cần Python trên `PATH` |
+| Vòng đời cài đặt | Cài, mở hai lần, nâng cấp cùng version, gỡ và giữ dữ liệu người dùng đạt trên developer-host |
+| Media đóng gói | STT → dịch → TTS → MP4; phụ đề cứng/mềm đã có bằng chứng local |
+| Cổng còn mở | Windows Sandbox/VM/người dùng sạch; shortcut/SmartScreen; ký số Setup |
+
+Vì các cổng trên còn mở, repository **không tuyên bố bản 4.14 là release Windows công khai hoàn tất**. Theo dõi bằng chứng và việc đang làm tại [.DHSYSTEM/TRACKER.md](.DHSYSTEM/TRACKER.md).
+
+## Kiểm thử và phát triển
+
+Chạy toàn bộ suite trong PowerShell:
+
+```powershell
+$env:QT_QPA_PLATFORM = 'offscreen'
+uv run --python 3.12.14 --locked --group dev pytest -q -p no:cacheprovider `
+  --basetemp="$env:TEMP\pyvideotrans-pytest"
 ```
 
-For persistent output and config mounts, use the file-level mounts in the [WebUI documentation](docs/webui.md).
+Tạo lại ảnh README:
 
-### 5. (Optional) NVIDIA GPU Acceleration Configuration
-
-If you have an NVIDIA graphics card, execute the following commands to install the CUDA-supported PyTorch version:
-
-```bash
-# Uninstall CPU version
-uv remove torch torchaudio
-
-# Install CUDA version (Example for CUDA 12.x)
-uv add torch==2.7 torchaudio==2.7 --index-url https://download.pytorch.org/whl/cu128
-uv add nvidia-cublas-cu12 nvidia-cudnn-cu12
+```powershell
+.\.venv\Scripts\python.exe scripts\capture_readme_screenshots.py
 ```
 
-> [AMD GPU acceleration via Whisper.NET](docs/whisper_net_setup.md)
+Script dùng Qt offscreen, nạp Segoe UI từ Windows và chỉ render dữ liệu mẫu. Hãy xem lại cả ba PNG trước khi commit.
 
----
+## Tài liệu
 
-##  Supported Channels & Models (Partial)
+- [Mục lục tài liệu](docs/README.md)
+- [Hướng dẫn cài đặt Windows](docs/huong-dan-cai-dat-windows.md)
+- [Hướng dẫn kiểm thử và sử dụng](docs/huong-dan-test-va-su-dung.md)
+- [Thiết lập môi trường phát triển](docs/dev-setup.md)
+- [Kiến trúc kỹ thuật](docs/architecture.md)
+- [Ma trận runtime](docs/runtime-matrix.md)
+- [CLI](docs/cli.md) · [WebUI](docs/webui.md) · [FAQ](docs/faq.md)
 
-| Category | Channel/Model | Description |
-| :--- | :--- | :--- |
-| **ASR (Speech Recognition)** | **Faster-Whisper** (Local) | Recommended, fast speed, high accuracy |
-| | WhisperX / Parakeet | Supports timestamp alignment & speaker diarization |
-| | Alibaba Qwen3-ASR / ByteDance Volcano | Online API, excellent for Chinese |
-| **Translation (LLM/MT)** | **DeepSeek** / ChatGPT | Supports context understanding, more natural translation |
-| | [infistar AI](https://www.infistar.cc/register?aff=9H6H7RR9&ref_source=link) | infistar - 160+ models, one Key, OpenAI compatible gateway, switch to 160+ models at any time with one Key |
-| | MiniMax AI | MiniMax M3 LLM, latest flagship model, OpenAI-compatible |
-| | Google / Microsoft | Traditional machine translation, fast speed |
-| | Ollama / M2M100 | Fully local offline translation |
-| **TTS (Speech Synthesis)** | **Edge-TTS** | Microsoft free interface, natural effect |
-| | **F5-TTS / OmniVoice / Qwen3-TTS** | Supports **Voice Cloning** |
-| | GPT-SoVITS / Index-TTS / ChatTTS | High-quality open-source TTS, requires local deployment |
-| | 302.AI / OpenAI / Azure | High-quality commercial API |
+## Dữ liệu, bảo mật và trách nhiệm sử dụng
 
----
+- Cấu hình, cache và log của bản Windows nằm trong vùng dữ liệu người dùng, không ghi vào thư mục cài đặt chỉ đọc.
+- Báo cáo **Kiểm tra máy** được thiết kế để loại khóa API, nội dung media và đường dẫn riêng tư đầy đủ.
+- Thao tác khắc phục hệ thống chỉ dùng action nằm trong allowlist và luôn yêu cầu xác nhận; ứng dụng không âm thầm cài driver GPU, CUDA hay model lớn.
+- Người dùng chịu trách nhiệm về bản quyền nội dung, điều khoản provider, chi phí/quota API và quy định pháp luật tại nơi sử dụng.
 
-##  Documentation & Support
+## Nguồn gốc và giấy phép
 
-* **Hướng dẫn tiếng Việt**: [Cách cài đặt, kiểm thử và sử dụng](docs/huong-dan-test-va-su-dung.md) | [Mục lục tài liệu](docs/README.md)
-* **Official Documentation**: [https://pyvideotrans.com](https://pyvideotrans.com) (Includes detailed tutorials, API configuration guides, FAQ)
-* **Online Q&A Community**: [https://bbs.pyvideotrans.com](https://bbs.pyvideotrans.com) (Submit error logs for automated AI analysis and answers)
-* **GitHub Wiki**: [architecture.md](docs/architecture.md) | [Add new Translator Channel](docs/dev_extend_en.md) | [cli.md](docs/cli.md) | [webui.md](docs/webui.md) | [Synchronize.md](docs/Synchronize.md) | [faq.md](docs/faq.md)
+Dự án này phát triển từ [jianchang512/pyvideotrans](https://github.com/jianchang512/pyvideotrans) và tiếp tục sử dụng nhiều dự án nguồn mở như [FFmpeg](https://github.com/FFmpeg/FFmpeg), [PySide6](https://pypi.org/project/PySide6/), [faster-whisper](https://github.com/SYSTRAN/faster-whisper), [edge-tts](https://github.com/rany2/edge-tts) và [Gradio](https://www.gradio.app/).
 
-##  Disclaimer
-
-This software is an open-source, free, non-commercial project. Users are solely responsible for any legal consequences arising from the use of this software (including but not limited to calling third-party APIs or processing copyrighted video content). Please comply with local laws and regulations and the terms of use of relevant service providers.
-
-## Acknowledgements
-
-This project mainly relies on the following open-source projects (partial):
-
-* [FFmpeg](https://github.com/FFmpeg/FFmpeg)
-* [PySide6](https://pypi.org/project/PySide6/)
-* [sherpa-onnx](https://github.com/k2-fsa/sherpa-onnx)
-* [faster-whisper](https://github.com/SYSTRAN/faster-whisper)
-* [openai-whisper](https://github.com/openai/whisper)
-* [edge-tts](https://github.com/rany2/edge-tts)
-* [F5-TTS](https://github.com/SWivid/F5-TTS)
-* [Confucius4-TTS](https://github.com/netease-youdao/Confucius4-TTS)
-* [OmniVoice](https://github.com/k2-fsa/omnivoice)
-* [CosyVoice](https://github.com/FunAudioLLM/CosyVoice)
-* [Gradio](https://www.gradio.app/) (WebUI)
-
----
-
-*Created by [jianchang512](https://github.com/jianchang512)*
-
-
+Mã nguồn được phân phối theo [GNU General Public License v3.0](LICENSE). Bản quyền và giấy phép của dependency/model đi kèm vẫn thuộc về các tác giả tương ứng.

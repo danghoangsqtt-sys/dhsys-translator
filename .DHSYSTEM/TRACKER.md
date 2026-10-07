@@ -1,6 +1,6 @@
 # Tracker
 
-- In progress: [ENH-006](requests/ENH-006.md) — rewrite the project README for the current 4.14 Vietnamese-first application, capture reproducible Qt UI screenshots, validate the documentation and publish the update to `origin/main`. This documentation task does not close ENH-005 task 5.5 or the Phase 3 clean-runner release gate.
+- Complete: [ENH-006](requests/ENH-006.md) — the root README now documents the current 4.14 Vietnamese-first application, correct GitHub clone path, desktop/CLI/WebUI workflows, distribution limits and release status. Three sanitized screenshots are rendered from the current Qt widgets by a reproducible script. Local-link/diff checks, 22 focused UI tests and all 705 Python 3.12.14 tests pass with one external `pydub/audioop` warning. ENH-005 task 5.5 and the Phase 3 clean-runner/signing gates remain open.
 
 - In progress: ENH-005 task 5.5 — the guarded developer-host simulation is `partial` after passing install, two launches, Việt/Anh frozen UI, hard/soft media, write-denied program tree, same-version upgrade, uninstall and user-data preservation without Python on PATH. A readiness boundary bug found by acceptance was repaired and the distribution rebuilt; 36 focused and 705 full tests pass with one external warning. Evidence is `.DHSYSTEM/phases/5/evidence/task-5.5-installed-smoke.json`. Windows Sandbox, a disposable VM or a clean user remains the authority for clean-machine evidence; shortcuts and SmartScreen are pending and the Setup artifact is unsigned.
 
