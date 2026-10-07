@@ -1,6 +1,6 @@
 # Tracker
 
-- In progress: [ENH-007](requests/ENH-007.md) / Phase 7 — default provider surfaces will prioritize Việt Nam/global and zero-API-cost choices, move China-focused/less common integrations behind a persisted **Show all providers** control, and replace ambiguous “Built-in” wording with cost/readiness categories. All provider IDs, credentials, saved selections and Chinese media-language support remain intact.
+- In progress: [ENH-007](requests/ENH-007.md) / Phase 7 — Task 7.1 PASS (`6df80b81`, 46 focused/regression tests). Task 7.2 is applying the shared Việt Nam/global policy to menus and combo boxes, adding a persisted **Show all providers** control and a no-API-key recommended profile. All provider IDs, credentials, saved selections and Chinese media-language support remain intact.
 
 - Complete: [ENH-006](requests/ENH-006.md) — the root README now documents the current 4.14 Vietnamese-first application, correct GitHub clone path, desktop/CLI/WebUI workflows, distribution limits and release status. Three sanitized screenshots are rendered from the current Qt widgets by a reproducible script. Local-link/diff checks, 22 focused UI tests and all 705 Python 3.12.14 tests pass with one external `pydub/audioop` warning. ENH-005 task 5.5 and the Phase 3 clean-runner/signing gates remain open.
 
