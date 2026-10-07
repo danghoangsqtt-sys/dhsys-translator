@@ -50,6 +50,7 @@ build
 pretrained_models
 runtime
 release/local/
+release/test-*/
 
 __pycache__
 .idea
