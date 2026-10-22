@@ -53,6 +53,7 @@ class BindSignalsMixin:
         self.aisendsrt.toggled.connect(self.checkbox_state_changed)
         self.rightbottom.clicked.connect(lambda : get_win('info'))
         self.statusLabel.clicked.connect(self.show_home)
+        self._attach_wizard_pages()
 
         def _setcursor():
             self.callback('set cursor...')

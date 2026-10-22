@@ -169,6 +169,29 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.page_stack.setCurrentWidget(self.wizard)
         self.toolBar.hide()
 
+    def _attach_wizard_pages(self):
+        """Fill wizard steps 1-2 once win_action exists and defaults are loaded."""
+        from videotrans.ui.wizard.adapter import MainWindowAdapter
+        from videotrans.ui.wizard.shell import STEP_OPTIONS, STEP_VIDEO
+        from videotrans.ui.wizard.step_options import OptionsStep
+        from videotrans.ui.wizard.step_video import VideoStep
+
+        self.wizard_adapter = MainWindowAdapter(self)
+        self.wizard_video = VideoStep(self.wizard_adapter)
+        self.wizard_options = OptionsStep(
+            self.wizard_adapter,
+            total_duration=self.wizard_video.total_duration_ms,
+            video_count=lambda: len(self.wizard_video.files()),
+        )
+        self.wizard.set_page(STEP_VIDEO, self.wizard_video)
+        self.wizard.set_page(STEP_OPTIONS, self.wizard_options)
+        self.wizard.set_step_validator(STEP_VIDEO, self.wizard_video.is_ready)
+        self.wizard.set_step_validator(STEP_OPTIONS, self.wizard_options.is_ready)
+        self.wizard_video.changed.connect(self.wizard.refresh_navigation)
+        self.wizard_video.changed.connect(self.wizard_options.refresh)
+        self.wizard_options.changed.connect(self.wizard.refresh_navigation)
+        self.wizard.step_changed.connect(lambda _step: self.wizard_options.refresh())
+
     def show_classic(self):
         """Return to the classic Home/workspace and remember that choice."""
         if params.get('ui_mode') != 'classic':

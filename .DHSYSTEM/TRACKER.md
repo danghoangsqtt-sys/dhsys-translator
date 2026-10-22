@@ -1,5 +1,7 @@
 # Tracker
 
+- Complete: ENH-009 task 10.2 — wizard **Bước 1** chooses videos (drag-drop, files or folders, duration/resolution, output folder) and a purpose (lồng tiếng + phụ đề / chỉ phụ đề / chỉ SRT); **Bước 2** sets languages, voice with preview, subtitle style, shows a cost summary and a scrolling **Nâng cao**. The wizard drives the classic widgets, so existing handlers and the start check see the same settings. 815 tests pass. Next: task 10.3 (Step 3 run, progress and results).
+
 - Complete: ENH-009 task 10.1 — the app now opens on a three-step **guided wizard** shell (Chọn video → Ngôn ngữ, giọng & phụ đề → Chạy & xem kết quả) with Back/Next/Start and step validation; **Giao diện cũ** returns to the classic Home and **Giao diện có hướng dẫn** in the classic sidebar comes back, both remembered in `ui_mode`. Pages are placeholders until 10.2/10.3. 800 tests pass. Next: task 10.2 (Step 1 and Step 2 pages).
 
 - Complete: ENH-009 Phase 9 — task 9.3 rebuilt `dist/sp` (SHA-256 `69A2B66EDCD11649DCBB8C0ABC95ADD68C31AAA586D3F8731B3E8AA088152F44`); the packaged result panel plays hard- and soft-subtitle MP4s, shows the caption strip, switches Original/Side-by-side and re-exports with the bundled FFmpeg in Vietnamese and English UI; core, sidebar 5/5 and dynamic menus 72/72 pass. 785 tests pass. Next: Phase 10 task 10.1 (wizard shell).

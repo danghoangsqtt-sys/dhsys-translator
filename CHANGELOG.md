@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+ENH-009 Task 10.2 fills the first two wizard steps: **Choose video** (drag and drop files or folders, duration and resolution, output folder, purpose: dubbing + subtitles, subtitles only or SRT only) and **Language, voice & subtitles** (languages, voice with preview, subtitle style, a cost summary that says when no API key is needed, and an Advanced section). The wizard works on the same settings as the classic workspace.
+
 ENH-009 Task 10.1 makes a three-step **guided mode** the start screen (Choose video → Language, voice & subtitles → Run & review) with Back/Next/Start navigation. **Classic workspace** switches back to the full interface and **Guided mode** in the classic sidebar returns; the choice is remembered. The step pages are filled in by the next tasks.
 
 ENH-009 Task 9.3 verifies the result window in the rebuilt Windows build: hard- and soft-subtitle MP4s play inside the app, compare modes and the caption strip work, and re-export runs with the bundled FFmpeg in Vietnamese and English UI.

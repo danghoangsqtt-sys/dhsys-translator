@@ -28,7 +28,7 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | 7 | ENH-007 Việt Nam/global provider visibility and free-first guidance | complete; reversible curated view, no-key profile and bilingual cost guidance; 726 tests pass |
 | 8 | ENH-009 default providers usable in Viet Nam; China-hosted and less-common clouds under Advanced | complete; 8.1–8.3 PASS; frozen candidate verified |
 | 9 | ENH-009 result screen with in-app playback, compare, re-export and history | complete; 9.1–9.3 PASS; frozen playback verified |
-| 10 | ENH-009 three-step guided wizard (default) with classic toggle and batch queue | in_progress; 10.1 PASS |
+| 10 | ENH-009 three-step guided wizard (default) with classic toggle and batch queue | in_progress; 10.1–10.2 PASS |
 | 11 | ENH-009 animated captions (karaoke, rounded box, bilingual) via ASS + FFmpeg | planned |
 
 ENH-003 is added to Phase 4. ENH-005 is active in [Phase 5](phases/5/SPEC.md) so the owner can build and share portable/installer artifacts directly without GitHub. Target product version after the pending 4.14.1 repair line: **4.15.0 (provisional)**. Phase 5 progress does not change the current `4.14` manifest or publish an artifact.
@@ -80,7 +80,7 @@ Order is deliberate: provider cleanup first, then result review (needed by the w
 | Task | Outcome | State |
 | --- | --- | --- |
 | 10.1 | Wizard shell and classic toggle | PASS |
-| 10.2 | Step 1 and Step 2 pages | planned |
+| 10.2 | Step 1 and Step 2 pages | PASS |
 | 10.3 | Step 3 progress and batch results | planned |
 | 10.4 | Label review and frozen UI acceptance | planned |
 
