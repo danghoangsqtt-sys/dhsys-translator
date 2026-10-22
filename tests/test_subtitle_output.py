@@ -222,3 +222,28 @@ def test_successful_video_task_emits_receipt_before_success(tmp_path, monkeypatc
     receipt = json.loads(events[0]["text"])
     assert receipt["video_path"] == str(video)
     assert receipt["subtitle_type"] == 1
+
+
+def test_output_receipt_adds_optional_result_panel_fields(tmp_path):
+    video = tmp_path / "translated.mp4"
+    target = tmp_path / "vi.srt"
+    audio = tmp_path / "vi.m4a"
+    for path in (video, target, audio):
+        path.write_text("fixture", encoding="utf-8")
+    base = dict(
+        subtitle_type=1,
+        output_srt=0,
+        targetdir_mp4=str(video),
+        source_sub=None,
+        target_sub=str(target),
+        target_dir=str(tmp_path),
+    )
+
+    with_audio = build_output_receipt(SimpleNamespace(**base, target_wav_output=str(audio)))
+    missing_audio = build_output_receipt(SimpleNamespace(**base, target_wav_output=str(tmp_path / "none.m4a")))
+    legacy_cfg = build_output_receipt(SimpleNamespace(**base))
+
+    assert with_audio["audio_paths"] == [str(audio)]
+    assert with_audio["target_dir"] == str(tmp_path)
+    assert missing_audio["audio_paths"] == []
+    assert legacy_cfg["audio_paths"] == []

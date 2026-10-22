@@ -4,7 +4,7 @@
   "crystallize_version": "0.8.0",
   "crystallized_at": "2026-10-22T00:00:00+07:00",
   "current_phase": 9,
-  "current_task": "9.1",
+  "current_task": "9.2",
   "status": "ENH-009 Phase 8 complete (frozen candidate verified); Phases 9–11 planned. Independent Phase 3 clean-runner and Phase 5 clean-machine/signing gates remain open.",
   "local_branch": "plan/enh-009-guided-workflow",
   "checkpoint_commit": "bb3b6f27",
@@ -148,8 +148,8 @@
       10,
       11
     ],
-    "status": "in_progress; Phase 8 complete",
-    "next": "Task 9.1 — ResultPanel with in-app playback",
+    "status": "in_progress; Phase 8 complete; 9.1 PASS",
+    "next": "Task 9.2 — compare modes, re-export and history",
     "source": "docs/brainstorm/session-2026-10-22-guided-workflow.md",
     "ui_direction": ".DHSYSTEM/ui-direction/2026-10-22-guided-workflow/",
     "constraints": [
@@ -160,7 +160,8 @@
     ],
     "task_8_1": "PASS (persisted): curated contract exact, Advanced show-all submenu, hidden-selected suffix; 50 focused / 740 full tests",
     "task_8_2": "PASS: audit 0 problems; WebUI curated-first choices with unchanged values; CLI [advanced] markers and Vietnamese voice examples; 133 focused / 748 full tests",
-    "task_8_3": "PASS: dist/sp rebuilt (sha256 8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1); core, sidebar 5/5, menus 72/72, UI vi/en with provider checks pass"
+    "task_8_3": "PASS: dist/sp rebuilt (sha256 8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1); core, sidebar 5/5, menus 72/72, UI vi/en with provider checks pass",
+    "task_9_1": "PASS: ResultPanel + ResultDialog replace the receipt message box; optional audio_paths/target_dir in receipts; 27 focused / 761 full tests; source playback probe OK"
   },
   "phase_8_candidate_sha256": "8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1"
 }

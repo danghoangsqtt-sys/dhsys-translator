@@ -50,10 +50,18 @@ def build_output_receipt(cfg) -> dict:
     if subtitle_type in BILINGUAL_SUBTITLE_TYPES:
         bilingual_order = "source_target" if int(getattr(cfg, "output_srt", 2)) == 1 else "target_source"
 
+    audio_paths = []
+    raw_audio = getattr(cfg, "target_wav_output", None)
+    if raw_audio and Path(raw_audio).exists():
+        audio_paths.append(str(Path(raw_audio)))
+
     return {
         "subtitle_type": subtitle_type,
         "video_path": video_path,
         "subtitle_paths": subtitle_paths,
         "bilingual_order": bilingual_order,
         "soft_track_requires_player": subtitle_type in SOFT_SUBTITLE_TYPES,
+        # Optional fields for the result panel; older receipts omit them.
+        "audio_paths": audio_paths,
+        "target_dir": str(getattr(cfg, "target_dir", "") or ""),
     }

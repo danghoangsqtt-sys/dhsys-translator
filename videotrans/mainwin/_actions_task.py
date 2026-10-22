@@ -381,8 +381,22 @@ class WinActionTaskMixin:
             self.update_status('end')
             self.main.retrybtn.setVisible(bool(self.retry_queue_mp4))
             if receipts:
-                QMessageBox.information(
-                    self.main,
-                    tr('output_receipt_title'),
-                    "\n\n".join(format_output_receipt(receipt) for receipt in receipts),
-                )
+                self.show_result_dialog(receipts)
+
+    def show_result_dialog(self, receipts):
+        """Open the non-modal result window with in-app playback for finished jobs."""
+        from videotrans.ui.result_panel import ResultDialog
+
+        previous = getattr(self, 'result_dialog', None)
+        if previous is not None:
+            try:
+                previous.close()
+            except RuntimeError:
+                pass
+        self.result_dialog = ResultDialog(
+            receipts, self.main, details_formatter=format_output_receipt
+        )
+        self.result_dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
+        self.result_dialog.show()
+        self.result_dialog.raise_()
+        return self.result_dialog

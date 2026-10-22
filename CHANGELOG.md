@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+ENH-009 Task 9.1 replaces the text-only completion receipt with a **Result** window: the finished video plays inside the app (play/pause, seek, volume, fullscreen, Space and arrow keys), output files are listed with sizes, and buttons open the folder, open the video in another player or start another translation. Receipts gain optional `audio_paths` and `target_dir` fields; older receipts still load.
+
 ENH-009 Task 8.1 narrows the default provider lists to services reachable from Viet Nam: online no-key services (Google, Microsoft, Edge-TTS, gTTS), OpenAI, Gemini and OpenRouter accounts, local models/services and custom endpoints. DeepSeek, Azure, DeepL, Deepgram and ElevenLabs now sit with the China-hosted clouds behind **Advanced → Show all providers**; a saved hidden provider stays selected and is labelled "(hidden)". No provider ID, credential or saved selection changes.
 
 ENH-009 Task 8.2 applies the same view outside the desktop: WebUI provider dropdowns show the default providers first and label the others "(Advanced)", `cli.py --list providers` marks them `[advanced]` with unchanged indexes, and CLI examples use a Vietnamese Edge voice. A new audit (`scripts/audit_provider_surfaces.py`) fails the test suite if a desktop provider list bypasses the visibility policy.

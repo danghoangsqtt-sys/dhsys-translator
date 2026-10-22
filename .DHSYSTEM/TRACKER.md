@@ -1,5 +1,7 @@
 # Tracker
 
+- Complete: ENH-009 task 9.1 — finished jobs now open a **Kết quả** window with in-app playback (play/pause, seek, volume, fullscreen, Space/arrow keys), the output file list, Open folder, Open in another player and Translate another video, instead of the text-only receipt box. Receipts add optional `audio_paths`/`target_dir`. 27 focused and 761 full tests pass; a real MP4 played from source. Next: task 9.2 (compare modes, re-export, history).
+
 - Complete: ENH-009 Phase 8 — task 8.3 rebuilt `dist/sp` (SHA-256 `8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1`) and the frozen core, sidebar 5/5, dynamic menus 72/72 and Vietnamese/English UI probes pass, including new provider-visibility checks (11/16/13 default rows, hidden labels, Advanced show-all). 748 tests pass. Next: Phase 9 task 9.1 (result panel).
 
 - Complete: ENH-009 task 8.2 — every desktop provider combo is confirmed registered and now guarded by `scripts/audit_provider_surfaces.py`; WebUI dropdowns put curated providers first and label the rest "(Advanced)" without changing values; `cli.py --list providers` marks `[advanced]` rows and help examples use a Vietnamese voice. 133 focused and 748 full tests pass. Next: task 8.3 (frozen rebuild and acceptance).
