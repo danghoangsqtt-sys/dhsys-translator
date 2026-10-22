@@ -6,7 +6,7 @@ State: in_progress. Request: ENH-009.
 | --- | --- | --- |
 | 10.1 Wizard shell and classic toggle | PASS | 800 full tests; real MainWindow starts on wizard and toggles ui_mode both ways |
 | 10.2 Step 1 and Step 2 pages | PASS | 815 full tests; real MainWindow probe drives classic widgets through both pages |
-| 10.3 Step 3 progress and batch results | planned | See [tasks/10.3.md](tasks/10.3.md) |
+| 10.3 Step 3 progress and batch results | in_progress | See [tasks/10.3.md](tasks/10.3.md) |
 | 10.4 Label review and frozen UI acceptance | planned | See [tasks/10.4.md](tasks/10.4.md) |
 
 Product manifest remains 4.14. Provider IDs, persisted params and Chinese media-language support are preserved.
