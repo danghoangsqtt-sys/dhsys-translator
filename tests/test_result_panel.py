@@ -348,7 +348,7 @@ def test_edit_and_reexport_runs_worker_and_loads_new_file(tmp_path):
     assert panel.title.text() == "clip-vi-2.mp4"
     assert panel.selector.count() == 2
     assert emitted and emitted[0]["video_path"] == str(new_video)
-    assert panel.message.text() == tr("result_reexport_done")
+    assert panel.reexport_status.text() == tr("result_reexport_done")
 
 
 def test_cancelled_edit_does_not_reexport(tmp_path):
@@ -377,8 +377,8 @@ def test_reexport_failure_is_reported(tmp_path):
     assert panel.wait_for_reexport(10000)
     app.processEvents()
 
-    assert tr("result_reexport_failed") in panel.message.text()
-    assert "encoder exploded" in panel.message.text()
+    assert tr("result_reexport_failed") in panel.reexport_status.text()
+    assert "encoder exploded" in panel.reexport_status.text()
     assert panel.reexport_button.isEnabled()
 
 

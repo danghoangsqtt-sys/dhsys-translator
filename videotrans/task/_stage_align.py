@@ -16,6 +16,7 @@ class AlignMixin:
         _st=time.time()
         if self._exit() or self.cfg.app_mode == 'tiqu' or not self.should_dubbing or self.ignore_align:
             return
+        self.signal(text="align", type="stage")
 
         self.signal(text=tr('duiqicaozuo'))
         self.precent += 3

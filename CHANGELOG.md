@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+ENH-009 Task 10.3 completes the wizard's **Run & review** step: start translating, follow each video's current stage and progress, stop, and watch the result right in the wizard (batches list every video). **Translate another video** returns to step 1 with the same language, voice and subtitle choices. The result window's re-export status now has its own line.
+
 ENH-009 Task 10.2 fills the first two wizard steps: **Choose video** (drag and drop files or folders, duration and resolution, output folder, purpose: dubbing + subtitles, subtitles only or SRT only) and **Language, voice & subtitles** (languages, voice with preview, subtitle style, a cost summary that says when no API key is needed, and an Advanced section). The wizard works on the same settings as the classic workspace.
 
 ENH-009 Task 10.1 makes a three-step **guided mode** the start screen (Choose video → Language, voice & subtitles → Run & review) with Back/Next/Start navigation. **Classic workspace** switches back to the full interface and **Guided mode** in the classic sidebar returns; the choice is remembered. The step pages are filled in by the next tasks.

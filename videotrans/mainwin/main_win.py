@@ -172,8 +172,9 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
     def _attach_wizard_pages(self):
         """Fill wizard steps 1-2 once win_action exists and defaults are loaded."""
         from videotrans.ui.wizard.adapter import MainWindowAdapter
-        from videotrans.ui.wizard.shell import STEP_OPTIONS, STEP_VIDEO
+        from videotrans.ui.wizard.shell import STEP_OPTIONS, STEP_RUN, STEP_VIDEO
         from videotrans.ui.wizard.step_options import OptionsStep
+        from videotrans.ui.wizard.step_run import RunStep
         from videotrans.ui.wizard.step_video import VideoStep
 
         self.wizard_adapter = MainWindowAdapter(self)
@@ -191,6 +192,38 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.wizard_video.changed.connect(self.wizard_options.refresh)
         self.wizard_options.changed.connect(self.wizard.refresh_navigation)
         self.wizard.step_changed.connect(lambda _step: self.wizard_options.refresh())
+
+        self.wizard_run = RunStep(self.wizard_adapter, purpose=self.wizard_video.purpose)
+        self.wizard.set_page(STEP_RUN, self.wizard_run)
+        self.wizard.start_requested.connect(self.wizard_run.start)
+        self.wizard_run.running_changed.connect(self.wizard.set_busy)
+        self.wizard_run.running_changed.connect(
+            lambda running: None if running else self.wizard.set_start_allowed(False)
+        )
+        self.wizard_run.translate_another.connect(self._wizard_translate_another)
+        self.wizard.step_changed.connect(self._wizard_step_changed)
+
+    def _wizard_step_changed(self, step):
+        """Leaving step 3 after a job prepares a fresh run with the listed videos."""
+        from videotrans.ui.wizard.shell import STEP_RUN
+
+        if self.wizard_run.running:
+            return
+        if step != STEP_RUN:
+            if self.wizard_run.owns_results():
+                self.wizard_run.reset_run()
+            self.wizard.set_start_allowed(True)
+            return
+        if not self.wizard_run.owns_results():
+            # The classic action clears its queue after each job; restore the wizard's list.
+            self.wizard_video.set_files(self.wizard_video.files())
+            self.wizard_run.show_ready()
+
+    def _wizard_translate_another(self):
+        """New video, same language/voice/subtitle choices."""
+        self.wizard_video.set_files([])
+        self.wizard.set_start_allowed(True)
+        self.wizard.reset()
 
     def show_classic(self):
         """Return to the classic Home/workspace and remember that choice."""

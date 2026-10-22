@@ -200,3 +200,28 @@ class MainWindowAdapter:
         handler = getattr(self.main, "show_workspace", None)
         if callable(handler):
             handler()
+
+    # --------------------------------------------------------------- jobs
+    def is_running(self) -> bool:
+        from videotrans.configure.config import app_cfg
+
+        return getattr(app_cfg, "current_status", "") == "ing"
+
+    def start_job(self) -> bool:
+        """Start through the classic check; True when it switched to running.
+
+        The classic action creates its job list on a short timer, so callers
+        read ``jobs()`` a moment later.
+        """
+        if self.action is None or self.is_running():
+            return False
+        self.action.check_start()
+        return self.is_running()
+
+    def stop_job(self):
+        if self.action is not None and self.is_running():
+            self.action.update_status("stop")
+
+    def jobs(self):
+        """(uuid, file name) for every job created by the last start."""
+        return [(item["uuid"], item["name"] or "") for item in getattr(self.action, "obj_list", []) or []]

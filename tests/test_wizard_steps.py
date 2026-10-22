@@ -323,6 +323,8 @@ def test_main_window_attaches_pages_and_validators(tmp_path):
 
     main = _main(target_index=0)
     main.wizard = WizardShell()
+    main._wizard_translate_another = lambda: MainWindow._wizard_translate_another(main)
+    main._wizard_step_changed = lambda step: MainWindow._wizard_step_changed(main, step)
     MainWindow._attach_wizard_pages(main)
 
     assert main.wizard.pages.widget(0) is main.wizard_video
@@ -338,3 +340,13 @@ def test_main_window_attaches_pages_and_validators(tmp_path):
     assert not main.wizard.next_button.isEnabled()
     main.wizard_options.target_language.setCurrentIndex(1)
     assert main.wizard.next_button.isEnabled()
+    main.wizard.next()
+    assert main.wizard.pages.widget(2) is main.wizard_run
+    assert not main.wizard_run.ready.isHidden()
+    main.win_action.queue_mp4 = []  # the classic action clears its queue after a job
+    main.wizard.back()
+    main.wizard.next()
+    assert main.win_action.queue_mp4 == main.wizard_video.files()
+    main._wizard_translate_another()
+    assert main.wizard_video.files() == []
+    assert main.wizard.current_step() == 0

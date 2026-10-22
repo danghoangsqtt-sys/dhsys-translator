@@ -14,6 +14,7 @@ class PrepareMixin:
     def prepare(self) -> None:
         _st=time.time()
         if self._exit(): return
+        self.signal(text="prepare", type="stage")
         self.signal(text=tr("Hold on a monment..."))
         Path(self.cfg.cache_folder).mkdir(parents=True, exist_ok=True)
         Path(self.cfg.target_dir).mkdir(parents=True, exist_ok=True)

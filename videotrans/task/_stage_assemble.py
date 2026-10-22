@@ -36,6 +36,7 @@ class AssembleMixin:
         _st=time.time()
         if self._exit() or self.is_audio_trans or self.cfg.app_mode == 'tiqu' or not self.should_hebing:
             return
+        self.signal(text="assemble", type="stage")
         self.precent = self.precent + 3 if self.precent < 95 else self.precent
         self.signal(text=tr('kaishihebing'))
         self._join_video_audio_srt()

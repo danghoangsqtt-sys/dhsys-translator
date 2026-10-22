@@ -50,6 +50,8 @@ class WizardShell(QWidget):
         self._validators: Dict[int, Callable[[], bool]] = {}
         self._visited = {STEP_VIDEO}
         self._current = STEP_VIDEO
+        self._busy = False
+        self._start_allowed = True
 
         root = QVBoxLayout(self)
         root.setContentsMargins(22, 18, 22, 18)
@@ -161,7 +163,22 @@ class WizardShell(QWidget):
             return True
         return all(self.step_ready(step) for step in range(index))
 
+    def set_busy(self, busy: bool):
+        """Lock navigation while a job runs; the run page owns Stop."""
+        self._busy = bool(busy)
+        self.refresh_navigation()
+
+    def is_busy(self) -> bool:
+        return self._busy
+
+    def set_start_allowed(self, allowed: bool):
+        """Hide Start after a finished job until the user prepares a new one."""
+        self._start_allowed = bool(allowed)
+        self.refresh_navigation()
+
     def go_to(self, index: int) -> bool:
+        if self._busy and index != self.current_step():
+            return False
         if not 0 <= index < self.pages.count() or not self.can_reach(index):
             self.refresh_navigation()
             return False
@@ -184,7 +201,7 @@ class WizardShell(QWidget):
         self.go_to(STEP_VIDEO)
 
     def _request_start(self):
-        if self.current_step() == STEP_RUN and self.can_start():
+        if self.current_step() == STEP_RUN and self.can_start() and not self._busy and self._start_allowed:
             self.start_requested.emit()
 
     def can_start(self) -> bool:
@@ -193,16 +210,19 @@ class WizardShell(QWidget):
     def refresh_navigation(self):
         current = self.current_step()
         last = self.pages.count() - 1
-        self.back_button.setEnabled(current > 0)
+        busy = self._busy
+        self.back_button.setEnabled(current > 0 and not busy)
         self.next_button.setVisible(current < last)
-        self.next_button.setEnabled(current < last and self.step_ready(current))
-        self.start_button.setVisible(current == last)
-        self.start_button.setEnabled(current == last and self.can_start())
+        self.next_button.setEnabled(current < last and self.step_ready(current) and not busy)
+        startable = current == last and not busy and self._start_allowed
+        self.start_button.setVisible(startable)
+        self.start_button.setEnabled(startable and self.can_start())
+        self.classic_button.setEnabled(not busy)
         for index, button in enumerate(self.step_buttons):
             state = "active" if index == current else ("done" if index in self._visited and index < current else "todo")
             button.setChecked(index == current)
             button.setProperty("stepState", state)
-            button.setEnabled(self.can_reach(index))
+            button.setEnabled(self.can_reach(index) and not busy)
             button.style().unpolish(button)
             button.style().polish(button)
 

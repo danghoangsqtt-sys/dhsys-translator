@@ -1,5 +1,7 @@
 # Tracker
 
+- Complete (UI): ENH-009 task 10.3 — wizard **Bước 3** starts jobs through the classic check, shows each video's stage (from a new `stage` task message), progress and log, offers **Dừng**, and embeds the result panel when done; **Dịch video khác** returns to Step 1. A real-signal `MainWindow` probe found and fixed four issues. 830 tests pass. Pending: one real media job from the wizard (needs model download + online services, awaiting owner approval). Next: task 10.4.
+
 - Complete: ENH-009 task 10.2 — wizard **Bước 1** chooses videos (drag-drop, files or folders, duration/resolution, output folder) and a purpose (lồng tiếng + phụ đề / chỉ phụ đề / chỉ SRT); **Bước 2** sets languages, voice with preview, subtitle style, shows a cost summary and a scrolling **Nâng cao**. The wizard drives the classic widgets, so existing handlers and the start check see the same settings. 815 tests pass. Next: task 10.3 (Step 3 run, progress and results).
 
 - Complete: ENH-009 task 10.1 — the app now opens on a three-step **guided wizard** shell (Chọn video → Ngôn ngữ, giọng & phụ đề → Chạy & xem kết quả) with Back/Next/Start and step validation; **Giao diện cũ** returns to the classic Home and **Giao diện có hướng dẫn** in the classic sidebar comes back, both remembered in `ui_mode`. Pages are placeholders until 10.2/10.3. 800 tests pass. Next: task 10.2 (Step 1 and Step 2 pages).

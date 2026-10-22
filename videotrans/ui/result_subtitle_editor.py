@@ -77,7 +77,7 @@ class ResultSubtitleEditor(QDialog):
         layout.addWidget(self.status)
 
         self.buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Save | QDialogButtonBox.StandardButton.Cancel)
-        self.buttons.button(QDialogButtonBox.StandardButton.Save).setText(tr("result_save_and_reexport"))
+        self.buttons.button(QDialogButtonBox.StandardButton.Save).setText(tr("result_save_and_reexport").replace("&", "&&"))
         self.buttons.accepted.connect(self.save_and_accept)
         self.buttons.rejected.connect(self.reject)
         layout.addWidget(self.buttons)

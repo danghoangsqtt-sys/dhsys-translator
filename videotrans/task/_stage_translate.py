@@ -14,6 +14,7 @@ class TranslateMixin:
     def trans(self) -> None:
         _st=time.time()
         if self._exit() or not self.should_trans: return
+        self.signal(text="trans", type="stage")
 
         self.precent += 3
         self.signal(text=tr('starttrans'))

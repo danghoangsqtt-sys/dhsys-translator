@@ -21,6 +21,7 @@ class RecognMixin:
         _st=time.time()
         if self._exit(): return
         if not self.should_recogn: return
+        self.signal(text="recogn", type="stage")
         self.precent += 3
         self.signal(text=tr("kaishishibie"))
         if vail_file(self.cfg.source_sub):

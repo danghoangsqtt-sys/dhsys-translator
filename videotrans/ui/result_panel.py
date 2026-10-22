@@ -256,6 +256,13 @@ class ResultPanel(QWidget):
         self.message.hide()
         root.addWidget(self.message)
 
+        # Re-export progress has its own line so asynchronous playback errors cannot hide it.
+        self.reexport_status = QLabel()
+        self.reexport_status.setObjectName("resultReexportStatus")
+        self.reexport_status.setWordWrap(True)
+        self.reexport_status.hide()
+        root.addWidget(self.reexport_status)
+
         controls = QHBoxLayout()
         self.play_button = QPushButton()
         self.play_button.setObjectName("resultPlay")
@@ -309,7 +316,7 @@ class ResultPanel(QWidget):
         self.open_external_button.setObjectName("resultOpenExternal")
         self.open_external_button.clicked.connect(self.open_external)
         actions.addWidget(self.open_external_button)
-        self.reexport_button = QPushButton(tr("result_edit_reexport"))
+        self.reexport_button = QPushButton(tr("result_edit_reexport").replace("&", "&&"))
         self.reexport_button.setObjectName("resultReexport")
         self.reexport_button.clicked.connect(self.edit_and_reexport)
         actions.addWidget(self.reexport_button)
@@ -563,8 +570,8 @@ class ResultPanel(QWidget):
         self._worker.succeeded.connect(self._on_reexport_succeeded)
         self._worker.failed.connect(self._on_reexport_failed)
         self._worker.finished.connect(self._update_reexport_button)
-        self.message.setText(tr("result_reexporting"))
-        self.message.show()
+        self.reexport_status.setText(tr("result_reexporting"))
+        self.reexport_status.show()
         self._update_reexport_button()
         self._worker.start()
         return self._worker
@@ -574,13 +581,13 @@ class ResultPanel(QWidget):
         self._receipts = merge_receipts([receipt], self._receipts)
         self._rebuild_selector(0)
         self._show_receipt(self._receipts[0])
-        self.message.setText(tr("result_reexport_done"))
-        self.message.show()
+        self.reexport_status.setText(tr("result_reexport_done"))
+        self.reexport_status.show()
         self.reexported.emit(dict(receipt))
 
     def _on_reexport_failed(self, error: str):
-        self.message.setText(tr("result_reexport_failed") + f"\n{tr(error)}")
-        self.message.show()
+        self.reexport_status.setText(tr("result_reexport_failed") + f"\n{tr(error)}")
+        self.reexport_status.show()
 
     # -------------------------------------------------------------- actions
     def open_folder(self):

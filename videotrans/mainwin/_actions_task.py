@@ -400,6 +400,11 @@ class WinActionTaskMixin:
             append_results(receipts)
         except Exception as e:
             logger.warning(f'Result history could not be updated: {e}')
+        wizard_run = getattr(self.main, 'wizard_run', None)
+        if wizard_run is not None and wizard_run.owns_results(receipts):
+            # Jobs started from the wizard show their results inside step 3.
+            wizard_run.show_results(receipts, recent)
+            return wizard_run
         self.result_dialog = ResultDialog(
             receipts, self.main, details_formatter=format_output_receipt,
             recent=recent, record_history=append_results,

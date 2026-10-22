@@ -20,6 +20,7 @@ class DubbingMixin:
         if self._exit() or self.cfg.app_mode == 'tiqu':
             return
         if self.should_dubbing:
+            self.signal(text="dubbing", type="stage")
             self.signal(text=tr('kaishipeiyin'))
         self.precent += 3
         self._tts()
