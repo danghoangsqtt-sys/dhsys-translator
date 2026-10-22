@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiểu phụ đề động</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><span class="brand">pyVideoTrans-DH</span><span class="spacer"></span><a href="step2-options.html">← Về bước 2</a></header>
+  <main>
+    <section>
+      <h1>Kiểu phụ đề động</h1>
+      <p class="muted">Xem trước bằng CSS để duyệt hướng. Bản thật sinh file ASS (thẻ <code>\k</code>, <code>\t</code>, <code>\fad</code>, BorderStyle 3) rồi burn bằng FFmpeg/libass có sẵn; không cần Node hay Remotion.</p>
+    </section>
+    <section class="caption-grid">
+      <div class="card">
+        <div class="player"><div class="cap karaoke"><span class="w">Xin</span><span class="w">chào</span><span class="w">các</span><span class="w">bạn</span><span class="w">nhé</span></div></div>
+        <h3 style="margin-top:10px">Karaoke từng từ</h3>
+        <p class="muted small">Cả câu hiện; từ đang đọc đổi màu vàng và phóng nhẹ. Thời gian từ lấy từ word timestamps khi có, nếu không thì chia theo độ dài âm tiết trong đoạn TTS.</p>
+      </div>
+      <div class="card">
+        <div class="player"><div class="cap box"><span>Hôm nay ta tìm hiểu FreeRTOS</span></div></div>
+        <h3 style="margin-top:10px">Câu nền bo góc</h3>
+        <p class="muted small">Nền tối mờ, fade vào/ra 150 ms. Dễ đọc trên mọi nền video.</p>
+      </div>
+      <div class="card">
+        <div class="player"><div class="cap bi"><div class="main">Đây là bộ lập lịch tác vụ</div><div class="src">This is the task scheduler</div></div></div>
+        <h3 style="margin-top:10px">Song ngữ động</h3>
+        <p class="muted small">Dòng Việt lớn có hiệu ứng (karaoke hoặc nền); dòng nguồn nhỏ, tĩnh, phía dưới.</p>
+      </div>
+    </section>
+    <section class="card soft">
+      <h2>Tùy chỉnh chung</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
+        <div class="field"><label>Font</label><select><option>Be Vietnam Pro (kèm theo app)</option></select></div>
+        <div class="field"><label>Cỡ chữ</label><select><option>Tự động theo độ phân giải</option></select></div>
+        <div class="field"><label>Màu nhấn</label><select><option>Vàng #FFD84A</option></select></div>
+        <div class="field"><label>Vị trí</label><select><option>Dưới · cách lề 8%</option></select></div>
+      </div>
+      <p class="muted small">Font phải hỗ trợ đủ dấu tiếng Việt và được đóng gói trong bản Windows để libass không thay font.</p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

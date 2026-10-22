@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bước 2 · Ngôn ngữ và phụ đề</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><span class="brand">pyVideoTrans-DH</span><span class="spacer"></span><a href="providers.html">⚙ Nhà cung cấp</a><a href="../index.html">Tất cả công cụ</a></header>
+  <nav class="stepper" aria-label="Các bước">
+    <a class="step done" href="step1-video.html"><b>✓</b> Chọn video</a>
+    <a class="step active" href="step2-options.html"><b>2</b> Ngôn ngữ &amp; phụ đề</a>
+    <a class="step" href="step3-result.html"><b>3</b> Chạy &amp; xem kết quả</a>
+  </nav>
+  <main class="two-col">
+    <section style="display:grid;gap:16px">
+      <div class="card">
+        <h2>Ngôn ngữ</h2>
+        <div style="display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:end">
+          <div class="field"><label>Video đang nói</label><select><option>Tự nhận dạng (Tiếng Anh)</option></select></div>
+          <span style="padding-bottom:20px">→</span>
+          <div class="field"><label>Dịch sang</label><select><option>Tiếng Việt</option></select></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Giọng đọc</h2>
+        <div class="tiles">
+          <div class="tile selected"><h3>Hoài My <span class="badge">Miễn phí</span></h3><p class="muted small">Nữ · Edge-TTS · cần mạng</p><a href="#">▶ Nghe thử</a></div>
+          <div class="tile"><h3>Nam Minh <span class="badge">Miễn phí</span></h3><p class="muted small">Nam · Edge-TTS · cần mạng</p><a href="#">▶ Nghe thử</a></div>
+          <div class="tile"><h3>Hải Đăng <span class="badge local">Chạy máy</span></h3><p class="muted small">VieNeu · cần server local</p><a href="#">▶ Nghe thử</a></div>
+          <div class="tile"><h3>Không lồng tiếng</h3><p class="muted small">Giữ âm thanh gốc</p></div>
+        </div>
+      </div>
+      <div class="card">
+        <h2>Phụ đề</h2>
+        <div class="tiles">
+          <div class="tile selected"><h3>Karaoke từng từ</h3><p class="muted small">Từ đang đọc sáng lên</p></div>
+          <div class="tile"><h3>Câu nền bo góc</h3><p class="muted small">Gọn, dễ đọc</p></div>
+          <div class="tile"><h3>Song ngữ</h3><p class="muted small">Việt lớn, nguồn nhỏ</p></div>
+          <div class="tile"><h3>Cổ điển / Không có</h3><p class="muted small">Kiểu cũ hoặc bỏ phụ đề</p></div>
+        </div>
+        <p class="small" style="margin-top:8px"><a href="captions.html">Xem trước các kiểu →</a></p>
+      </div>
+      <details class="advanced">
+        <summary>Nâng cao (nhận dạng, dịch, căn thời gian, video)</summary>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+          <div class="field"><label>Nhận dạng giọng nói</label><select><option>faster-whisper · large-v3-turbo (chạy máy)</option></select></div>
+          <div class="field"><label>Dịch</label><select><option>Google (miễn phí)</option></select></div>
+          <div class="field"><label>Tách giọng nền</label><select><option>Tắt</option></select></div>
+          <div class="field"><label>Căn tốc độ giọng</label><select><option>Tự động</option></select></div>
+        </div>
+        <p class="muted small">Đây là toàn bộ tùy chọn cũ, giữ nguyên tên trường params/settings.</p>
+      </details>
+    </section>
+    <aside class="card soft">
+      <h2>Tóm tắt</h2>
+      <table>
+        <tr><th>Video</th><td>freertos-intro.mp4</td></tr>
+        <tr><th>Ngôn ngữ</th><td>Anh → Việt</td></tr>
+        <tr><th>Giọng</th><td>Hoài My</td></tr>
+        <tr><th>Phụ đề</th><td>Karaoke, in cứng vào hình</td></tr>
+        <tr><th>Chi phí</th><td><span class="badge">0 đ · không cần API key</span></td></tr>
+        <tr><th>Ước tính</th><td>~9 phút (CPU)</td></tr>
+      </table>
+    </aside>
+  </main>
+  <footer class="actions"><a class="btn" href="step1-video.html">← Quay lại</a><a class="btn primary" href="step3-result.html">Bắt đầu dịch</a></footer>
+</div>
+</body>
+</html>

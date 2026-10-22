@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bước 1 · Chọn video</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><span class="brand">pyVideoTrans-DH</span><span class="spacer"></span><a href="providers.html">⚙ Nhà cung cấp</a><a href="../index.html">Tất cả công cụ</a></header>
+  <nav class="stepper" aria-label="Các bước">
+    <a class="step active" href="step1-video.html"><b>1</b> Chọn video</a>
+    <a class="step" href="step2-options.html"><b>2</b> Ngôn ngữ &amp; phụ đề</a>
+    <a class="step" href="step3-result.html"><b>3</b> Chạy &amp; xem kết quả</a>
+  </nav>
+  <main class="two-col">
+    <section style="display:grid;gap:16px">
+      <div class="drop">
+        <div class="icon">🎬</div>
+        <h2>Kéo video vào đây</h2>
+        <p class="muted">hoặc <a href="#">chọn file</a> · MP4, MKV, MOV, AVI · có thể chọn nhiều video</p>
+      </div>
+      <div class="file-row">
+        <div class="thumb" aria-hidden="true"></div>
+        <div style="flex:1">
+          <b>freertos-intro.mp4</b>
+          <div class="muted small">12:48 · 1920×1080 · Âm thanh tiếng Anh (tự nhận dạng)</div>
+        </div>
+        <a class="btn" href="#">Xóa</a>
+      </div>
+    </section>
+    <aside class="card soft">
+      <h2>Bạn muốn làm gì?</h2>
+      <div class="tiles" style="grid-template-columns:1fr">
+        <div class="tile selected"><h3>Lồng tiếng Việt + phụ đề</h3><p class="muted small">Nhận dạng → dịch → đọc giọng Việt → ghép phụ đề vào video.</p></div>
+        <div class="tile"><h3>Chỉ phụ đề tiếng Việt</h3><p class="muted small">Giữ giọng gốc, thêm phụ đề đã dịch.</p></div>
+        <div class="tile"><h3>Chỉ tạo file SRT</h3><p class="muted small">Không xuất video; dùng để chỉnh tay sau.</p></div>
+      </div>
+      <p class="muted small" style="margin-top:10px">Mục đích chỉ đặt sẵn các lựa chọn ở bước 2; bạn vẫn đổi được.</p>
+    </aside>
+  </main>
+  <footer class="actions"><span class="muted">Thư mục lưu: Videos\pyVideoTrans · <a href="#">đổi</a></span><a class="btn primary" href="step2-options.html">Tiếp tục →</a></footer>
+</div>
+</body>
+</html>

@@ -2,17 +2,17 @@
   "project": "pyVideoTrans",
   "version": "4.14",
   "crystallize_version": "0.8.0",
-  "crystallized_at": "2026-10-05T00:00:00+07:00",
-  "current_phase": 7,
-  "current_task": "complete",
-  "status": "ENH-007 Phase 7 complete locally: reversible curated provider visibility, persisted show-all, no-key 0/0/0 profile and bilingual cost/readiness guidance. 75 focused and 726 full tests pass. Independent Phase 3 clean-runner and Phase 5 clean-machine/signing gates remain open.",
+  "crystallized_at": "2026-10-22T00:00:00+07:00",
+  "current_phase": 8,
+  "current_task": "8.1",
+  "status": "ENH-009 crystallized into Phases 8–11 (planned). Phase 7 complete. Independent Phase 3 clean-runner and Phase 5 clean-machine/signing gates remain open.",
   "local_branch": "main",
   "checkpoint_commit": "bb3b6f27",
   "source_plan": "docs/PLAN.md",
   "source_spec": "docs/SPEC.md",
   "repair_plan": "docs/BUGFIX-PLAN.md",
   "planned_patch_version": "4.14.1",
-  "updated_at": "2026-10-06",
+  "updated_at": "2026-10-22",
   "task_3_3_current_candidate": "dist/sp/sp.exe",
   "task_3_3_current_candidate_sha256": "A4C7D607B80C15CF04A023B94BA32A2CF4E31BA8F39B2BDBBA889F79B8B18F25",
   "task_3_3_evidence_commit": "5a6511ad",
@@ -20,7 +20,9 @@
   "task_3_3_local_clean_checkout": "detached worktree at 39c4c023; CPython 3.12.13; uv locked sync 424 resolved/392 installed; 104 focused and 658 full tests passed; workflow YAML parse and git diff --check passed",
   "task_3_3_frozen_ui_revalidation": "current dist/sp core smoke plus Vietnamese/English UI probes pass; 5/5 sidebar tools and 71/71 current dynamic-menu entries open; 117/117 related source UI tests pass; historical 72nd entry was standalone lawalert consolidated into About/legal",
   "task_3_3_local_environment_note": "Docker Desktop daemon currently unavailable; prior successful local Docker auth/host-port evidence remains retained; GitHub clean-runner intentionally deferred by user request",
-  "task_3_3_blockers": ["Build Windows Candidate GitHub Actions workflow has zero runs; clean-runner release gate is unproven"],
+  "task_3_3_blockers": [
+    "Build Windows Candidate GitHub Actions workflow has zero runs; clean-runner release gate is unproven"
+  ],
   "planned_local_distribution": {
     "request": "ENH-005",
     "phase": 5,
@@ -50,13 +52,23 @@
     "task_5_5_evidence": ".DHSYSTEM/phases/5/evidence/task-5.5-installed-smoke.json",
     "task_5_5_local_result": "partial on DeveloperHost: install, two core launches, Vietnamese/English frozen UI, hard/soft media, read-only install tree, same-version upgrade, uninstall and user-data preservation pass with Python absent from PATH",
     "task_5_5_tests": "36 focused contract/readiness and 705 full Python 3.12 tests pass; one external pydub/audioop deprecation warning",
-    "task_5_5_blockers": ["Windows Sandbox/disposable VM/clean-user lifecycle and shortcuts are unproven", "Setup Authenticode status is NotSigned; SmartScreen behavior is unproven"],
+    "task_5_5_blockers": [
+      "Windows Sandbox/disposable VM/clean-user lifecycle and shortcuts are unproven",
+      "Setup Authenticode status is NotSigned; SmartScreen behavior is unproven"
+    ],
     "next": "Run Task 5.5 in Windows Sandbox, a disposable VM or a clean Windows user; verify shortcuts and unsigned SmartScreen behavior before PASS"
   },
   "planned_product_direction": {
     "request": "ENH-004",
     "phase": 4,
-    "tasks": ["4.13", "4.14", "4.15", "4.16", "4.17", "4.18"],
+    "tasks": [
+      "4.13",
+      "4.14",
+      "4.15",
+      "4.16",
+      "4.17",
+      "4.18"
+    ],
     "status": "tasks 4.13-4.18 PASS. Task 4.18 source/frozen Windows/media acceptance is complete: 72 focused, 349 related and 658 full Python 3.12.14 tests pass; frozen core/UI/sidebar/dynamic-menu smoke passes; hard/soft subtitle media evidence passes. No provider was deleted, renumbered or hidden; Local is accepted as local-only only with a loopback Local LLM endpoint, while Gemini/OpenRouter remain remote/off-device. Chinese media-language support remains unchanged. Phase 3 release gates remain independently open.",
     "continuation_repository": "https://github.com/danghoangsqtt-sys/dhsys-translator",
     "continuation_prompt": "docs/HANDOFF-DESKTOP-AI.md",
@@ -112,7 +124,12 @@
     ],
     "status": "tasks 4.1-4.12 and ENH-003 verified and persisted; Phase 4 is complete; Phase 3 release gates remain open",
     "planned_request": "ENH-003",
-    "planned_tasks": ["4.9", "4.10", "4.11", "4.12"],
+    "planned_tasks": [
+      "4.9",
+      "4.10",
+      "4.11",
+      "4.12"
+    ],
     "planned_target_version": "4.15.0 after pending 4.14.1 repair release",
     "evidence": ".DHSYSTEM/phases/4/PHASE-STATE.md",
     "candidate_path": "dist/sp/sp.exe",
@@ -122,5 +139,24 @@
     "localization_candidate_sha256": "9EFE5C00A69E182D896F0B91A5F8B28FF0A7F2EE49B284DAC6962939821ECB6",
     "localization_source_tests": "576 passed, 1 external warning",
     "localization_media_flow": "packaged zh-cn to vi STT, Microsoft fallback translation, Edge TTS 2/2, H.264/AAC/subtitle MP4 passed"
+  },
+  "planned_guided_workflow": {
+    "request": "ENH-009",
+    "phases": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "status": "planned",
+    "next": "Task 8.1 — narrow curated provider policy",
+    "source": "docs/brainstorm/session-2026-10-22-guided-workflow.md",
+    "ui_direction": ".DHSYSTEM/ui-direction/2026-10-22-guided-workflow/",
+    "constraints": [
+      "presentation-only provider hiding; IDs unchanged",
+      "subtitle_type enum unchanged; new caption_style and ui_mode params",
+      "no Node/Chromium/Remotion",
+      "manifest stays 4.14 until release gates pass"
+    ]
   }
 }

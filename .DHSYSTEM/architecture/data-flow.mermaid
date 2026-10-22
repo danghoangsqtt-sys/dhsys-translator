@@ -11,7 +11,14 @@ flowchart TD
     SubtitleMode -->|Hard| Burn[Burn into video pixels]
     SubtitleMode -->|Soft| Mux[Mux subtitle stream]
     SubtitleMode -->|None| NoSub[Explicit no-subtitle output]
+    SubtitleMode -->|Hard + animated style| Caption[Caption style builder: word timing + ASS]
+    Caption --> Burn
+    Caption --> AssFile[Styled .ass beside SRT]
     Synthesize --> Assemble[FFmpeg assembly]
     Burn --> Assemble
     Mux --> Assemble
     NoSub --> Assemble
+    Assemble --> Receipt[Output receipt]
+    Receipt --> Result[Result panel: playback, compare, history]
+    Result -->|Edit subtitles| ReExport[Assemble-only re-export]
+    ReExport --> Assemble

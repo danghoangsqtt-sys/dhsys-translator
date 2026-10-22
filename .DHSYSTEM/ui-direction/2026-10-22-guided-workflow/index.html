@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guided Workflow — UI Direction</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><span class="brand">pyVideoTrans-DH</span><span class="muted">UI Direction · 2026-10-22</span></header>
+  <main>
+    <section>
+      <h1>Luồng dịch video có hướng dẫn</h1>
+      <p class="muted">Mockup định hướng bố cục cho bản Qt. Không phải mã triển khai; mọi action, params và provider ID hiện có được giữ nguyên.</p>
+    </section>
+    <section class="hub-list">
+      <a href="pages/step1-video.html"><h2>Bước 1 · Chọn video</h2><p class="muted">Kéo thả, xem thông tin file, chọn mục đích.</p></a>
+      <a href="pages/step2-options.html"><h2>Bước 2 · Ngôn ngữ, giọng, phụ đề</h2><p class="muted">Ba lựa chọn chính; mọi thứ kỹ thuật nằm trong "Nâng cao".</p></a>
+      <a href="pages/step3-result.html"><h2>Bước 3 · Chạy &amp; xem kết quả</h2><p class="muted">Tiến độ theo giai đoạn, trình phát trong app, so sánh gốc/dịch.</p></a>
+      <a href="pages/captions.html"><h2>Kiểu phụ đề động</h2><p class="muted">Karaoke từng từ, câu nền bo góc, song ngữ động (ASS + FFmpeg).</p></a>
+      <a href="pages/providers.html"><h2>Cài đặt nhà cung cấp</h2><p class="muted">Chỉ hiện nhóm dùng được ở Việt Nam; cloud Trung Quốc bị ẩn.</p></a>
+    </section>
+    <section class="note">
+      <b>Thứ tự triển khai đã chốt:</b> Provider → Màn hình kết quả → Wizard 3 bước → Phụ đề động.
+    </section>
+  </main>
+</div>
+</body>
+</html>

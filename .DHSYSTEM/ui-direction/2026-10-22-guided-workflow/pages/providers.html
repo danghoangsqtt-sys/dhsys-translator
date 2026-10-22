@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cài đặt nhà cung cấp</title>
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="app">
+  <header class="topbar"><span class="brand">pyVideoTrans-DH</span><span class="spacer"></span><a href="step1-video.html">← Về luồng dịch</a></header>
+  <main>
+    <section>
+      <h1>Nhà cung cấp</h1>
+      <p class="muted">Chỉ hiện dịch vụ dùng được ở Việt Nam. Mặc định chạy được ngay, không cần API key.</p>
+    </section>
+    <section class="card">
+      <h2>Dịch phụ đề</h2>
+      <table>
+        <tr><th>Dịch vụ</th><th>Loại</th><th>Trạng thái</th><th></th></tr>
+        <tr><td><b>Google Dịch</b></td><td><span class="badge">Miễn phí</span></td><td>✓ Đang dùng</td><td></td></tr>
+        <tr><td>Microsoft Translator</td><td><span class="badge">Miễn phí</span></td><td class="muted">Dự phòng tự động</td><td></td></tr>
+        <tr><td>Gemini</td><td><span class="badge key">API key</span></td><td class="muted">Chưa nhập key</td><td><a class="btn" href="#">Nhập key</a></td></tr>
+        <tr><td>OpenAI / ChatGPT</td><td><span class="badge key">API key</span></td><td class="muted">Chưa nhập key</td><td><a class="btn" href="#">Nhập key</a></td></tr>
+        <tr><td>OpenRouter</td><td><span class="badge key">API key</span></td><td class="muted">Chưa nhập key</td><td><a class="btn" href="#">Nhập key</a></td></tr>
+        <tr><td>LLM chạy máy (Ollama, LM Studio)</td><td><span class="badge local">Chạy máy</span></td><td class="muted">Không tìm thấy server</td><td><a class="btn" href="#">Cấu hình</a></td></tr>
+      </table>
+    </section>
+    <section class="card">
+      <h2>Nhận dạng giọng nói</h2>
+      <table>
+        <tr><td><b>faster-whisper</b></td><td><span class="badge local">Chạy máy</span></td><td>✓ Đang dùng · large-v3-turbo</td></tr>
+        <tr><td>Gemini / OpenAI Whisper API</td><td><span class="badge key">API key</span></td><td class="muted">Chưa nhập key</td></tr>
+      </table>
+    </section>
+    <section class="card">
+      <h2>Giọng đọc</h2>
+      <table>
+        <tr><td><b>Edge-TTS</b></td><td><span class="badge">Miễn phí</span></td><td>✓ Đang dùng</td></tr>
+        <tr><td>VieNeu, F5-TTS, Piper…</td><td><span class="badge local">Chạy máy</span></td><td class="muted">Tùy chọn</td></tr>
+        <tr><td>OpenAI TTS, Gemini TTS</td><td><span class="badge key">API key</span></td><td class="muted">Chưa nhập key</td></tr>
+      </table>
+    </section>
+    <details class="advanced">
+      <summary>Nâng cao · dịch vụ ẩn</summary>
+      <p class="muted" style="margin-top:8px">Các dịch vụ cloud Trung Quốc (Baidu, Tencent, Alibaba/Qwen, Volcengine/Doubao, Zhipu, MiniMax, SiliconFlow, DeepSeek, Xiaomi…) và các API ít dùng bị ẩn khỏi mọi danh sách. Bật lại tại đây nếu thật sự cần; cấu hình cũ và ID không bị xóa.</p>
+      <label><input type="checkbox"> Hiện dịch vụ ẩn trong danh sách chọn</label>
+    </details>
+  </main>
+</div>
+</body>
+</html>

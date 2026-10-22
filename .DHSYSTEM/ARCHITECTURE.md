@@ -41,13 +41,29 @@ flowchart TD
     SubtitleMode -->|Hard| Burn[Burn into video pixels]
     SubtitleMode -->|Soft| Mux[Mux subtitle stream]
     SubtitleMode -->|None| NoSub[Explicit no-subtitle output]
+    SubtitleMode -->|Hard + animated style| Caption[Caption style builder: word timing + ASS]
+    Caption --> Burn
+    Caption --> AssFile[Styled .ass beside SRT]
     Synthesize --> Assemble[FFmpeg assembly]
     Burn --> Assemble
     Mux --> Assemble
     NoSub --> Assemble
+    Assemble --> Receipt[Output receipt]
+    Receipt --> Result[Result panel: playback, compare, history]
+    Result -->|Edit subtitles| ReExport[Assemble-only re-export]
+    ReExport --> Assemble
 ```
 
 Diagram source: `.DHSYSTEM/architecture/data-flow.mermaid`.
+
+## ENH-009 extension — guided workflow, result review and animated captions
+
+Source: `docs/brainstorm/session-2026-10-22-guided-workflow.md`; UI direction `.DHSYSTEM/ui-direction/2026-10-22-guided-workflow/` (pages: `step1-video`, `step2-options`, `step3-result`, `captions`, `providers`).
+
+- **Provider visibility (Phase 8):** the curated set in `ui/provider_visibility.py` narrows to online-no-key, OpenAI/Gemini/OpenRouter, local and custom endpoints; the show-all switch moves to Advanced. Presentation-only.
+- **Result panel (Phase 9):** `ui/result_panel.py` consumes `output_receipt` only; Qt Multimedia playback; assemble-only re-export; receipt history JSON in user data.
+- **Guided wizard (Phase 10):** `ui/wizard/` routes inside `WorkspaceShell`, writes existing params and starts jobs through `win_action.check_start`; `ui_mode` toggles back to the classic workspace.
+- **Animated captions (Phase 11):** pure `util/caption_styles.py` builds ASS (`\kf`, BorderStyle 3, `\fad`) from final SRT cues; new `caption_style` param; hard subtitles only; bundled Be Vietnam Pro font passed to libass via `fontsdir`. No Node/Remotion.
 
 ## Component decisions
 
@@ -56,6 +72,8 @@ Diagram source: `.DHSYSTEM/architecture/data-flow.mermaid`.
 | Subtitle editor | Repair current `QTableWidget` dialogs | Lowest-risk fix; current data contracts already exist |
 | Provider profiles | Mapping layer over current registries/params | Avoids persisted enum breakage and keeps advanced providers reachable |
 | TTS pronunciation | Separate `tts_text` preparation service | Protects subtitle fidelity and makes glossary behavior testable |
+| Animated captions | ASS + bundled FFmpeg/libass | Remotion-style word highlight without Node/Chromium in the Windows package |
+| Result review | Qt Multimedia `ResultPanel` fed by `output_receipt` | Already bundled; keeps task internals out of widgets |
 | VieNeu | External loopback OpenAI-compatible pilot | Avoids dependency conflicts and keeps packaging unchanged during evaluation |
 | Subtitle default | Hard subtitle for fresh main workflow | Matches user expectation that captions are immediately visible |
 | Provider removal | Deferred until audit/migration task 4.17 | Prevents configuration loss and unsupported assumptions about local models |
@@ -65,7 +83,7 @@ Diagram source: `.DHSYSTEM/architecture/data-flow.mermaid`.
 | Diagram | Status | Rationale |
 | --- | --- | --- |
 | system-overview | required | ENH-004 affects UI, profiles and three processing stages |
-| data-flow | required | Visible SRT and transient TTS text must remain separate |
+| data-flow | required | Visible SRT and transient TTS text must remain separate; ENH-009 adds caption-style and result-review paths |
 | event-flows | optional | Dialog events are sufficiently specified in task 4.13 |
 | module-dependencies | optional | Detailed imports belong to implementation design |
 | deployment | required for Phase 5 | Portable/installer boundaries, writable user data and consent-based remediation must remain explicit |

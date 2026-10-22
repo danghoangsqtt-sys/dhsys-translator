@@ -26,6 +26,10 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | 5 | ENH-005 local Windows distribution, machine readiness scan and consent-based setup assistant | in_progress; tasks 5.1–5.4 PASS locally; GitHub-independent |
 | 6 | Timeline editor | conditional; scope decision pending |
 | 7 | ENH-007 Việt Nam/global provider visibility and free-first guidance | complete; reversible curated view, no-key profile and bilingual cost guidance; 726 tests pass |
+| 8 | ENH-009 default providers usable in Viet Nam; China-hosted and less-common clouds under Advanced | planned |
+| 9 | ENH-009 result screen with in-app playback, compare, re-export and history | planned |
+| 10 | ENH-009 three-step guided wizard (default) with classic toggle and batch queue | planned |
+| 11 | ENH-009 animated captions (karaoke, rounded box, bilingual) via ASS + FFmpeg | planned |
 
 ENH-003 is added to Phase 4. ENH-005 is active in [Phase 5](phases/5/SPEC.md) so the owner can build and share portable/installer artifacts directly without GitHub. Target product version after the pending 4.14.1 repair line: **4.15.0 (provisional)**. Phase 5 progress does not change the current `4.14` manifest or publish an artifact.
 
@@ -50,3 +54,42 @@ Source: [ENH-005](requests/ENH-005.md). GitHub is not required. The phase preser
 | 7.3 | Việt/Anh cost guidance, docs and regression acceptance | PASS |
 
 Source: [ENH-007](requests/ENH-007.md). This phase hides only presentation rows/actions; it does not delete providers, renumber saved indexes or remove Chinese media-language support.
+
+## Phases 8–11 — ENH-009 guided workflow, result review and animated captions
+
+Order is deliberate: provider cleanup first, then result review (needed by the wizard's last step), then the wizard, then animated captions.
+
+### Phase 8 — Provider mặc định dùng được ở Việt Nam ([SPEC](phases/8/SPEC.md))
+
+| Task | Outcome | State |
+| --- | --- | --- |
+| 8.1 | Narrow curated provider policy | planned |
+| 8.2 | Close provider visibility leaks | planned |
+| 8.3 | Frozen rebuild and acceptance | planned |
+
+### Phase 9 — Màn hình kết quả có trình phát ([SPEC](phases/9/SPEC.md))
+
+| Task | Outcome | State |
+| --- | --- | --- |
+| 9.1 | ResultPanel with in-app playback | planned |
+| 9.2 | Compare modes, re-export and history | planned |
+| 9.3 | Frozen playback acceptance | planned |
+
+### Phase 10 — Wizard 3 bước ([SPEC](phases/10/SPEC.md))
+
+| Task | Outcome | State |
+| --- | --- | --- |
+| 10.1 | Wizard shell and classic toggle | planned |
+| 10.2 | Step 1 and Step 2 pages | planned |
+| 10.3 | Step 3 progress and batch results | planned |
+| 10.4 | Label review and frozen UI acceptance | planned |
+
+### Phase 11 — Phụ đề động kiểu Remotion ([SPEC](phases/11/SPEC.md))
+
+| Task | Outcome | State |
+| --- | --- | --- |
+| 11.1 | Caption styles, word timing and ASS builder | planned |
+| 11.2 | Pipeline integration and font bundling | planned |
+| 11.3 | Caption style picker and acceptance | planned |
+
+Source: [ENH-009](requests/ENH-009.md). Hiding stays presentation-only; `subtitle_type`, provider IDs and Chinese media-language support are preserved; no Node/Remotion dependency.
