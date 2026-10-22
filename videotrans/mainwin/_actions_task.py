@@ -13,7 +13,7 @@ from PySide6.QtWidgets import QMessageBox
 
 from videotrans import recognition
 from videotrans.component.progressbar import ClickableProgressBar
-from videotrans.configure.config import tr, settings, app_cfg
+from videotrans.configure.config import tr, settings, app_cfg, logger
 from videotrans.task.taskcfg import InputFile, SignMsg
 from videotrans.util.help_misc import show_error, shutdown_system
 from videotrans.util.help_ffmpeg import format_video
@@ -385,6 +385,7 @@ class WinActionTaskMixin:
 
     def show_result_dialog(self, receipts):
         """Open the non-modal result window with in-app playback for finished jobs."""
+        from videotrans.ui.result_history import append_results, recent_results
         from videotrans.ui.result_panel import ResultDialog
 
         previous = getattr(self, 'result_dialog', None)
@@ -393,8 +394,15 @@ class WinActionTaskMixin:
                 previous.close()
             except RuntimeError:
                 pass
+        recent = []
+        try:
+            recent = recent_results()
+            append_results(receipts)
+        except Exception as e:
+            logger.warning(f'Result history could not be updated: {e}')
         self.result_dialog = ResultDialog(
-            receipts, self.main, details_formatter=format_output_receipt
+            receipts, self.main, details_formatter=format_output_receipt,
+            recent=recent, record_history=append_results,
         )
         self.result_dialog.setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose)
         self.result_dialog.show()

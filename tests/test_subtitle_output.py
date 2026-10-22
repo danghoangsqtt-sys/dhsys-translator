@@ -247,3 +247,39 @@ def test_output_receipt_adds_optional_result_panel_fields(tmp_path):
     assert with_audio["target_dir"] == str(tmp_path)
     assert missing_audio["audio_paths"] == []
     assert legacy_cfg["audio_paths"] == []
+
+
+def test_output_receipt_carries_compare_and_reexport_inputs(tmp_path):
+    video = tmp_path / "translated.mp4"
+    source = tmp_path / "en.srt"
+    target = tmp_path / "vi.srt"
+    for path in (video, source, target):
+        path.write_text("fixture", encoding="utf-8")
+    cfg = SimpleNamespace(
+        subtitle_type=4,
+        output_srt=1,
+        targetdir_mp4=str(video),
+        source_sub=str(source),
+        target_sub=str(target),
+        target_dir=str(tmp_path),
+        name="D:/videos/input.mp4",
+        source_language_code="en",
+        target_language_code="vi",
+        target_language="Tiếng Việt",
+        video_autorate=True,
+    )
+
+    receipt = build_output_receipt(cfg)
+
+    assert receipt["source_video"] == "D:/videos/input.mp4"
+    assert receipt["source_sub"] == str(source)
+    assert receipt["target_sub"] == str(target)
+    assert receipt["source_language_code"] == "en"
+    assert receipt["target_language_code"] == "vi"
+    assert receipt["target_language"] == "Tiếng Việt"
+    assert receipt["output_srt"] == 1
+    assert receipt["video_autorate"] is True
+
+    minimal = build_output_receipt(SimpleNamespace(subtitle_type=1, targetdir_mp4=str(video)))
+    assert minimal["source_video"] == ""
+    assert minimal["video_autorate"] is False

@@ -1,5 +1,7 @@
 # Tracker
 
+- Complete: ENH-009 task 9.2 — the result window compares Bản dịch / Gốc / Cạnh nhau without losing the playback position, shows soft subtitles in a caption strip, lists recent results (20, `result_history.json`), and re-exports edited subtitles into a new file from the original video and dubbed audio (disabled after video slow-down). 785 tests pass; real FFmpeg re-export and mode switching verified from source. Next: task 9.3 (frozen playback acceptance).
+
 - Complete: ENH-009 task 9.1 — finished jobs now open a **Kết quả** window with in-app playback (play/pause, seek, volume, fullscreen, Space/arrow keys), the output file list, Open folder, Open in another player and Translate another video, instead of the text-only receipt box. Receipts add optional `audio_paths`/`target_dir`. 27 focused and 761 full tests pass; a real MP4 played from source. Next: task 9.2 (compare modes, re-export, history).
 
 - Complete: ENH-009 Phase 8 — task 8.3 rebuilt `dist/sp` (SHA-256 `8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1`) and the frozen core, sidebar 5/5, dynamic menus 72/72 and Vietnamese/English UI probes pass, including new provider-visibility checks (11/16/13 default rows, hidden labels, Advanced show-all). 748 tests pass. Next: Phase 9 task 9.1 (result panel).

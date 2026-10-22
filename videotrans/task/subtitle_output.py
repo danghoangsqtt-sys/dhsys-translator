@@ -11,6 +11,7 @@ SUBTITLE_TYPE_KEYS = (
     "embedsubtitle2",
     "softsubtitle2",
 )
+HARD_SUBTITLE_TYPES = frozenset({1, 3})
 SOFT_SUBTITLE_TYPES = frozenset({2, 4})
 BILINGUAL_SUBTITLE_TYPES = frozenset({3, 4})
 
@@ -64,4 +65,12 @@ def build_output_receipt(cfg) -> dict:
         # Optional fields for the result panel; older receipts omit them.
         "audio_paths": audio_paths,
         "target_dir": str(getattr(cfg, "target_dir", "") or ""),
+        "source_video": str(getattr(cfg, "name", "") or ""),
+        "source_sub": str(getattr(cfg, "source_sub", "") or ""),
+        "target_sub": str(getattr(cfg, "target_sub", "") or ""),
+        "source_language_code": str(getattr(cfg, "source_language_code", "") or ""),
+        "target_language_code": str(getattr(cfg, "target_language_code", "") or ""),
+        "target_language": str(getattr(cfg, "target_language", "") or ""),
+        "output_srt": int(getattr(cfg, "output_srt", 2) or 0),
+        "video_autorate": bool(getattr(cfg, "video_autorate", False)),
     }
