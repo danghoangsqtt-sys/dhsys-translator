@@ -18,6 +18,7 @@ from videotrans.util.checkgpu import AiLoaderThread
 from videotrans.ui.en import Ui_MainWindow
 from videotrans.ui.home import HomePage
 from videotrans.ui.workspace_shell import WorkspaceShell
+from videotrans.ui.wizard import WizardShell
 from videotrans.ui.workflow_state import WorkflowStatePresenter
 from videotrans.ui.provider_profiles import (
     PROFILE_BY_KEY, PROFILE_CUSTOM, ProviderSelection, resolve_profile_transition,
@@ -138,22 +139,41 @@ class MainWindow(BindSignalsMixin, LifecycleMixin, QMainWindow, Ui_MainWindow):
         self.page_stack = QStackedWidget(self)
         self.home_page = HomePage(config.defaulelang, self.page_stack)
         self.workspace_shell = WorkspaceShell(self, workspace, self.page_stack)
+        self.wizard = WizardShell(self.page_stack)
         self.page_stack.addWidget(self.home_page)
         self.page_stack.addWidget(self.workspace_shell)
+        self.page_stack.addWidget(self.wizard)
         self.setCentralWidget(self.page_stack)
         self.home_page.workspace_requested.connect(self.show_workspace)
         self.home_page.tool_requested.connect(self._open_home_tool)
         self.home_page.locale_requested.connect(self._set_home_locale)
-        self.show_home()
+        self.wizard.classic_requested.connect(self.show_classic)
+        if params.get('ui_mode', 'wizard') == 'wizard':
+            self.show_wizard()
+        else:
+            self.show_home()
 
     def show_home(self):
         self.page_stack.setCurrentWidget(self.home_page)
         self.toolBar.hide()
 
     def show_workspace(self):
-        self.page_stack.setCurrentIndex(1)
+        self.page_stack.setCurrentWidget(self.workspace_shell)
         # The shell exposes the same toolbar QAction instances in its tool catalog.
         self.toolBar.hide()
+
+    def show_wizard(self):
+        """Open the guided flow and remember it as the start screen."""
+        if params.get('ui_mode') != 'wizard':
+            params.getset_params({'ui_mode': 'wizard'})
+        self.page_stack.setCurrentWidget(self.wizard)
+        self.toolBar.hide()
+
+    def show_classic(self):
+        """Return to the classic Home/workspace and remember that choice."""
+        if params.get('ui_mode') != 'classic':
+            params.getset_params({'ui_mode': 'classic'})
+        self.show_home()
 
     def _open_home_tool(self, name):
         action = getattr(self, name, None)

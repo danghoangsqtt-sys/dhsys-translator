@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+ENH-009 Task 10.1 makes a three-step **guided mode** the start screen (Choose video → Language, voice & subtitles → Run & review) with Back/Next/Start navigation. **Classic workspace** switches back to the full interface and **Guided mode** in the classic sidebar returns; the choice is remembered. The step pages are filled in by the next tasks.
+
 ENH-009 Task 9.3 verifies the result window in the rebuilt Windows build: hard- and soft-subtitle MP4s play inside the app, compare modes and the caption strip work, and re-export runs with the bundled FFmpeg in Vietnamese and English UI.
 
 ENH-009 Task 9.2 adds **Translated / Original / Side by side** views to the result window (playback position is kept when switching), a caption strip for soft subtitles, a list of up to 20 recent results, and **Edit subtitles & re-export**: fix the subtitle text and rebuild the video into a new file from the original video and the dubbed audio, without re-running recognition, translation or TTS. Re-export is unavailable for jobs that slowed the video down to fit the voice.

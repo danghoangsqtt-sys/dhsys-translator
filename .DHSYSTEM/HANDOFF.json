@@ -4,7 +4,7 @@
   "crystallize_version": "0.8.0",
   "crystallized_at": "2026-10-22T00:00:00+07:00",
   "current_phase": 10,
-  "current_task": "10.1",
+  "current_task": "10.2",
   "status": "ENH-009 Phases 8–9 complete (frozen candidate verified); Phases 10–11 planned. Independent Phase 3 clean-runner and Phase 5 clean-machine/signing gates remain open.",
   "local_branch": "plan/enh-009-guided-workflow",
   "checkpoint_commit": "bb3b6f27",
@@ -148,8 +148,8 @@
       10,
       11
     ],
-    "status": "in_progress; Phases 8–9 complete",
-    "next": "Task 10.1 — wizard shell and classic toggle",
+    "status": "in_progress; Phases 8–9 complete; 10.1 PASS",
+    "next": "Task 10.2 — Step 1 (video + purpose) and Step 2 (options)",
     "source": "docs/brainstorm/session-2026-10-22-guided-workflow.md",
     "ui_direction": ".DHSYSTEM/ui-direction/2026-10-22-guided-workflow/",
     "constraints": [
@@ -163,7 +163,8 @@
     "task_8_3": "PASS: dist/sp rebuilt (sha256 8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1); core, sidebar 5/5, menus 72/72, UI vi/en with provider checks pass",
     "task_9_1": "PASS: ResultPanel + ResultDialog replace the receipt message box; optional audio_paths/target_dir in receipts; 27 focused / 761 full tests; source playback probe OK",
     "task_9_2": "PASS: compare modes with position carry-over, soft caption strip, recent history (20), text-only editor + re-export into new file (disabled after video_autorate); 785 full tests; real ffmpeg re-export verified",
-    "task_9_3": "PASS: dist/sp rebuilt (sha256 69A2B66EDCD11649DCBB8C0ABC95ADD68C31AAA586D3F8731B3E8AA088152F44); packaged playback, caption, compare and re-export pass in vi/en"
+    "task_9_3": "PASS: dist/sp rebuilt (sha256 69A2B66EDCD11649DCBB8C0ABC95ADD68C31AAA586D3F8731B3E8AA088152F44); packaged playback, caption, compare and re-export pass in vi/en",
+    "task_10_1": "PASS: WizardShell + ui_mode (default wizard) routing in MainWindow, classic/guided toggles; 800 full tests; real MainWindow routing probe OK"
   },
   "phase_8_candidate_sha256": "8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1",
   "phase_9_candidate_sha256": "69A2B66EDCD11649DCBB8C0ABC95ADD68C31AAA586D3F8731B3E8AA088152F44"

@@ -100,3 +100,20 @@ def test_dockerignore_excludes_local_credentials():
     ):
         assert any(fnmatch(path, rule) for rule in rules), path
     assert not any(fnmatch("videotrans/configure/_app_params.py", rule) for rule in rules)
+
+
+def test_ui_mode_defaults_to_wizard_and_keeps_valid_choice(tmp_path):
+    fresh = AppParams(_json_path=str(tmp_path / "fresh.json"))
+    assert fresh.ui_mode == "wizard"
+
+    config_path = tmp_path / "params.json"
+    config_path.write_text(json.dumps({"ui_mode": "classic"}), encoding="utf-8")
+    assert AppParams(_json_path=str(config_path)).ui_mode == "classic"
+
+
+@pytest.mark.parametrize("saved_value", ["dashboard", "", 1, None])
+def test_invalid_ui_mode_falls_back_to_wizard(tmp_path, saved_value):
+    config_path = tmp_path / "params.json"
+    config_path.write_text(json.dumps({"ui_mode": saved_value}), encoding="utf-8")
+
+    assert AppParams(_json_path=str(config_path)).ui_mode == "wizard"

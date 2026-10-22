@@ -59,7 +59,14 @@ class WorkspaceShell(QWidget):
         credit = QLabel(tr("Video Workspace"))
         credit.setObjectName("workspaceCredit")
         layout.addWidget(credit)
-        layout.addSpacing(14)
+        layout.addSpacing(10)
+        self.guided_button = QPushButton(tr("wizard_open_guided"))
+        self.guided_button.setObjectName("workspaceGuidedMode")
+        self.guided_button.setToolTip(tr("wizard_open_guided_tip"))
+        self.guided_button.clicked.connect(self._open_guided)
+        self.guided_button.setEnabled(hasattr(self.main_window, "show_wizard"))
+        layout.addWidget(self.guided_button)
+        layout.addSpacing(8)
         tools_label = QLabel(tr("Media jobs"))
         tools_label.setObjectName("workspaceGroup")
         layout.addWidget(tools_label)
@@ -163,6 +170,9 @@ class WorkspaceShell(QWidget):
         menu = QMenu(self)
         home = menu.addAction(tr("Home"))
         home.triggered.connect(self.main_window.show_home)
+        if hasattr(self.main_window, "show_wizard"):
+            guided = menu.addAction(tr("wizard_open_guided"))
+            guided.triggered.connect(self._open_guided)
         menu.addSection(tr("Media jobs"))
         for action_name, _ in self.BASIC_JOBS:
             menu.addAction(getattr(self.main_window, action_name))
@@ -176,6 +186,11 @@ class WorkspaceShell(QWidget):
         providers = menu.addMenu(tr("Provider settings"))
         self._populate_provider_settings(providers)
         return menu
+
+    def _open_guided(self):
+        handler = getattr(self.main_window, "show_wizard", None)
+        if callable(handler):
+            handler()
 
     def resizeEvent(self, event):
         compact = self.width() < self.COMPACT_BREAKPOINT

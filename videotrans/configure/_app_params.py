@@ -61,6 +61,8 @@ class AppParams:
                         expected = default.get(key)
                         if key == "subtitle_type" and (type(value) is not int or value not in range(5)):
                             continue
+                        if key == "ui_mode" and value not in ("wizard", "classic"):
+                            continue
                         if key not in default or type(value) is type(expected):
                             default[key] = value
                         elif isinstance(expected, float) and type(value) is int:
@@ -103,6 +105,8 @@ class AppParams:
             "provider_profile": "no_key",
             "provider_profile_custom": {},
             "show_all_providers": False,
+            # Start screen: the guided wizard, or the classic Home/workspace.
+            "ui_mode": "wizard",
             # Persisted values stay frozen: 1 is the existing hard-subtitle mode.
             "subtitle_type": 1,
             "tts_type": 0,
