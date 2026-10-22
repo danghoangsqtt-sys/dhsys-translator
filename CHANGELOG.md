@@ -6,6 +6,8 @@ ENH-009 Task 8.1 narrows the default provider lists to services reachable from V
 
 ENH-009 Task 8.2 applies the same view outside the desktop: WebUI provider dropdowns show the default providers first and label the others "(Advanced)", `cli.py --list providers` marks them `[advanced]` with unchanged indexes, and CLI examples use a Vietnamese Edge voice. A new audit (`scripts/audit_provider_surfaces.py`) fails the test suite if a desktop provider list bypasses the visibility policy.
 
+ENH-009 Task 8.3 rebuilt the Windows onedir candidate and extended the frozen UI probe with provider-visibility checks; core, sidebar, 72/72 dynamic menus and Vietnamese/English UI probes pass on the rebuilt `sp.exe`.
+
 ENH-007 is implemented for the 4.15.0 line: provider menus and desktop combo boxes now default to a reversible Viet Nam/global curated view, offer a no-API-key recommended profile, and explain local model downloads, best-effort online services, local servers and potentially billable APIs. Existing provider IDs, credentials and saved selections remain available through **Show all providers**. 75 focused and 726 full Python 3.12.14 tests pass with one external `pydub/audioop` warning; the current product manifest remains 4.14 until independent release gates pass.
 
 Planned ENH-005 for the 4.15.0 line: add a GitHub-independent local distribution path with portable ZIP and per-user Setup.exe, plus a Vietnamese/English “Kiểm tra máy” surface that reports workload-specific CPU/RAM/disk/GPU/runtime readiness. Any remediation is explicit, allowlisted and re-verified; Python/Qt/FFmpeg stay bundled, while drivers/CUDA/large models remain guided or opt-in.

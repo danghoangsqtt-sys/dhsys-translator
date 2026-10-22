@@ -1,0 +1,31 @@
+{
+  "status": "pass",
+  "frozen": true,
+  "results": [
+    {
+      "name": "fn_recogn",
+      "title": "Chuyển lời nói thành văn bản",
+      "status": "pass"
+    },
+    {
+      "name": "fn_peiyin",
+      "title": "Chuyển văn bản thành giọng nói",
+      "status": "pass"
+    },
+    {
+      "name": "fn_fanyisrt",
+      "title": "Dịch văn bản / phụ đề SRT",
+      "status": "pass"
+    },
+    {
+      "name": "fn_peiyinrole",
+      "title": "Lồng tiếng nhiều người",
+      "status": "pass"
+    },
+    {
+      "name": "fn_vas",
+      "title": "Ghép video / âm thanh / phụ đề",
+      "status": "pass"
+    }
+  ]
+}

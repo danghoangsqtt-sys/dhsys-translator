@@ -1,0 +1,21 @@
+{
+  "task": "8.3",
+  "date": "2026-10-22",
+  "branch": "plan/enh-009-guided-workflow",
+  "source_commit_built": "5a8427d0",
+  "build": "pyinstaller sp.spec --clean --noconfirm (PyInstaller 6.16.0, CPython 3.12.14); 8m22s; dist/sp 6.2 GiB",
+  "candidate": "dist/sp/sp.exe",
+  "candidate_sha256": "8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1",
+  "probe_environment": "resources staged beside sp.exe as in CI; offscreen Qt; working directory outside dist/sp; isolated LOCALAPPDATA per probe; PYVIDEOTRANS_LANG set per UI probe",
+  "results": {
+    "core": "pass (task-8.3-frozen-core.json)",
+    "sidebar": "pass 5/5 (task-8.3-frozen-sidebar.json)",
+    "dynamic_menus_open": "pass 72/72 (task-8.3-frozen-menus.json)",
+    "ui_vi": "pass; provider default view 11 translation / 16 recognition / 13 TTS; hidden-selected labels '(ẩn)'; Advanced submenu 'Nâng cao' (task-8.3-frozen-ui-vi.json)",
+    "ui_en": "pass; same counts; labels '(hidden)'; submenu 'Advanced' (task-8.3-frozen-ui-en.json)"
+  },
+  "notes": [
+    "The first English UI run failed because the harness passed the locale only as a script argument after sp.exe had already initialised its locale; re-run with PYVIDEOTRANS_LANG=en_US passed. Product code unchanged.",
+    "Machine-specific paths in reports are replaced by <repo>, <probe-work> and <user-home>."
+  ]
+}

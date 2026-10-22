@@ -1,5 +1,7 @@
 # Tracker
 
+- Complete: ENH-009 Phase 8 — task 8.3 rebuilt `dist/sp` (SHA-256 `8193689682F8CF3E82AED4A4E50199E1114DF8E733DC5907A9BE91066B7D01B1`) and the frozen core, sidebar 5/5, dynamic menus 72/72 and Vietnamese/English UI probes pass, including new provider-visibility checks (11/16/13 default rows, hidden labels, Advanced show-all). 748 tests pass. Next: Phase 9 task 9.1 (result panel).
+
 - Complete: ENH-009 task 8.2 — every desktop provider combo is confirmed registered and now guarded by `scripts/audit_provider_surfaces.py`; WebUI dropdowns put curated providers first and label the rest "(Advanced)" without changing values; `cli.py --list providers` marks `[advanced]` rows and help examples use a Vietnamese voice. 133 focused and 748 full tests pass. Next: task 8.3 (frozen rebuild and acceptance).
 
 - Complete locally: ENH-009 task 8.1 — the default provider view now shows only online no-key services, OpenAI/Gemini/OpenRouter, local models/services and custom endpoints; DeepSeek, Azure, DeepL, Deepgram and ElevenLabs join the China-hosted clouds under **Nâng cao → Hiện tất cả nhà cung cấp**. Saved hidden selections stay selected with an "(ẩn)" label. 50 focused and 740 full tests pass. Next: task 8.2 (close remaining provider surfaces).

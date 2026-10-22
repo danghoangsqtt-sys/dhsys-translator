@@ -148,13 +148,13 @@ Không commit mật khẩu. Nếu đưa WebUI ra Internet, đặt HTTPS ở reve
 
 ## Provider và mô hình
 
-Giao diện mặc định chỉ hiện nhóm provider phổ biến cho Việt Nam/quốc tế. Các tích hợp Trung Quốc hoặc ít dùng hơn **không bị xóa**: bật **Hiện tất cả nhà cung cấp** trong một trong ba menu Cài đặt dịch/nhận dạng/lồng tiếng để khôi phục toàn bộ 29 kênh dịch, 33 kênh nhận dạng và 38 kênh TTS. Lựa chọn cũ nằm ngoài danh sách rút gọn vẫn được giữ nguyên và luôn hiện khi đang được chọn.
+Giao diện mặc định chỉ hiện provider dùng được ngay ở Việt Nam: dịch vụ online không cần key (Google, Microsoft, Edge TTS, gTTS), tài khoản OpenAI/Gemini/OpenRouter, model và server chạy trên máy, cùng endpoint tự cấu hình. Các cloud Trung Quốc và các API quốc tế ít dùng (DeepSeek, Azure, DeepL, Deepgram, ElevenLabs…) **không bị xóa**: mở **Nâng cao → Hiện tất cả nhà cung cấp** trong menu Cài đặt dịch/nhận dạng/lồng tiếng để khôi phục toàn bộ 29 kênh dịch, 33 kênh nhận dạng và 38 kênh TTS. Lựa chọn cũ nằm ngoài danh sách mặc định vẫn được giữ và hiện kèm nhãn **(ẩn)**. WebUI xếp các provider mặc định lên đầu và gắn nhãn *(Advanced)* cho phần còn lại; `cli.py --list providers` đánh dấu chúng `[advanced]`.
 
-| Nhóm | Ví dụ được tích hợp | Ghi chú |
+| Nhóm | Hiện mặc định | Ghi chú |
 | --- | --- | --- |
-| Nhận dạng | faster-whisper, Whisper/OpenAI, WhisperX, Qwen, Deepgram, Azure, Google | Local và cloud; model lớn cần thêm tài nguyên. |
-| Dịch | Google, Microsoft, DeepSeek, Gemini, OpenRouter, Claude/OpenAI-compatible, Ollama/Local LLM | Chất lượng, quota và chính sách dữ liệu phụ thuộc provider. |
-| Giọng đọc | Edge TTS, OpenAI-compatible, Azure, ElevenLabs, F5-TTS, GPT-SoVITS, VieNeu pilot | Một số kênh cần server/model chạy riêng hoặc khóa API. |
+| Nhận dạng | faster-whisper, Whisper/OpenAI, Whisper.cpp, WhisperX, Parakeet, Gemini, OpenRouter, Google | Local và cloud; model lớn cần thêm tài nguyên. |
+| Dịch | Google, Microsoft, ChatGPT/OpenAI, Gemini, OpenRouter, Local LLM/LiteLLM, M2M100, DeepLX/Libre tự host | Chất lượng, quota và chính sách dữ liệu phụ thuộc provider. |
+| Giọng đọc | Edge TTS, gTTS, OpenAI TTS, Gemini TTS, F5-TTS, Piper, Kokoro, GPT-SoVITS, VieNeu pilot | Một số kênh cần server/model chạy riêng hoặc khóa API. |
 | Công cụ media | FFmpeg/ffprobe, tách giọng, ghép audio/video/SRT, căn phụ đề | FFmpeg được bundle trong bản Windows. |
 
 Ý nghĩa nhãn và chi phí:

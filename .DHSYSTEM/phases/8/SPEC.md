@@ -1,6 +1,6 @@
 # Phase 8 — Provider mặc định dùng được ở Việt Nam
 
-Status: planned. Request: [ENH-009](../../requests/ENH-009.md). Builds on Phase 7 / ENH-007. Product manifest remains 4.14.
+Status: complete (2026-10-22). Request: [ENH-009](../../requests/ENH-009.md). Builds on Phase 7 / ENH-007. Product manifest remains 4.14.
 
 ## Goal
 

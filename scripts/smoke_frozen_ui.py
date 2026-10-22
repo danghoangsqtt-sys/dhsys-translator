@@ -9,6 +9,77 @@ import traceback
 from types import SimpleNamespace
 
 
+def check_provider_visibility(window, tr):
+    """Task 8.3: the packaged UI shows only the Phase 8 curated providers by default."""
+    from PySide6.QtWidgets import QComboBox
+    from videotrans import recognition, translator, tts
+    from videotrans.ui.fn_peiyinrole import Ui_fn_peiyinrole
+    from videotrans.ui.provider_visibility import (
+        CURATED_PROVIDER_IDS,
+        RECOGNITION,
+        TRANSLATION,
+        TTS,
+        register_provider_combo,
+        refresh_registered_combos,
+    )
+
+    def visible_names(combo):
+        return [combo.itemText(row) for row in range(combo.count()) if not combo.view().isRowHidden(row)]
+
+    kinds = (
+        (TRANSLATION, translator.TRANSLASTE_NAME_LIST, translator.GOOGLE_INDEX, translator.DEEPSEEK_INDEX),
+        (RECOGNITION, recognition.RECOGN_NAME_LIST, recognition.FASTER_WHISPER, recognition.Deepgram),
+        (TTS, tts.TTS_NAME_LIST, tts.EDGE_TTS, tts.AZURE_TTS),
+    )
+    report = {}
+    combos = []
+    for kind, names, default_id, hidden_id in kinds:
+        combo = QComboBox()
+        combo.addItems(names)
+        combo.setCurrentIndex(default_id)
+        register_provider_combo(combo, kind, show_all=False)
+        expected = [names[i] for i in range(len(names)) if i in CURATED_PROVIDER_IDS[kind]]
+        if visible_names(combo) != expected:
+            raise AssertionError(f'{kind} default view differs from the Phase 8 contract: {visible_names(combo)}')
+
+        saved_hidden = QComboBox()
+        saved_hidden.addItems(names)
+        saved_hidden.setCurrentIndex(hidden_id)
+        register_provider_combo(saved_hidden, kind, show_all=False)
+        label = saved_hidden.itemText(hidden_id)
+        if saved_hidden.view().isRowHidden(hidden_id) or label != names[hidden_id] + ' ' + tr('provider_hidden_suffix'):
+            raise AssertionError(f'{kind} saved hidden provider is not kept and labelled: {label!r}')
+        combos.append((combo, names))
+        report[kind] = {'visible': expected, 'hidden_selected_label': label}
+
+    quick_tool = Ui_fn_peiyinrole()
+    tool_expected = [tts.TTS_NAME_LIST[i] for i in range(len(tts.TTS_NAME_LIST)) if i in CURATED_PROVIDER_IDS[TTS]]
+    current = quick_tool.tts_type.currentIndex()
+    tool_visible = [name for name in visible_names(quick_tool.tts_type) if not name.endswith(tr('provider_hidden_suffix'))]
+    if current in CURATED_PROVIDER_IDS[TTS] and tool_visible != tool_expected:
+        raise AssertionError(f'quick-tool TTS combo bypasses the curated view: {tool_visible}')
+    quick_tool.close()
+
+    advanced = window.menu_provider_advanced
+    if window.show_all_providers not in advanced.actions():
+        raise AssertionError('show-all switch is not inside the Advanced submenu')
+    for provider_menu in (window.menu_Key, window.menu_TTS, window.menu_RECOGN):
+        if advanced.menuAction() not in provider_menu.actions() or window.show_all_providers in provider_menu.actions():
+            raise AssertionError(f'{provider_menu.title()} does not expose only the Advanced submenu')
+    if window.deepl.isVisible() or window.deepseek.isVisible() or not window.chatgpt.isVisible():
+        raise AssertionError('provider settings menu does not follow the curated view')
+
+    refresh_registered_combos(show_all=True)
+    for combo, names in combos:
+        if visible_names(combo) != list(names):
+            raise AssertionError('show-all did not restore every provider row with its original label')
+    refresh_registered_combos(show_all=False)
+
+    report['advanced_menu_title'] = advanced.title()
+    report['quick_tool_tts_visible'] = len(tool_visible)
+    return report
+
+
 def run_check():
     if not getattr(sys, 'frozen', False):
         raise AssertionError('run this probe through the packaged sp.exe')
@@ -422,7 +493,10 @@ def run_check():
                 params[key] = value
 
     window.close()
+    provider_visibility = check_provider_visibility(window, tr)
+
     return {
+        'provider_visibility': provider_visibility,
         'requested_locale': requested_locale,
         'locale': defaulelang,
         'locale_choices': locale_choices,
