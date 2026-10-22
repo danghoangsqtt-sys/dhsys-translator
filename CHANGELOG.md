@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+ENH-009 Task 9.3 verifies the result window in the rebuilt Windows build: hard- and soft-subtitle MP4s play inside the app, compare modes and the caption strip work, and re-export runs with the bundled FFmpeg in Vietnamese and English UI.
+
 ENH-009 Task 9.2 adds **Translated / Original / Side by side** views to the result window (playback position is kept when switching), a caption strip for soft subtitles, a list of up to 20 recent results, and **Edit subtitles & re-export**: fix the subtitle text and rebuild the video into a new file from the original video and the dubbed audio, without re-running recognition, translation or TTS. Re-export is unavailable for jobs that slowed the video down to fit the voice.
 
 ENH-009 Task 9.1 replaces the text-only completion receipt with a **Result** window: the finished video plays inside the app (play/pause, seek, volume, fullscreen, Space and arrow keys), output files are listed with sizes, and buttons open the folder, open the video in another player or start another translation. Receipts gain optional `audio_paths` and `target_dir` fields; older receipts still load.

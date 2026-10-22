@@ -1,0 +1,171 @@
+{
+  "status": "pass",
+  "checks": {
+    "provider_visibility": {
+      "translation": {
+        "visible": [
+          "Google Translate (Free)",
+          "Microsoft Translate (Free)",
+          "M2M100(local · model download required)",
+          "OpenAI ChatGPT",
+          "Gemini AI",
+          "CompatibleAI/LocalModel",
+          "OpenRouter",
+          "DeepLx",
+          "LibreTranslate(LocalAPI)",
+          "Custom Translation API",
+          "LiteLLM"
+        ],
+        "hidden_selected_label": "DeepSeek (hidden)"
+      },
+      "recognition": {
+        "visible": [
+          "faster-whisper(local · model download required)",
+          "openai-whisper(local · model download required)",
+          "Nemotron-3.5-asr-0.6b(local · model download required)",
+          "Omnilingual(local · model download required)",
+          "Huggingface_ASR(local · model download required)",
+          "Whisper.cpp(Winlocal · model download required)",
+          "OpenAI STT API",
+          "Gemini STT",
+          "Faster-Whisper-XXL.exe",
+          "WhisperX(LocalAPI)",
+          "Parakeet-tdt(LocalAPI)",
+          "Google STT API (Free)",
+          "STT(LocalAPI)",
+          "Whisper.NET",
+          "Custom STT API",
+          "OpenRouter"
+        ],
+        "hidden_selected_label": "Deepgram.com (hidden)"
+      },
+      "tts": {
+        "visible": [
+          "Edge-TTS (online · no API key)",
+          "F5-TTS(local · model download required)",
+          "OmniVoice(local · model download required)",
+          "Piper(local · model download required)",
+          "ChatterBox(local · model download required)",
+          "Supertonic3(local · model download required)",
+          "GPT-SoVITS(LocalAPI)",
+          "OpenAI TTS",
+          "Gemini TTS",
+          "gTTS(online · no API key)",
+          "kokoro(LocalAPI)",
+          "Custom TTS API",
+          "OpenRouter"
+        ],
+        "hidden_selected_label": "Azure TTS (hidden)"
+      },
+      "advanced_menu_title": "Advanced",
+      "quick_tool_tts_visible": 13
+    },
+    "result_panel": {
+      "hard": {
+        "statuses": [
+          "LoadingMedia",
+          "LoadedMedia",
+          "BufferingMedia",
+          "BufferedMedia",
+          "LoadedMedia",
+          "NoMedia"
+        ],
+        "position_delta_ms": 1950,
+        "duration_ms": 4000,
+        "error": "",
+        "caption": ""
+      },
+      "soft": {
+        "statuses": [
+          "LoadingMedia",
+          "LoadedMedia",
+          "BufferingMedia",
+          "BufferedMedia",
+          "LoadedMedia",
+          "LoadingMedia",
+          "BufferingMedia",
+          "LoadedMedia",
+          "BufferedMedia",
+          "LoadedMedia",
+          "LoadingMedia",
+          "BufferingMedia",
+          "LoadedMedia",
+          "BufferedMedia",
+          "LoadedMedia",
+          "NoMedia"
+        ],
+        "position_delta_ms": 1950,
+        "duration_ms": 4000,
+        "error": "",
+        "caption": "Xin chào các bạn"
+      },
+      "compare_original_continued": true,
+      "compare_side_drift_ms": 0,
+      "reexport_output": "soft-vi-2.mp4",
+      "reexport_streams": [
+        "h264,video",
+        "aac,audio",
+        "mov_text,subtitle"
+      ],
+      "labels": [
+        "Translated",
+        "Original",
+        "Side by side"
+      ]
+    },
+    "requested_locale": "en_US",
+    "locale": "en_US",
+    "locale_choices": [
+      "vi_VN",
+      "en_US"
+    ],
+    "legacy_catalog_ignored": false,
+    "brand": "Video Workshop",
+    "routes": [
+      "fn_recogn",
+      "fn_fanyisrt",
+      "fn_peiyinrole",
+      "fn_vas"
+    ],
+    "workspace_shell": true,
+    "system_check_route": true,
+    "light_style": true,
+    "workflow_sections": 5,
+    "workflow_state": "running",
+    "workflow_hierarchy": true,
+    "responsive_layout": true,
+    "responsive_quick_tools": true,
+    "subtitle_editors": [
+      "EditRecognResultDialog",
+      "EditRecognResultDialog2"
+    ],
+    "subtitle_mapping": [
+      "nosubtitle",
+      "embedsubtitle",
+      "softsubtitle",
+      "embedsubtitle2",
+      "softsubtitle2"
+    ],
+    "bilingual_orders": [
+      [
+        "Original line",
+        "Translated line"
+      ],
+      [
+        "Translated line",
+        "Original line"
+      ]
+    ],
+    "soft_receipt_requires_player": true,
+    "no_subtitle_confirmation": true,
+    "provider_registry_sizes": {
+      "translation": 29,
+      "recognition": 33,
+      "tts": 38
+    },
+    "provider_custom_restore": true,
+    "local_profile_loopback_only": true,
+    "pronunciation_layer_transient": true,
+    "vieneu_public_discovery_blocked": true
+  }
+}

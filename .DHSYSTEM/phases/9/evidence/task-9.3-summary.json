@@ -1,0 +1,19 @@
+{
+  "task": "9.3",
+  "date": "2026-10-22",
+  "branch": "plan/enh-009-guided-workflow",
+  "source_commit_built": "c04ee3ff",
+  "build": "pyinstaller sp.spec --clean --noconfirm (PyInstaller 6.16.0, CPython 3.12.14); 4m54s",
+  "candidate": "dist/sp/sp.exe",
+  "candidate_sha256": "69A2B66EDCD11649DCBB8C0ABC95ADD68C31AAA586D3F8731B3E8AA088152F44",
+  "qt_multimedia": "PySide6/plugins/multimedia/ffmpegmediaplugin.dll plus avcodec/avformat/avutil/swresample/swscale DLLs collected by the PyInstaller PySide6 hooks; no sp.spec change needed",
+  "probe_environment": "resources staged beside sp.exe as in CI; offscreen Qt; working directory outside dist/sp; isolated LOCALAPPDATA per probe; PYVIDEOTRANS_LANG per UI probe",
+  "results": {
+    "core": "pass",
+    "sidebar": "pass 5/5",
+    "dynamic_menus_open": "pass 72/72",
+    "ui_vi": "pass; hard MP4 Loading→Loaded→Buffered, +1996 ms in 2 s; soft mov_text MP4 +1996 ms with caption strip 'Xin chào các bạn'; Original mode continued, side-by-side drift 0 ms; re-export soft-vi-2.mp4 (h264, aac, mov_text); provider checks unchanged",
+    "ui_en": "pass; same checks, +1950 ms; labels Translated/Original/Side by side"
+  },
+  "notes": ["Machine-specific paths in reports are replaced by <repo>, <probe-work>, <temp> and <user-home>."]
+}

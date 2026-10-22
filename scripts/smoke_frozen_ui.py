@@ -80,6 +80,109 @@ def check_provider_visibility(window, tr):
     return report
 
 
+def check_result_panel(tr):
+    """Task 9.3: packaged playback, compare modes and re-export in the result window."""
+    import shutil
+    import subprocess
+    from PySide6.QtCore import QEventLoop, QTimer
+    from PySide6.QtMultimedia import QMediaPlayer
+    from videotrans.task.reexport import run_reexport
+    from videotrans.ui.result_panel import ResultPanel
+
+    ffmpeg = shutil.which('ffmpeg')
+    ffprobe = shutil.which('ffprobe')
+    if not ffmpeg or not ffprobe:
+        raise AssertionError('bundled FFmpeg is not on PATH for the result panel')
+    work = Path(tempfile.mkdtemp(prefix='pvt-result-panel-'))
+
+    def ffrun(*args):
+        subprocess.run([ffmpeg, '-hide_banner', '-loglevel', 'error', '-y', *args], cwd=work, check=True,
+                       creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
+
+    def wait(ms):
+        loop = QEventLoop()
+        QTimer.singleShot(ms, loop.quit)
+        loop.exec()
+
+    try:
+        ffrun('-f', 'lavfi', '-i', 'testsrc=size=320x180:rate=25', '-f', 'lavfi', '-i', 'sine=frequency=440',
+              '-t', '4', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-shortest', 'source.mp4')
+        (work / 'vi.srt').write_text('1\n00:00:00,300 --> 00:00:03,700\nXin chào các bạn\n', encoding='utf-8')
+        ffrun('-i', 'source.mp4', '-vf', 'subtitles=vi.srt', '-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-c:a', 'copy', 'hard-vi.mp4')
+        ffrun('-i', 'source.mp4', '-i', 'vi.srt', '-map', '0:v', '-map', '0:a', '-map', '1:s', '-c:v', 'copy',
+              '-c:a', 'copy', '-c:s', 'mov_text', '-metadata:s:s:0', 'language=vie', 'soft-vi.mp4')
+
+        def receipt(name, subtitle_type):
+            return {
+                'subtitle_type': subtitle_type, 'video_path': str(work / name), 'subtitle_paths': [str(work / 'vi.srt')],
+                'audio_paths': [], 'target_dir': str(work), 'source_video': str(work / 'source.mp4'),
+                'target_sub': str(work / 'vi.srt'), 'source_sub': '', 'source_language_code': 'en',
+                'target_language_code': 'vi', 'target_language': 'vi', 'output_srt': 2, 'video_autorate': False,
+            }
+
+        def play(name, subtitle_type):
+            panel = ResultPanel()
+            statuses = []
+            panel.player.mediaStatusChanged.connect(lambda status: statuses.append(status.name))
+            panel.resize(900, 640)
+            panel.show()
+            panel.load_receipt(receipt(name, subtitle_type))
+            wait(800)
+            start = panel.player.position()
+            panel.toggle_play()
+            wait(2000)
+            delta = panel.player.position() - start
+            caption = panel.caption.text() if not panel.caption.isHidden() else ''
+            report = {'statuses': statuses, 'position_delta_ms': delta, 'duration_ms': panel.player.duration(),
+                      'error': panel.player.errorString(), 'caption': caption}
+            loaded = {'LoadedMedia', 'BufferedMedia'} & set(statuses)
+            if not loaded or delta < 500 or panel.player.error() != QMediaPlayer.Error.NoError:
+                raise AssertionError(f'packaged result panel did not play {name}: {report}')
+            return panel, report
+
+        hard_panel, hard = play('hard-vi.mp4', 1)
+        hard_panel.release_media()
+        hard_panel.close()
+
+        panel, soft = play('soft-vi.mp4', 2)
+        if soft['caption'] != 'Xin chào các bạn':
+            raise AssertionError(f'soft-subtitle caption strip is wrong: {soft["caption"]!r}')
+        before = panel.player.position()
+        panel.set_mode('original')
+        wait(1200)
+        original_ok = (Path(panel.player.source().toLocalFile()).name == 'source.mp4'
+                       and panel.player.position() > before and panel.caption.isHidden())
+        panel.set_mode('side')
+        wait(1200)
+        drift = abs(panel.player.position() - panel.compare_player.position())
+        side_ok = (Path(panel.compare_player.source().toLocalFile()).name == 'source.mp4'
+                   and not panel.compare_widget.isHidden() and drift <= 500)
+        panel.release_media()
+        panel.close()
+        if not original_ok or not side_ok:
+            raise AssertionError(f'packaged compare modes failed: original={original_ok}, side={side_ok}, drift={drift}')
+
+        reexported = run_reexport(receipt('soft-vi.mp4', 2))
+        new_video = Path(reexported['video_path'])
+        streams = subprocess.run([ffprobe, '-v', 'error', '-show_entries', 'stream=codec_type,codec_name',
+                                  '-of', 'csv=p=0', str(new_video)], capture_output=True, text=True, check=True,
+                                 creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0)).stdout
+        if new_video.name != 'soft-vi-2.mp4' or 'mov_text,subtitle' not in streams or not (work / 'soft-vi.mp4').is_file():
+            raise AssertionError(f'packaged re-export failed: {new_video.name} {streams!r}')
+
+        return {
+            'hard': hard,
+            'soft': soft,
+            'compare_original_continued': original_ok,
+            'compare_side_drift_ms': drift,
+            'reexport_output': new_video.name,
+            'reexport_streams': streams.strip().splitlines(),
+            'labels': [tr('result_mode_translated'), tr('result_mode_original'), tr('result_mode_side')],
+        }
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+
+
 def run_check():
     if not getattr(sys, 'frozen', False):
         raise AssertionError('run this probe through the packaged sp.exe')
@@ -494,9 +597,11 @@ def run_check():
 
     window.close()
     provider_visibility = check_provider_visibility(window, tr)
+    result_panel = check_result_panel(tr)
 
     return {
         'provider_visibility': provider_visibility,
+        'result_panel': result_panel,
         'requested_locale': requested_locale,
         'locale': defaulelang,
         'locale_choices': locale_choices,

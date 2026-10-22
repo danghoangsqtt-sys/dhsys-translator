@@ -1,0 +1,171 @@
+{
+  "status": "pass",
+  "checks": {
+    "provider_visibility": {
+      "translation": {
+        "visible": [
+          "Google Dịch (Miễn phí)",
+          "Microsoft Dịch (Miễn phí)",
+          "M2M100(local · cần tải model)",
+          "OpenAI ChatGPT",
+          "Gemini AI",
+          "Tương thíchAI/LocalModel",
+          "OpenRouter",
+          "DeepLx",
+          "Miễn phíDịch(Địa phươngAPI)",
+          "API dịch tùy chỉnh",
+          "LiteLLM"
+        ],
+        "hidden_selected_label": "DeepSeek (ẩn)"
+      },
+      "recognition": {
+        "visible": [
+          "faster-whisper(local · cần tải model)",
+          "openai-whisper(local · cần tải model)",
+          "Nemotron-3.5-asr-0.6b(local · cần tải model)",
+          "đa ngôn ngữ(local · cần tải model)",
+          "Huggingface_ASR(local · cần tải model)",
+          "Whisper.cpp(Winlocal · cần tải model)",
+          "API OpenAI STT",
+          "Song Tử STT",
+          "Faster-Whisper-XXL.exe",
+          "WhisperX(Địa phươngAPI)",
+          "Parakeet-tdt(Địa phươngAPI)",
+          "API Google STT (Miễn phí)",
+          "STT(Địa phươngAPI)",
+          "Whisper.NET",
+          "API STT tùy chỉnh",
+          "OpenRouter"
+        ],
+        "hidden_selected_label": "Deepgram.com (ẩn)"
+      },
+      "tts": {
+        "visible": [
+          "Edge-TTS (online · không cần API key)",
+          "F5-TTS(local · cần tải model)",
+          "OmniVoice(local · cần tải model)",
+          "Piper(local · cần tải model)",
+          "ChatterBox(local · cần tải model)",
+          "Supertonic3(local · cần tải model)",
+          "GPT-SoVITS(Địa phươngAPI)",
+          "OpenAI TTS",
+          "Gemini TTS",
+          "gTTS(online · không cần API key)",
+          "kokoro(Địa phươngAPI)",
+          "API TTS tùy chỉnh",
+          "OpenRouter"
+        ],
+        "hidden_selected_label": "Azure TTS (ẩn)"
+      },
+      "advanced_menu_title": "Nâng cao",
+      "quick_tool_tts_visible": 13
+    },
+    "result_panel": {
+      "hard": {
+        "statuses": [
+          "LoadingMedia",
+          "LoadedMedia",
+          "BufferingMedia",
+          "BufferedMedia",
+          "LoadedMedia",
+          "NoMedia"
+        ],
+        "position_delta_ms": 1996,
+        "duration_ms": 4000,
+        "error": "",
+        "caption": ""
+      },
+      "soft": {
+        "statuses": [
+          "LoadingMedia",
+          "LoadedMedia",
+          "BufferingMedia",
+          "BufferedMedia",
+          "LoadedMedia",
+          "LoadingMedia",
+          "BufferingMedia",
+          "LoadedMedia",
+          "BufferedMedia",
+          "LoadedMedia",
+          "LoadingMedia",
+          "BufferingMedia",
+          "LoadedMedia",
+          "BufferedMedia",
+          "LoadedMedia",
+          "NoMedia"
+        ],
+        "position_delta_ms": 1996,
+        "duration_ms": 4000,
+        "error": "",
+        "caption": "Xin chào các bạn"
+      },
+      "compare_original_continued": true,
+      "compare_side_drift_ms": 0,
+      "reexport_output": "soft-vi-2.mp4",
+      "reexport_streams": [
+        "h264,video",
+        "aac,audio",
+        "mov_text,subtitle"
+      ],
+      "labels": [
+        "Bản dịch",
+        "Gốc",
+        "Cạnh nhau"
+      ]
+    },
+    "requested_locale": "vi",
+    "locale": "vi_VN",
+    "locale_choices": [
+      "vi_VN",
+      "en_US"
+    ],
+    "legacy_catalog_ignored": false,
+    "brand": "Xưởng Video",
+    "routes": [
+      "fn_recogn",
+      "fn_fanyisrt",
+      "fn_peiyinrole",
+      "fn_vas"
+    ],
+    "workspace_shell": true,
+    "system_check_route": true,
+    "light_style": true,
+    "workflow_sections": 5,
+    "workflow_state": "running",
+    "workflow_hierarchy": true,
+    "responsive_layout": true,
+    "responsive_quick_tools": true,
+    "subtitle_editors": [
+      "EditRecognResultDialog",
+      "EditRecognResultDialog2"
+    ],
+    "subtitle_mapping": [
+      "nosubtitle",
+      "embedsubtitle",
+      "softsubtitle",
+      "embedsubtitle2",
+      "softsubtitle2"
+    ],
+    "bilingual_orders": [
+      [
+        "Original line",
+        "Translated line"
+      ],
+      [
+        "Translated line",
+        "Original line"
+      ]
+    ],
+    "soft_receipt_requires_player": true,
+    "no_subtitle_confirmation": true,
+    "provider_registry_sizes": {
+      "translation": 29,
+      "recognition": 33,
+      "tts": 38
+    },
+    "provider_custom_restore": true,
+    "local_profile_loopback_only": true,
+    "pronunciation_layer_transient": true,
+    "vieneu_public_discovery_blocked": true
+  }
+}

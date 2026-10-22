@@ -1,6 +1,6 @@
 # Phase 9 — Màn hình kết quả có trình phát
 
-Status: planned. Request: [ENH-009](../../requests/ENH-009.md). UI direction: `ui-direction/2026-10-22-guided-workflow/pages/step3-result.html`.
+Status: complete (2026-10-22). Request: [ENH-009](../../requests/ENH-009.md). UI direction: `ui-direction/2026-10-22-guided-workflow/pages/step3-result.html`.
 
 ## Goal
 

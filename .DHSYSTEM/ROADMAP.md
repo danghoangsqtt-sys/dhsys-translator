@@ -27,7 +27,7 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | 6 | Timeline editor | conditional; scope decision pending |
 | 7 | ENH-007 Việt Nam/global provider visibility and free-first guidance | complete; reversible curated view, no-key profile and bilingual cost guidance; 726 tests pass |
 | 8 | ENH-009 default providers usable in Viet Nam; China-hosted and less-common clouds under Advanced | complete; 8.1–8.3 PASS; frozen candidate verified |
-| 9 | ENH-009 result screen with in-app playback, compare, re-export and history | in_progress; 9.1–9.2 PASS |
+| 9 | ENH-009 result screen with in-app playback, compare, re-export and history | complete; 9.1–9.3 PASS; frozen playback verified |
 | 10 | ENH-009 three-step guided wizard (default) with classic toggle and batch queue | planned |
 | 11 | ENH-009 animated captions (karaoke, rounded box, bilingual) via ASS + FFmpeg | planned |
 
@@ -73,7 +73,7 @@ Order is deliberate: provider cleanup first, then result review (needed by the w
 | --- | --- | --- |
 | 9.1 | ResultPanel with in-app playback | PASS |
 | 9.2 | Compare modes, re-export and history | PASS |
-| 9.3 | Frozen playback acceptance | planned |
+| 9.3 | Frozen playback acceptance | PASS |
 
 ### Phase 10 — Wizard 3 bước ([SPEC](phases/10/SPEC.md))
 
