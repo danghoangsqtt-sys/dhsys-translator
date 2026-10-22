@@ -79,6 +79,13 @@ from videotrans.configure.config import ROOT_DIR, TEMP_DIR, app_cfg, params, set
 from videotrans.configure.constants import FASTER_MODELS_DICT, DEEPGRAM_MODEL, Openai_Whisper_Models, FUNASR_MODEL
 from videotrans.configure._languages_dict import EDGET_LANGUAGES_NAME2CODE_EN
 from videotrans import recognition, translator, tts
+from videotrans.ui.provider_visibility import (
+    RECOGNITION as PROVIDER_RECOGNITION,
+    TRANSLATION as PROVIDER_TRANSLATION,
+    TTS as PROVIDER_TTS,
+    curated_first_provider_ids,
+    is_hidden_by_default,
+)
 from videotrans.util import tools
 from videotrans.util.gpus import getset_gpu
 from videotrans.util.help_role import role_menu
@@ -136,6 +143,19 @@ RECOGN_NAMES: List[str] = recognition.RECOGN_NAME_LIST
 TRANSLATE_NAMES: List[str] = translator.TRANSLASTE_NAME_LIST
 TTS_NAMES: List[str] = tts.TTS_NAME_LIST
 LANGNAME_DICT: dict = translator.LANGNAME_DICT
+
+
+def _provider_choices(kind: str, names: List[str]):
+    """Curated providers first; the rest stay selectable under an Advanced label.
+
+    Values remain the registry names so index lookups and saved params are unchanged.
+    """
+    choices = []
+    for provider_id in curated_first_provider_ids(kind):
+        name = names[provider_id]
+        label = f"{name} (Advanced)" if is_hidden_by_default(kind, provider_id) else name
+        choices.append((label, name))
+    return choices
 
 # ---------------------------------------------------------------------------
 # Selectable channel indices
@@ -1025,16 +1045,16 @@ def build_ui():
                     with gr.Column(scale=3):
                         input_file = gr.Video(label="Select Video File", interactive=True)
 
-                        recogn_choice = gr.Dropdown(choices=RECOGN_NAMES, value=RECOGN_NAMES[int(_user_params.get('recogn_type', DEFAULT_RECOGN)) if str(_user_params.get('recogn_type', '')).isdigit() else DEFAULT_RECOGN], label="ASR Channel", interactive=True)
+                        recogn_choice = gr.Dropdown(choices=_provider_choices(PROVIDER_RECOGNITION, RECOGN_NAMES), value=RECOGN_NAMES[int(_user_params.get('recogn_type', DEFAULT_RECOGN)) if str(_user_params.get('recogn_type', '')).isdigit() else DEFAULT_RECOGN], label="ASR Channel", interactive=True)
                         model_choice = gr.Dropdown(choices=FASTER_MODEL_NAMES, value=_user_params.get('model_name', DEFAULT_MODEL), label="Model", interactive=True)
 
-                        translate_choice = gr.Dropdown(choices=TRANSLATE_NAMES, value=TRANSLATE_NAMES[int(_user_params.get('translate_type', DEFAULT_TRANSLATE)) if str(_user_params.get('translate_type', '')).isdigit() else DEFAULT_TRANSLATE], label="Translation Channel", interactive=True)
+                        translate_choice = gr.Dropdown(choices=_provider_choices(PROVIDER_TRANSLATION, TRANSLATE_NAMES), value=TRANSLATE_NAMES[int(_user_params.get('translate_type', DEFAULT_TRANSLATE)) if str(_user_params.get('translate_type', '')).isdigit() else DEFAULT_TRANSLATE], label="Translation Channel", interactive=True)
                         _init_source = _lang_display_from_saved(_user_params.get('source_language'), DEFAULT_SOURCE_LANG)
                         _init_target = _lang_display_from_saved(_user_params.get('target_language'), DEFAULT_TARGET_LANG)
                         source_lang = gr.Dropdown(choices=LANG_DISPLAY_NAMES, value=_init_source, label="Source Language", interactive=True)
                         target_lang = gr.Dropdown(choices=['-']+LANG_DISPLAY_NAMES, value=_init_target, label="Target Language", interactive=True)
 
-                        tts_choice = gr.Dropdown(choices=TTS_NAMES, value=TTS_NAMES[int(_user_params.get('tts_type', DEFAULT_TTS)) if str(_user_params.get('tts_type', '')).isdigit() else DEFAULT_TTS], label="TTS Channel", interactive=True)
+                        tts_choice = gr.Dropdown(choices=_provider_choices(PROVIDER_TTS, TTS_NAMES), value=TTS_NAMES[int(_user_params.get('tts_type', DEFAULT_TTS)) if str(_user_params.get('tts_type', '')).isdigit() else DEFAULT_TTS], label="TTS Channel", interactive=True)
                                                 # Pre-fill voice roles based on loaded TTS channel and target language
                         _init_tts_idx = int(_user_params.get('tts_type', DEFAULT_TTS)) if str(_user_params.get('tts_type', '')).isdigit() else DEFAULT_TTS
                         _init_langcode = _lang_code_from_display(_init_target) if _init_target and _init_target != '-' else None

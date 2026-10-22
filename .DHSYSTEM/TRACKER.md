@@ -1,5 +1,7 @@
 # Tracker
 
+- Complete: ENH-009 task 8.2 — every desktop provider combo is confirmed registered and now guarded by `scripts/audit_provider_surfaces.py`; WebUI dropdowns put curated providers first and label the rest "(Advanced)" without changing values; `cli.py --list providers` marks `[advanced]` rows and help examples use a Vietnamese voice. 133 focused and 748 full tests pass. Next: task 8.3 (frozen rebuild and acceptance).
+
 - Complete locally: ENH-009 task 8.1 — the default provider view now shows only online no-key services, OpenAI/Gemini/OpenRouter, local models/services and custom endpoints; DeepSeek, Azure, DeepL, Deepgram and ElevenLabs join the China-hosted clouds under **Nâng cao → Hiện tất cả nhà cung cấp**. Saved hidden selections stay selected with an "(ẩn)" label. 50 focused and 740 full tests pass. Next: task 8.2 (close remaining provider surfaces).
 
 - Planned: [ENH-009](requests/ENH-009.md) / Phases 8–11 — crystallized 2026-10-22 from `docs/brainstorm/session-2026-10-22-guided-workflow.md`: default providers limited to free/no-key, OpenAI/Gemini/OpenRouter, local and custom (Phase 8); in-app result player with compare, re-export and history (Phase 9); three-step wizard as default with classic toggle and batch queue (Phase 10); animated karaoke/box/bilingual captions via ASS + FFmpeg (Phase 11). Next task: 8.1. Phase 3/5 release gates remain open and independent.

@@ -9,7 +9,7 @@ Usage examples:
   uv run cli.py --task sts --name "D:/subs/source.srt" --target_language_code en
 
   # Text to speech
-  uv run cli.py --task tts --name "C:/subs/movie.srt" --tts_type 0 --voice_role "zh-CN-YunyangNeural"
+  uv run cli.py --task tts --name "C:/subs/movie.srt" --tts_type 0 --voice_role "vi-VN-HoaiMyNeural"
 
   # Full video translation
   uv run cli.py --task vtv --name "E:/movies/clip.mp4" --source_language_code zh-cn --target_language_code en --voice_role "en-US-GuyNeural" --cuda
@@ -54,14 +54,14 @@ _LEGACY_TEXT_DB: Dict[str, Dict[str, str]] = {
     "cli_epilog": {
         "legacy": "Examples:\n"
               "  %(prog)s --task stt --name \"D:/demo.mp4\" --recogn_type 0 --model_name large-v3\n"
-              "  %(prog)s --task tts --name \"D:/demo.srt\" --tts_type 0 --voice_role \"zh-CN-YunyangNeural\"\n"
+              "  %(prog)s --task tts --name \"D:/demo.srt\" --tts_type 0 --voice_role \"vi-VN-HoaiMyNeural\"\n"
               "  %(prog)s --task sts --name \"D:/demo.srt\" --target_language_code en\n"
               "  %(prog)s --task vtv --name \"D:/demo.mp4\" --source_language_code zh-cn --target_language_code en --voice_role \"en-US-GuyNeural\"\n"
               "  %(prog)s --list providers\n"
               "  %(prog)s --list languages",
         "en": "Examples:\n"
               "  %(prog)s --task stt --name \"D:/demo.mp4\" --recogn_type 0 --model_name large-v3\n"
-              "  %(prog)s --task tts --name \"D:/demo.srt\" --tts_type 0 --voice_role \"zh-CN-YunyangNeural\"\n"
+              "  %(prog)s --task tts --name \"D:/demo.srt\" --tts_type 0 --voice_role \"vi-VN-HoaiMyNeural\"\n"
               "  %(prog)s --task sts --name \"D:/demo.srt\" --target_language_code en\n"
               "  %(prog)s --task vtv --name \"D:/demo.mp4\" --source_language_code zh-cn --target_language_code en --voice_role \"en-US-GuyNeural\"\n"
               "  %(prog)s --list providers\n"
@@ -180,7 +180,7 @@ _VI_TEXT = {
     "process_file": "[Tệp] {}", "param_list": "[Tham số] {}", "output_dir": "[Thư mục xuất] {}",
     "done": "[Hoàn tất] Tác vụ đã hoàn thành", "failed": "[Lỗi] Tác vụ gặp lỗi: {}",
     "cli_desc": "Chế độ dòng lệnh pyVideoTrans\nTài liệu: https://pyvideotrans.com/cli",
-    "cli_epilog": "Ví dụ:\n  %(prog)s --task stt --name \"D:/demo.mp4\" --recogn_type 0 --model_name large-v3\n  %(prog)s --task tts --name \"D:/demo.srt\" --tts_type 0 --voice_role \"zh-CN-YunyangNeural\"\n  %(prog)s --task sts --name \"D:/demo.srt\" --target_language_code en\n  %(prog)s --task vtv --name \"D:/demo.mp4\" --source_language_code zh-cn --target_language_code en --voice_role \"en-US-GuyNeural\"\n  %(prog)s --list providers\n  %(prog)s --list languages",
+    "cli_epilog": "Ví dụ:\n  %(prog)s --task stt --name \"D:/demo.mp4\" --recogn_type 0 --model_name large-v3\n  %(prog)s --task tts --name \"D:/demo.srt\" --tts_type 0 --voice_role \"vi-VN-HoaiMyNeural\"\n  %(prog)s --task sts --name \"D:/demo.srt\" --target_language_code en\n  %(prog)s --task vtv --name \"D:/demo.mp4\" --source_language_code zh-cn --target_language_code en --voice_role \"en-US-GuyNeural\"\n  %(prog)s --list providers\n  %(prog)s --list languages",
     "help_task": "Loại tác vụ: stt(chuyển giọng nói thành văn bản), tts(chuyển văn bản thành giọng nói), sts(dịch phụ đề), vtv(dịch video)",
     "help_name": "Đường dẫn tuyệt đối đến tệp cần xử lý (đặt trong dấu ngoặc kép nếu có khoảng trắng)",
     "help_list": "Liệt kê lựa chọn: providers, languages, models", "help_output_dir": "Thư mục xuất gốc (mặc định: thư mục output của ứng dụng; mỗi lần chạy dùng thư mục con riêng)",
@@ -323,18 +323,20 @@ def vtv_fun(params: dict) -> None:
 def list_providers() -> None:
     """Print available providers for all categories."""
     from videotrans import recognition, translator, tts
+    from videotrans.ui.provider_visibility import (
+        RECOGNITION, TRANSLATION, TTS, is_hidden_by_default,
+    )
 
-    print(tr('list_providers_header'))
-    for i, name in enumerate(recognition.RECOGN_NAME_LIST):
-        print(f"  {i:2d} = {name}")
-
-    print(tr('list_trans_header'))
-    for i, name in enumerate(translator.TRANSLASTE_NAME_LIST):
-        print(f"  {i:2d} = {name}")
-
-    print(tr('list_tts_header'))
-    for i, name in enumerate(tts.TTS_NAME_LIST):
-        print(f"  {i:2d} = {name}")
+    # Indexes stay the registry IDs; [advanced] marks providers the desktop hides by default.
+    for header, kind, names in (
+        ('list_providers_header', RECOGNITION, recognition.RECOGN_NAME_LIST),
+        ('list_trans_header', TRANSLATION, translator.TRANSLASTE_NAME_LIST),
+        ('list_tts_header', TTS, tts.TTS_NAME_LIST),
+    ):
+        print(tr(header))
+        for i, name in enumerate(names):
+            marker = " [advanced]" if is_hidden_by_default(kind, i) else ""
+            print(f"  {i:2d} = {name}{marker}")
 
 
 def list_languages() -> None:

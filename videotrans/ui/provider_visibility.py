@@ -201,6 +201,17 @@ def visible_provider_ids(kind: str, *, show_all: bool = False, selected_id: int 
     return tuple(provider_id for provider_id in registry_ids if provider_id in visible)
 
 
+def curated_first_provider_ids(kind: str):
+    """Registry IDs with the curated view first; for surfaces that cannot hide rows."""
+    _validate_kind(kind)
+    registry_ids = tuple(_REGISTRIES[kind])
+    curated = CURATED_PROVIDER_IDS[kind]
+    return (
+        tuple(provider_id for provider_id in registry_ids if provider_id in curated)
+        + tuple(provider_id for provider_id in registry_ids if provider_id not in curated)
+    )
+
+
 def is_hidden_by_default(kind: str, provider_id: int, *, show_all: bool = False) -> bool:
     """True when a provider is only reachable through the Advanced show-all switch."""
     _validate_kind(kind)

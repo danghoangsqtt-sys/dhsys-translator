@@ -4,7 +4,7 @@
   "crystallize_version": "0.8.0",
   "crystallized_at": "2026-10-22T00:00:00+07:00",
   "current_phase": 8,
-  "current_task": "8.2",
+  "current_task": "8.3",
   "status": "ENH-009 crystallized into Phases 8–11 (planned). Phase 7 complete. Independent Phase 3 clean-runner and Phase 5 clean-machine/signing gates remain open.",
   "local_branch": "plan/enh-009-guided-workflow",
   "checkpoint_commit": "bb3b6f27",
@@ -148,8 +148,8 @@
       10,
       11
     ],
-    "status": "in_progress; 8.1 PASS locally",
-    "next": "Task 8.2 — close provider visibility leaks",
+    "status": "in_progress; 8.1–8.2 PASS",
+    "next": "Task 8.3 — frozen rebuild and Phase 8 acceptance",
     "source": "docs/brainstorm/session-2026-10-22-guided-workflow.md",
     "ui_direction": ".DHSYSTEM/ui-direction/2026-10-22-guided-workflow/",
     "constraints": [
@@ -158,6 +158,7 @@
       "no Node/Chromium/Remotion",
       "manifest stays 4.14 until release gates pass"
     ],
-    "task_8_1": "PASS locally: curated contract exact, Advanced show-all submenu, hidden-selected suffix; 50 focused / 740 full tests"
+    "task_8_1": "PASS (persisted): curated contract exact, Advanced show-all submenu, hidden-selected suffix; 50 focused / 740 full tests",
+    "task_8_2": "PASS: audit 0 problems; WebUI curated-first choices with unchanged values; CLI [advanced] markers and Vietnamese voice examples; 133 focused / 748 full tests"
   }
 }
