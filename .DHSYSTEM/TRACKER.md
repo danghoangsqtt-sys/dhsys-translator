@@ -1,5 +1,7 @@
 # Tracker
 
+- Complete locally: ENH-009 task 8.1 — the default provider view now shows only online no-key services, OpenAI/Gemini/OpenRouter, local models/services and custom endpoints; DeepSeek, Azure, DeepL, Deepgram and ElevenLabs join the China-hosted clouds under **Nâng cao → Hiện tất cả nhà cung cấp**. Saved hidden selections stay selected with an "(ẩn)" label. 50 focused and 740 full tests pass. Next: task 8.2 (close remaining provider surfaces).
+
 - Planned: [ENH-009](requests/ENH-009.md) / Phases 8–11 — crystallized 2026-10-22 from `docs/brainstorm/session-2026-10-22-guided-workflow.md`: default providers limited to free/no-key, OpenAI/Gemini/OpenRouter, local and custom (Phase 8); in-app result player with compare, re-export and history (Phase 9); three-step wizard as default with classic toggle and batch queue (Phase 10); animated karaoke/box/bilingual captions via ASS + FFmpeg (Phase 11). Next task: 8.1. Phase 3/5 release gates remain open and independent.
 
 - Complete locally: [ENH-007](requests/ENH-007.md) / Phase 7 — default provider surfaces now prioritize Việt Nam/global choices, a persisted **Hiện tất cả nhà cung cấp** control restores every integration, and the recommended 0/0/0 profile needs no API key. “Tích hợp sẵn” was replaced by explicit local-download/online/API guidance. All 29/33/38 provider IDs, credentials, saved selections and Chinese media-language support remain intact. Evidence: 75 focused and 726 full Python 3.12.14 tests pass with one external warning; commits `6df80b81`, `9a3e754d`, `bb3b6f27`.

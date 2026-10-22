@@ -53,22 +53,19 @@ ACCESS_BY_CATEGORY = MappingProxyType({
 })
 
 
-# Keep the default surfaces intentionally compact.  These providers are broadly
-# useful internationally, work well with Vietnamese, or provide a practical local
-# or user-controlled path.  Providers outside these sets are still fully available
-# through the show-all control.
+# Keep the default surfaces intentionally compact: online services that need no
+# key, the OpenAI/Gemini/OpenRouter accounts reachable from Viet Nam, local models
+# and services, and custom endpoints.  China-hosted and less-common international
+# clouds stay fully available through the Advanced show-all control.
 CURATED_PROVIDER_IDS = MappingProxyType({
     TRANSLATION: frozenset({
         translator.GOOGLE_INDEX,
         translator.MICROSOFT_INDEX,
         translator.M2M100_INDEX,
         translator.CHATGPT_INDEX,
-        translator.DEEPSEEK_INDEX,
         translator.GEMINI_INDEX,
-        translator.AZUREGPT_INDEX,
         translator.LOCALLLM_INDEX,
         translator.OPENROUTER_INDEX,
-        translator.DEEPL_INDEX,
         translator.DEEPLX_INDEX,
         translator.LIBRE_INDEX,
         translator.TRANSAPI_INDEX,
@@ -86,9 +83,7 @@ CURATED_PROVIDER_IDS = MappingProxyType({
         recognition.Faster_Whisper_XXL,
         recognition.WHISPERX_API,
         recognition.PARAKEET,
-        recognition.ElevenLabs,
         recognition.GOOGLE_SPEECH,
-        recognition.Deepgram,
         recognition.STT_API,
         recognition.WHISPER_NET,
         recognition.CUSTOM_API,
@@ -104,10 +99,8 @@ CURATED_PROVIDER_IDS = MappingProxyType({
         tts.GPTSOVITS_TTS,
         tts.OPENAI_TTS,
         tts.GEMINI_TTS,
-        tts.ELEVENLABS_TTS,
         tts.G_TTS,
         tts.KOKORO_TTS,
-        tts.AZURE_TTS,
         tts.TTS_API,
         tts.OPENROUTER_API,
     }),
@@ -116,16 +109,16 @@ CURATED_PROVIDER_IDS = MappingProxyType({
 
 CURATED_MENU_ACTIONS = MappingProxyType({
     TRANSLATION: frozenset({
-        "deepseek", "chatgpt", "gemini", "localllm", "azure",
-        "openrouter", "litellm", "deepl", "deeplx", "libre", "transapi",
+        "chatgpt", "gemini", "localllm", "openrouter", "litellm",
+        "deeplx", "libre", "transapi",
     }),
     RECOGNITION: frozenset({
-        "openairecognapi", "parakeet", "whisperxapi", "deepgram", "xxl",
+        "openairecognapi", "parakeet", "whisperxapi", "xxl",
         "sttapi", "recognapi",
     }),
     TTS: frozenset({
-        "refaudio", "openaitts", "elevenlabs", "azuretts", "gptsovits",
-        "chatterbox", "kokoro", "clone", "ttsapi",
+        "refaudio", "openaitts", "gptsovits", "chatterbox", "kokoro",
+        "clone", "ttsapi",
     }),
 })
 
@@ -137,6 +130,9 @@ _REGISTRIES = MappingProxyType({
 })
 
 _ACTIVE_COMBOS = []
+
+# Qt.ItemDataRole.UserRole + 41; a literal keeps this module importable without Qt.
+_BASE_TEXT_ROLE = 0x0100 + 41
 
 _CATEGORY_OVERRIDES = MappingProxyType({
     TRANSLATION: {
@@ -205,6 +201,21 @@ def visible_provider_ids(kind: str, *, show_all: bool = False, selected_id: int 
     return tuple(provider_id for provider_id in registry_ids if provider_id in visible)
 
 
+def is_hidden_by_default(kind: str, provider_id: int, *, show_all: bool = False) -> bool:
+    """True when a provider is only reachable through the Advanced show-all switch."""
+    _validate_kind(kind)
+    return not show_all and provider_id not in CURATED_PROVIDER_IDS[kind]
+
+
+def hidden_selection_suffix(kind: str, provider_id: int, *, show_all: bool = False) -> str:
+    """Return the label suffix for a saved provider that the curated view hides."""
+    from videotrans.configure._i18n import tr
+
+    if not is_hidden_by_default(kind, provider_id, show_all=show_all):
+        return ""
+    return " " + tr("provider_hidden_suffix")
+
+
 def apply_combo_visibility(combo, kind: str, *, show_all: bool = False):
     """Hide model rows in place and return the IDs that remain visible."""
     from PySide6.QtCore import Qt
@@ -227,6 +238,15 @@ def apply_combo_visibility(combo, kind: str, *, show_all: bool = False):
             tr(provider_access(kind, provider_id).guidance_key),
             Qt.ItemDataRole.ToolTipRole,
         )
+        # Keep the untouched label so repeated refreshes never stack suffixes.
+        base_text = combo.itemData(provider_id, _BASE_TEXT_ROLE)
+        if base_text is None:
+            base_text = combo.itemText(provider_id)
+            combo.setItemData(provider_id, base_text, _BASE_TEXT_ROLE)
+        suffix = ""
+        if provider_id == selected_id:
+            suffix = hidden_selection_suffix(kind, provider_id, show_all=show_all)
+        combo.setItemText(provider_id, base_text + suffix)
         view.setRowHidden(provider_id, provider_id not in visible)
     return tuple(provider_id for provider_id in registry_ids if provider_id in visible)
 

@@ -1032,6 +1032,8 @@
   "Provider profile": "Provider profile",
   "Provider settings": "Provider settings",
   "Show all providers": "Show all providers",
+  "provider_hidden_suffix": "(hidden)",
+  "provider_advanced_menu": "Advanced",
   "Provider visibility guidance": "By default, only common Viet Nam/global choices are shown. Enable ‘Show all providers’ for advanced or previously saved providers.",
   "Advanced tools": "Advanced tools",
   "Open advanced tools": "Open advanced tools",

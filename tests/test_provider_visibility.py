@@ -150,8 +150,13 @@ def test_every_provider_row_has_localized_cost_readiness_guidance(kind, names):
 
 
 def test_settings_menu_policy_hides_china_focused_actions_but_can_restore_them():
-    assert menu_action_visible(TRANSLATION, "deepl")
+    assert menu_action_visible(TRANSLATION, "chatgpt")
+    assert not menu_action_visible(TRANSLATION, "deepl")
+    assert not menu_action_visible(TRANSLATION, "deepseek")
     assert not menu_action_visible(TRANSLATION, "tencent")
+    assert not menu_action_visible(RECOGNITION, "deepgram")
+    assert not menu_action_visible(TTS, "elevenlabs")
+    assert not menu_action_visible(TTS, "azuretts")
     assert not menu_action_visible(RECOGNITION, "zijierecognmodel")
     assert not menu_action_visible(TTS, "doubao2")
     assert menu_action_visible(TRANSLATION, "tencent", show_all=True)
@@ -200,10 +205,13 @@ def test_generated_provider_menus_keep_actions_but_hide_and_restore_them(monkeyp
 
     assert window.tencent in window.menu_Key.actions()
     assert window.tencent.isVisible() is False
-    assert window.deepl.isVisible() is True
-    assert window.show_all_providers in window.menu_Key.actions()
-    assert window.show_all_providers in window.menu_TTS.actions()
-    assert window.show_all_providers in window.menu_RECOGN.actions()
+    assert window.chatgpt.isVisible() is True
+    assert window.deepl.isVisible() is False
+    advanced = window.menu_provider_advanced.menuAction()
+    assert window.show_all_providers in window.menu_provider_advanced.actions()
+    for provider_menu in (window.menu_Key, window.menu_TTS, window.menu_RECOGN):
+        assert advanced in provider_menu.actions()
+        assert window.show_all_providers not in provider_menu.actions()
 
     window.show_all_providers.setChecked(True)
 
@@ -211,4 +219,87 @@ def test_generated_provider_menus_keep_actions_but_hide_and_restore_them(monkeyp
     assert window.tencent.isVisible() is True
     assert window.zijierecognmodel.isVisible() is True
     assert window.doubao2.isVisible() is True
+    assert window.deepl.isVisible() is True
     apply_menu_visibility(window, show_all=False)
+
+
+PHASE8_CURATED = {
+    TRANSLATION: {
+        translator.GOOGLE_INDEX, translator.MICROSOFT_INDEX, translator.M2M100_INDEX,
+        translator.CHATGPT_INDEX, translator.GEMINI_INDEX, translator.OPENROUTER_INDEX,
+        translator.LOCALLLM_INDEX, translator.LITELLM_INDEX, translator.DEEPLX_INDEX,
+        translator.LIBRE_INDEX, translator.TRANSAPI_INDEX,
+    },
+    RECOGNITION: {
+        recognition.GOOGLE_SPEECH, recognition.OPENAI_API, recognition.GEMINI_SPEECH,
+        recognition.OPENROUTER_API, recognition.FASTER_WHISPER, recognition.OPENAI_WHISPER,
+        recognition.Whisper_CPP, recognition.Faster_Whisper_XXL, recognition.WHISPERX_API,
+        recognition.PARAKEET, recognition.NEMOTRON_ASR, recognition.Omnilingual,
+        recognition.HUGGINGFACE_ASR, recognition.WHISPER_NET, recognition.STT_API,
+        recognition.CUSTOM_API,
+    },
+    TTS: {
+        tts.EDGE_TTS, tts.G_TTS, tts.OPENAI_TTS, tts.GEMINI_TTS, tts.OPENROUTER_API,
+        tts.F5_TTS, tts.OMNIVOICE_TTS, tts.PIPER_TTS, tts.CHATTERBOX_TTS,
+        tts.Supertonic_TTS, tts.GPTSOVITS_TTS, tts.KOKORO_TTS, tts.TTS_API,
+    },
+}
+
+
+@pytest.mark.parametrize("kind", (TRANSLATION, RECOGNITION, TTS))
+def test_phase8_default_view_matches_vietnam_contract_exactly(kind):
+    assert set(visible_provider_ids(kind)) == PHASE8_CURATED[kind]
+
+
+@pytest.mark.parametrize(
+    ("kind", "provider_id"),
+    (
+        (TRANSLATION, translator.DEEPSEEK_INDEX),
+        (TRANSLATION, translator.AZUREGPT_INDEX),
+        (TRANSLATION, translator.DEEPL_INDEX),
+        (RECOGNITION, recognition.Deepgram),
+        (RECOGNITION, recognition.ElevenLabs),
+        (TTS, tts.ELEVENLABS_TTS),
+        (TTS, tts.AZURE_TTS),
+    ),
+)
+def test_phase8_moves_less_reachable_clouds_to_advanced(kind, provider_id):
+    assert provider_id not in visible_provider_ids(kind)
+    assert provider_id in visible_provider_ids(kind, show_all=True)
+
+
+@pytest.mark.parametrize(
+    ("kind", "names", "hidden_id"),
+    (
+        (TRANSLATION, translator.TRANSLASTE_NAME_LIST, translator.DEEPSEEK_INDEX),
+        (RECOGNITION, recognition.RECOGN_NAME_LIST, recognition.Deepgram),
+        (TTS, tts.TTS_NAME_LIST, tts.AZURE_TTS),
+    ),
+)
+def test_hidden_selected_provider_is_labelled_and_label_is_restorable(kind, names, hidden_id):
+    combo = QComboBox()
+    combo.addItems(names)
+    combo.setCurrentIndex(hidden_id)
+    suffix = " " + tr("provider_hidden_suffix")
+
+    apply_combo_visibility(combo, kind)
+    apply_combo_visibility(combo, kind)
+
+    assert combo.currentIndex() == hidden_id
+    assert not combo.view().isRowHidden(hidden_id)
+    assert combo.itemText(hidden_id) == names[hidden_id] + suffix
+
+    apply_combo_visibility(combo, kind, show_all=True)
+
+    assert combo.itemText(hidden_id) == names[hidden_id]
+    assert all(combo.itemText(row) == names[row] for row in range(len(names)))
+
+
+def test_curated_selection_gets_no_hidden_suffix():
+    combo = QComboBox()
+    combo.addItems(translator.TRANSLASTE_NAME_LIST)
+    combo.setCurrentIndex(translator.GOOGLE_INDEX)
+
+    apply_combo_visibility(combo, TRANSLATION)
+
+    assert combo.itemText(translator.GOOGLE_INDEX) == translator.TRANSLASTE_NAME_LIST[translator.GOOGLE_INDEX]

@@ -102,9 +102,13 @@ def _setup_actions_and_menus(ui, MainWindow):
     ui.show_all_providers.setCheckable(True)
     show_all = bool(params.get("show_all_providers", False))
     ui.show_all_providers.setChecked(show_all)
+    # The show-all switch lives only under Advanced so the default menus stay short.
+    ui.menu_provider_advanced = QtWidgets.QMenu(tr("provider_advanced_menu"), MainWindow)
+    ui.menu_provider_advanced.setObjectName("menu_provider_advanced")
+    ui.menu_provider_advanced.addAction(ui.show_all_providers)
     for provider_menu in (ui.menu_Key, ui.menu_TTS, ui.menu_RECOGN):
         provider_menu.addSeparator()
-        provider_menu.addAction(ui.show_all_providers)
+        provider_menu.addAction(ui.menu_provider_advanced.menuAction())
 
     def set_show_all(checked):
         handler = getattr(MainWindow, "set_show_all_providers", None)

@@ -1287,6 +1287,8 @@
   "Provider profile": "Hồ sơ nhà cung cấp",
   "Provider settings": "Cài đặt nhà cung cấp",
   "Show all providers": "Hiện tất cả nhà cung cấp",
+  "provider_hidden_suffix": "(ẩn)",
+  "provider_advanced_menu": "Nâng cao",
   "Provider visibility guidance": "Mặc định chỉ hiện các lựa chọn phổ biến cho Việt Nam/quốc tế. Bật ‘Hiện tất cả nhà cung cấp’ để dùng cấu hình nâng cao hoặc nhà cung cấp đã lưu trước đây.",
   "Advanced tools": "Công cụ nâng cao",
   "Open advanced tools": "Mở công cụ nâng cao",
