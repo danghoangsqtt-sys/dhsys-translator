@@ -26,7 +26,7 @@ Source: `docs/PLAN.md` and `docs/SPEC.md`. Status is recorded here after each ph
 | 5 | ENH-005 local Windows distribution, machine readiness scan and consent-based setup assistant | in_progress; tasks 5.1–5.4 PASS locally; GitHub-independent |
 | 6 | Timeline editor | conditional; scope decision pending |
 | 7 | ENH-007 Việt Nam/global provider visibility and free-first guidance | complete; reversible curated view, no-key profile and bilingual cost guidance; 726 tests pass |
-| 8 | ENH-009 default providers usable in Viet Nam; China-hosted and less-common clouds under Advanced | in_progress; 8.1 PASS locally |
+| 8 | ENH-009 default providers usable in Viet Nam; China-hosted and less-common clouds under Advanced | in_progress; 8.1 PASS |
 | 9 | ENH-009 result screen with in-app playback, compare, re-export and history | planned |
 | 10 | ENH-009 three-step guided wizard (default) with classic toggle and batch queue | planned |
 | 11 | ENH-009 animated captions (karaoke, rounded box, bilingual) via ASS + FFmpeg | planned |
@@ -63,7 +63,7 @@ Order is deliberate: provider cleanup first, then result review (needed by the w
 
 | Task | Outcome | State |
 | --- | --- | --- |
-| 8.1 | Narrow curated provider policy | PASS (local) |
+| 8.1 | Narrow curated provider policy | PASS |
 | 8.2 | Close provider visibility leaks | planned |
 | 8.3 | Frozen rebuild and acceptance | planned |
 
